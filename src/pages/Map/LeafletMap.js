@@ -53,7 +53,10 @@ class LeafletMap extends React.Component {
         />
         <Marker position={baseLocation} />
         {locations.map((route, index) => (
-          <RouteMarker key={index} props={{ route, index }} />
+          <RouteMarker
+            key={index}
+            props={{ route, index, baseLocation: [latitude, longitude] }}
+          />
         ))}
       </Map>
     );
@@ -61,12 +64,35 @@ class LeafletMap extends React.Component {
 }
 
 const RouteMarker = ({ props }) => {
-  let coords = [];
-  for (let location of props.route) {
-    coords.push([location["from"], location["to"]]);
-  }
-  const [latlngs, setLatlngs] = useState([...coords]);
-  const [driverLocation, setDriverLocation] = useState([0, 0]);
+  useEffect(() => {
+    let latlngs = [];
+    for (let location of props.route) {
+      latlngs.push([location["from"], location["to"]]);
+    }
+    const temp = latlngs[destination - 1][1];
+    latlngs[destination - 1][1] = driverLocation;
+    const driverCoord = [driverLocation, temp];
+    latlngs.splice(destination, 0, driverCoord);
+    setCoords([...latlngs]);
+  }, []);
+
+  const handleDriverLocation = () => {
+    // console.log(coords);
+    // console.log(driverLocation);
+    let tempCoords = [...coords];
+    tempCoords[destination - 1][1] = [40.5, -119.5];
+    tempCoords[destination][0] = [40.5, -119.5];
+    setCoords(tempCoords);
+  };
+
+  const handleDelivery = () => {
+    setDestination(++destination);
+
+    if (destination === props.route.length) console.log("Final Destination");
+  };
+
+  const [coords, setCoords] = useState([]);
+  const [driverLocation, setDriverLocation] = useState(props.baseLocation); // useState(CURRENT_DRIVER_LOCATION ? CURRENT_DRIVER_LOCATION : props.baseLocation)
   // for determining which destination driver is going to. will probably splice the driver's
   // coordinates as they drive, based on their destination.
   // initially: `latlngs.splice(destination, 0, driverLocation)`
@@ -74,11 +100,11 @@ const RouteMarker = ({ props }) => {
   // then, whenever driver completes the delivery, do
   // `setDestination(++destination)`
   // until their last destination
-  const [destination, setDestination] = useState(1);
+  const [destination, setDestination] = useState(1); // useState(CURRENT_DRIVER_DESTINATION ? CURRENT_DRIVER_DESTINATION : props.baseLocation)
 
   //   const [icon, setIcon] = useState(Icons.MarkerIcon("green"));
   // console.log(props.route);
-  console.log(latlngs);
+  // console.log(coords);
 
   return (
     <React.Fragment>
@@ -87,7 +113,7 @@ const RouteMarker = ({ props }) => {
           key={index}
           position={location[1]}
           icon={
-            destination >= index + 1
+            destination > index
               ? destination === index + 1
                 ? blueIcon
                 : greenIcon
@@ -95,13 +121,17 @@ const RouteMarker = ({ props }) => {
           }
         ></Marker>
       ))}
-      {latlngs.map((coords, index) => (
-        <Polyline
-          key={index}
-          positions={coords}
-          color={destination >= index + 1 ? "green" : "red"}
-        />
-      ))}
+      {coords.map((location, index) => {
+        // console.log(index, location);
+        return (
+          <Polyline
+            key={index}
+            positions={[location[0], location[1]]}
+            color={destination > index ? "green" : "red"}
+          />
+        );
+      })}
+      <button onClick={handleDriverLocation}>HI</button>
     </React.Fragment>
   );
 };
