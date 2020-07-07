@@ -64,6 +64,10 @@ class LeafletMap extends React.Component {
 }
 
 const RouteMarker = ({ props }) => {
+  const [coords, setCoords] = useState([]);
+  const [driverLocation, setDriverLocation] = useState(props.baseLocation); // useState(CURRENT_DRIVER_LOCATION ? CURRENT_DRIVER_LOCATION : props.baseLocation)
+  const [destination, setDestination] = useState(1); // useState(CURRENT_DRIVER_DESTINATION ? CURRENT_DRIVER_DESTINATION : props.baseLocation)
+
   useEffect(() => {
     let latlngs = [];
     for (let location of props.route) {
@@ -80,8 +84,8 @@ const RouteMarker = ({ props }) => {
     // console.log(coords);
     // console.log(driverLocation);
     let tempCoords = [...coords];
-    tempCoords[destination - 1][1] = [40.5, -119.5];
-    tempCoords[destination][0] = [40.5, -119.5];
+    tempCoords[destination - 1][1] = [40.5, -119.5]; // = driverLocation
+    tempCoords[destination][0] = [40.5, -119.5]; // = driverLocation
     setCoords(tempCoords);
   };
 
@@ -91,18 +95,6 @@ const RouteMarker = ({ props }) => {
     if (destination === props.route.length) console.log("Final Destination");
   };
 
-  const [coords, setCoords] = useState([]);
-  const [driverLocation, setDriverLocation] = useState(props.baseLocation); // useState(CURRENT_DRIVER_LOCATION ? CURRENT_DRIVER_LOCATION : props.baseLocation)
-  // for determining which destination driver is going to. will probably splice the driver's
-  // coordinates as they drive, based on their destination.
-  // initially: `latlngs.splice(destination, 0, driverLocation)`
-  // during: `latlngs[destination] = driverLocation`
-  // then, whenever driver completes the delivery, do
-  // `setDestination(++destination)`
-  // until their last destination
-  const [destination, setDestination] = useState(1); // useState(CURRENT_DRIVER_DESTINATION ? CURRENT_DRIVER_DESTINATION : props.baseLocation)
-
-  //   const [icon, setIcon] = useState(Icons.MarkerIcon("green"));
   // console.log(props.route);
   // console.log(coords);
 
