@@ -4,19 +4,20 @@ import LeafletMap from "./LeafletMap";
 import DeliveryRoutes from "./DeliveryRoutes";
 
 function MapPage() {
+  // Random coordinates for testing
   const items = [
     [
-      [41, -120],
-      [35, -115],
+      { from: [40, -120], to: [41, -120] },
+      { from: [41, -120], to: [42, -121] },
     ],
     [
-      [37, -121],
-      [35, -126],
+      { from: [40, -120], to: [39, -121] },
+      { from: [39, -121], to: [37, -122] },
     ],
     [
-      [36, -122],
-      [34, -117],
-      [42, -122],
+      { from: [40, -120], to: [37, -116] },
+      { from: [37, -116], to: [33, -115] },
+      { from: [33, -115], to: [35, -113] },
     ],
   ];
 
