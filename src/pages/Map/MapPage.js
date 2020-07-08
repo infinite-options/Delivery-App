@@ -5,34 +5,45 @@ import LeafletMap from "./LeafletMap";
 import DeliveryRoutes from "./DeliveryRoutes";
 
 function MapPage() {
+  // has a bunch of [latitude, longitude] values for testing
   const ROUTE_API =
     "https://wrguk721j7.execute-api.us-west-1.amazonaws.com/dev/api/v1/deliveryRoute";
 
   const [isLoading, setIsLoading] = useState(true);
+  // will there ever be a case where there are more drivers than locations?
   const [drivers, setDrivers] = useState(2); // useState(DRIVER_COUNT)
   const [locations, setLocations] = useState([]);
 
   useEffect(() => {
+    createRoutes();
+  }, []);
+
+  const createRoutes = () => {
     axios
       .get(ROUTE_API)
       .then((response) => {
         // console.log(response);
         if (response.status === 200) {
           const result = [...response.data.result];
+          // cut off head & tail of result, since those values are the HQ location value
           const routes = result.slice(1, result.length - 1);
+          // determine average routes per driver
           const routesPerDriver = Math.floor(routes.length / drivers);
-          const extraRoutes = routes.length % drivers;
+          const extraRoutes = routes.length % drivers; // extras will be distributed as evenly as possible
 
           // console.log(routes);
           let tempLocations = [];
           let index = 0;
           for (let i = 0; i < drivers; i++) {
             let tempRoute = [];
+            // if driver is to be assigned an extra route, lengthen the loop by 1 iteration
             let driverRoutes =
               i < extraRoutes ? routesPerDriver + 1 : routesPerDriver;
             for (let j = 0; j < driverRoutes; j++) {
+              // destination coords
               let toLatitude = routes[index].latitude;
               let toLongitude = routes[index].longitude;
+              // beginning coords, if first route then begin from HQ coords
               let fromLatitude = !j
                 ? result[0].latitude
                 : routes[index - 1].latitude;
@@ -56,25 +67,7 @@ function MapPage() {
       .catch((err) => {
         console.log(err.response ? err.response : err);
       });
-  }, []);
-
-  // Random coordinates for testing
-  // const items = [
-  //   [
-  //     { from: [40, -120], to: [41, -120] },
-  //     { from: [41, -120], to: [42, -121] },
-  //   ],
-  //   [
-  //     { from: [40, -120], to: [39, -121] },
-  //     { from: [39, -121], to: [37, -122] },
-  //   ],
-  //   [
-  //     { from: [40, -120], to: [37, -116] },
-  //     { from: [37, -116], to: [33, -115] },
-  //     { from: [33, -115], to: [35, -113] },
-  //   ],
-  // ];
-  // console.log(items);
+  };
 
   return (
     <React.Fragment>
@@ -97,7 +90,6 @@ function MapPage() {
                 lineHeight: "10vh",
                 textAlign: "center",
                 minWidth: "100%",
-                // maxWidth: "100%",
               }}
             >
               <div className="column is-4 is-size-3">Routes</div>

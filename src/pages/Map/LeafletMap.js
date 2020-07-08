@@ -69,16 +69,32 @@ const RouteMarker = ({ props }) => {
   const [destination, setDestination] = useState(1); // useState(CURRENT_DRIVER_DESTINATION ? CURRENT_DRIVER_DESTINATION : props.baseLocation)
 
   useEffect(() => {
+    createRouteCoords();
+  }, []);
+
+  const createRouteCoords = () => {
     let latlngs = [];
     for (let location of props.route) {
       latlngs.push([location["from"], location["to"]]);
     }
-    const temp = latlngs[destination - 1][1];
-    latlngs[destination - 1][1] = driverLocation;
-    const driverCoord = [driverLocation, temp];
-    latlngs.splice(destination, 0, driverCoord);
+    createDriverCoords(latlngs);
     setCoords([...latlngs]);
-  }, []);
+  };
+
+  const createDriverCoords = (routeCoords) => {
+    // console.log(routeCoords);
+    // checking if there are more drivers than delivery locations
+    if (routeCoords.length) {
+      // point from previous location to driver location
+      const temp = routeCoords[destination - 1][1];
+      routeCoords[destination - 1][1] = driverLocation;
+      // create route from driver location to next location
+      const fromDriverToNext = [driverLocation, temp];
+      routeCoords.splice(destination, 0, fromDriverToNext);
+    } else {
+      routeCoords.push([props.baseLocation, props.baseLocation]);
+    }
+  };
 
   const handleDriverLocation = () => {
     // console.log(coords);
