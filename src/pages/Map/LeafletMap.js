@@ -78,8 +78,9 @@ const RouteMarker = ({ props }) => {
     // console.log(coords);
     // console.log(driverLocation);
     let tempCoords = [...coords];
-    tempCoords[destination - 1][1] = [40.5, -119.5]; // = driverLocation
-    tempCoords[destination][0] = [40.5, -119.5]; // = driverLocation
+    const randomCoords = getRandomCoordinates(props.baseLocation, 0.375); // line 93
+    tempCoords[destination - 1][1] = randomCoords; // = driverLocation
+    tempCoords[destination][0] = randomCoords; // = driverLocation
     setCoords(tempCoords);
   };
 
@@ -89,6 +90,14 @@ const RouteMarker = ({ props }) => {
     if (destination === props.route.length) console.log("Final Destination");
   };
 
+  // for testing driver coordinates only
+  function getRandomCoordinates(location, range) {
+    const x = location[0];
+    const y = location[1];
+    const lat = (Math.random() * (2 * range) + (x - range)).toFixed(3) * 1;
+    const lng = (Math.random() * (2 * range) + (y - range)).toFixed(3) * 1;
+    return [lat, lng];
+  }
   // console.log(props.route);
   // console.log(coords);
 
