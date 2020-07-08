@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useRouteMatch, Redirect } from "react-router-dom";
+import "./style.css";
 import {
   Map,
   TileLayer,
@@ -9,34 +10,11 @@ import {
   Polyline,
 } from "react-leaflet";
 import { geolocated } from "react-geolocated";
-import "./style.css";
-import L, { Point } from "leaflet";
+import Icons from "Icons/Icons";
+// import L, { Point } from "leaflet";
 // use San Jose, CA as the default center
 const DEFAULT_LATITUDE = 37.338208;
 const DEFAULT_LONGITUDE = -121.886329;
-
-const Icons = L.Icon.extend({
-  options: {
-    shadowUrl:
-      "https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png",
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-    popupAnchor: [1, -34],
-    shadowSize: [41, 41],
-  },
-});
-const greenIcon = new Icons({
-  iconUrl:
-    "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png",
-});
-const redIcon = new Icons({
-  iconUrl:
-    "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png",
-});
-const blueIcon = new Icons({
-  iconUrl:
-    "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png",
-});
 
 class LeafletMap extends React.Component {
   render() {
@@ -51,7 +29,10 @@ class LeafletMap extends React.Component {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
         />
-        <Marker position={baseLocation} />
+        <Marker
+          position={baseLocation}
+          icon={Icons.CustomIcon("headquarters")}
+        />
         {locations.map((route, index) => (
           <RouteMarker
             key={index}
@@ -123,9 +104,9 @@ const RouteMarker = ({ props }) => {
           icon={
             destination > index
               ? destination === index + 1
-                ? blueIcon
-                : greenIcon
-              : redIcon
+                ? Icons.CustomIcon("truck")
+                : Icons.DefaultIcon("green")
+              : Icons.DefaultIcon("red")
           }
         ></Marker>
       ))}
