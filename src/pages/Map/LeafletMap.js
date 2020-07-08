@@ -29,10 +29,7 @@ class LeafletMap extends React.Component {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
         />
-        <Marker
-          position={baseLocation}
-          icon={Icons.CustomIcon("headquarters")}
-        />
+        <Marker position={baseLocation} icon={Icons.Headquarters} />
         {locations.map((route, index) => (
           <RouteMarker
             key={index}
@@ -104,7 +101,7 @@ const RouteMarker = ({ props }) => {
           icon={
             destination > index
               ? destination === index + 1
-                ? Icons.CustomIcon("truck")
+                ? Icons.Truck
                 : Icons.DefaultIcon("green")
               : Icons.DefaultIcon("red")
           }

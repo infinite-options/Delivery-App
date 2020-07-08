@@ -1,6 +1,6 @@
-import L, { Icon } from "leaflet";
-import Headquarters from "./headquarters.png";
-import Truck from "./truck.png";
+import { Icon } from "leaflet";
+import HeadquartersIcon from "./headquarters.png";
+import TruckIcon from "./truck.png";
 
 const DefaultIcon = (color, width = 25, height = 41) => {
   return new Icon({
@@ -16,7 +16,7 @@ const DefaultIcon = (color, width = 25, height = 41) => {
 
 const CustomIcon = (icon, width = 32, height = 41) => {
   return new Icon({
-    iconUrl: icon === "truck" ? Truck : Headquarters, // probably shouldn't do it like this, but problem for future me when i add more icons
+    iconUrl: icon,
     shadowUrl:
       "https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png",
     iconSize: [width, height],
@@ -26,4 +26,7 @@ const CustomIcon = (icon, width = 32, height = 41) => {
   });
 };
 
-export default { DefaultIcon, CustomIcon };
+const Truck = CustomIcon(TruckIcon);
+const Headquarters = CustomIcon(HeadquartersIcon);
+
+export default { DefaultIcon, Truck, Headquarters };
