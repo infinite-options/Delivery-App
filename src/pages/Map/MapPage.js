@@ -97,11 +97,11 @@ function MapPage() {
             </div>
           </nav>
           <div className="map-page">
-            <div className="columns">
-              <div className="column is-4 mt-5 ml-5">
+            <div className="columns" style={{ marginLeft: "0.75rem" }}>
+              <div className="column is-4">
                 <DeliveryRoutes locations={locations} />
               </div>
-              <div className="column has-no-padding has-shadow">
+              <div className="column" style={{ padding: "0" }}>
                 <div className="sticky">
                   <LeafletMap locations={locations} />
                 </div>

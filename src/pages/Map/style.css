@@ -3,9 +3,7 @@
   height: 100%;
   z-index: 0;
 }
-.has-margin-bottom-0-5 {
-  margin-bottom: 0.5rem;
-}
+
 .marker-popup {
   width: 250px;
 }
@@ -22,6 +20,6 @@
 }
 
 .map-page {
-  margin-top: 10vh;
+  margin-top: 12vh;
   background-color: #f8f7fa;
 }
