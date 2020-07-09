@@ -16,60 +16,80 @@ import L, { Point } from "leaflet";
 const DEFAULT_LATITUDE = 37.338208;
 const DEFAULT_LONGITUDE = -121.886329;
 
-class LeafletMap extends React.Component {
-  render() {
-    const locations = this.props.locations;
-    const baseLocation = locations[0][0]["from"];
-    const latitude = baseLocation ? baseLocation[0] : DEFAULT_LATITUDE;
-    const longitude = baseLocation ? baseLocation[1] : DEFAULT_LONGITUDE;
+function LeafletMap(props) {
+  const [mapMarkers, setMapMarkers] = useState([]);
 
-    // FIXME: this deletes markers in unloaded tiles forever
-    const handleMapUpdate = (e) => {
-      // console.log(e.target.getBounds());
-      const map = e.target;
-      // const mapBounds = map.getBounds();
+  const locations = props.locations;
+  const baseLocation = locations[0][0]["from"];
+  const latitude = baseLocation ? baseLocation[0] : DEFAULT_LATITUDE;
+  const longitude = baseLocation ? baseLocation[1] : DEFAULT_LONGITUDE;
+
+  const handleMapUpdate = (e) => {
+    // console.log(e.target);
+    // onLoad does not work on Map component, so must be called from its child component (TileLayer)
+    const map = e.target instanceof L.Map ? e.target : e.target._map;
+    // const mapBounds = map.getBounds();
+    // store all Markers if onLoad event has been called (AKA first time loading site)
+    if (!mapMarkers.length && e.target instanceof L.TileLayer) {
       let markers = [];
       map.eachLayer((layer) => {
-        if (layer instanceof L.Marker) markers.push(layer);
+        // console.log("Scanning");
+        if (layer instanceof L.Marker) {
+          markers.push(layer);
+          // check if Marker should be visible initially
+          const isVisible = map.getBounds().contains(layer.getLatLng());
+          if (!isVisible) map.removeLayer(layer);
+        }
+        // if Markers ever need to be added/removed in the future, remember to push marker into mapMarker Hook
       });
-      manageMarkers(map, markers);
-    };
+      // console.log(markers);
+      setMapMarkers(markers);
+    } else {
+      manageMarkers(map); // updating Markers' visibility as user drags map around
+    }
+    // console.log(mapMarkers);
+  };
 
-    const manageMarkers = (map, markers) => {
-      for (let i = markers.length - 1; i >= 0; i--) {
-        const marker = markers[i];
-        const mapBounds = map.getBounds();
-        const isVisible = mapBounds.contains(marker.getLatLng());
-        if (marker._icon && !isVisible) map.removeLayer(marker);
-        else if (!marker.icon && isVisible) map.addLayer(marker);
-      }
-    };
+  const manageMarkers = (map) => {
+    // console.log(mapMarkers);
+    for (let i = mapMarkers.length - 1; i >= 0; i--) {
+      const marker = mapMarkers[i];
+      const mapBounds = map.getBounds();
+      const isVisible = mapBounds.contains(marker.getLatLng());
+      if (marker._icon && !isVisible) map.removeLayer(marker);
+      else if (!marker.icon && isVisible) map.addLayer(marker);
+    }
+  };
 
-    return (
-      <Map
-        center={[latitude, longitude]}
-        zoom={11}
-        // preferCanvas={true}
-        // onviewreset={handleMapUpdate}
-        // onLoad={handleMapUpdate}
-        // onMoveEnd={handleMapUpdate}
-      >
-        <TileLayer
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-          updateWhenZooming={false}
-          updateWhenIdle={true}
+  return (
+    <Map
+      center={[latitude, longitude]}
+      zoom={11}
+      minZoom={2}
+      maxBounds={[
+        [-83.75, -180], // preventing users from seeing map edge
+        [83.75, 180],
+      ]}
+      maxBoundsViscosity={0.9375}
+      // preferCanvas={true}
+      onMoveEnd={handleMapUpdate}
+    >
+      <TileLayer
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+        updateWhenZooming={false}
+        // updateWhenIdle={true}
+        onLoad={handleMapUpdate}
+      />
+      <Marker position={baseLocation} icon={Icons.Headquarters} />
+      {locations.map((route, index) => (
+        <RouteMarker
+          key={index}
+          props={{ route, index, baseLocation: [latitude, longitude] }}
         />
-        <Marker position={baseLocation} icon={Icons.Headquarters} />
-        {locations.map((route, index) => (
-          <RouteMarker
-            key={index}
-            props={{ route, index, baseLocation: [latitude, longitude] }}
-          />
-        ))}
-      </Map>
-    );
-  }
+      ))}
+    </Map>
+  );
 }
 
 const RouteMarker = ({ props }) => {
@@ -117,7 +137,7 @@ const RouteMarker = ({ props }) => {
   };
 
   const handleDelivery = () => {
-    setDestination(++destination);
+    setDestination(destination + 1);
 
     if (destination === props.route.length) console.log("Final Destination");
   };
