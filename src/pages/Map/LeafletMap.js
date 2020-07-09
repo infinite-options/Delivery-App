@@ -11,7 +11,7 @@ import {
 } from "react-leaflet";
 import { geolocated } from "react-geolocated";
 import Icons from "Icons/Icons";
-// import L, { Point } from "leaflet";
+import L, { Point } from "leaflet";
 // use San Jose, CA as the default center
 const DEFAULT_LATITUDE = 37.338208;
 const DEFAULT_LONGITUDE = -121.886329;
@@ -23,11 +23,42 @@ class LeafletMap extends React.Component {
     const latitude = baseLocation ? baseLocation[0] : DEFAULT_LATITUDE;
     const longitude = baseLocation ? baseLocation[1] : DEFAULT_LONGITUDE;
 
+    // FIXME: this deletes markers in unloaded tiles forever
+    const handleMapUpdate = (e) => {
+      // console.log(e.target.getBounds());
+      const map = e.target;
+      // const mapBounds = map.getBounds();
+      let markers = [];
+      map.eachLayer((layer) => {
+        if (layer instanceof L.Marker) markers.push(layer);
+      });
+      manageMarkers(map, markers);
+    };
+
+    const manageMarkers = (map, markers) => {
+      for (let i = markers.length - 1; i >= 0; i--) {
+        const marker = markers[i];
+        const mapBounds = map.getBounds();
+        const isVisible = mapBounds.contains(marker.getLatLng());
+        if (marker._icon && !isVisible) map.removeLayer(marker);
+        else if (!marker.icon && isVisible) map.addLayer(marker);
+      }
+    };
+
     return (
-      <Map center={[latitude, longitude]} zoom={11}>
+      <Map
+        center={[latitude, longitude]}
+        zoom={11}
+        // preferCanvas={true}
+        // onviewreset={handleMapUpdate}
+        // onLoad={handleMapUpdate}
+        // onMoveEnd={handleMapUpdate}
+      >
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+          updateWhenZooming={false}
+          updateWhenIdle={true}
         />
         <Marker position={baseLocation} icon={Icons.Headquarters} />
         {locations.map((route, index) => (
@@ -55,6 +86,7 @@ const RouteMarker = ({ props }) => {
     for (let location of props.route) {
       latlngs.push([location["from"], location["to"]]);
     }
+    createManyCoordinates(latlngs, 0); // test
     createDriverCoords(latlngs);
     setCoords([...latlngs]);
   };
@@ -78,7 +110,7 @@ const RouteMarker = ({ props }) => {
     // console.log(coords);
     // console.log(driverLocation);
     let tempCoords = [...coords];
-    const randomCoords = getRandomCoordinates(props.baseLocation, 0.375); // line 93
+    const randomCoords = getRandomCoordinates(props.baseLocation, 0.375); // testing
     tempCoords[destination - 1][1] = randomCoords; // = driverLocation
     tempCoords[destination][0] = randomCoords; // = driverLocation
     setCoords(tempCoords);
@@ -97,6 +129,21 @@ const RouteMarker = ({ props }) => {
     const lat = (Math.random() * (2 * range) + (x - range)).toFixed(3) * 1;
     const lng = (Math.random() * (2 * range) + (y - range)).toFixed(3) * 1;
     return [lat, lng];
+  }
+
+  // for testing marker limits only
+  function createManyCoordinates(latlngs, val) {
+    // 2 Markers per 1 val
+    for (let i = 0; i < val; i++) {
+      const randomVal = () => {
+        return (Math.random() * 360 - 180).toFixed(3) * 1;
+      };
+
+      latlngs.push([
+        [randomVal(), randomVal()],
+        [randomVal(), randomVal()],
+      ]);
+    }
   }
   // console.log(props.route);
   // console.log(coords);
