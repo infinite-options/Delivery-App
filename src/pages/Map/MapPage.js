@@ -129,7 +129,7 @@ function MapPage() {
             </div>
           </nav>
           <div className="map-page">
-            <div className="columns" style={{ marginLeft: "0.75rem" }}>
+            <div className="columns" style={{ margin: "auto" }}>
               <div className="column is-4">
                 <DeliveryRoutes locations={locations} />
               </div>
