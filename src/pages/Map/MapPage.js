@@ -18,7 +18,7 @@ function MapPage() {
   const [isLoading, setIsLoading] = useState(true);
   // will there ever be a case where there are more drivers than locations?
   const [drivers, setDrivers] = useState(2); // useState(DRIVER_COUNT)
-  const [locations, setLocations] = useState([]);
+  const [routes, setRoutes] = useState([]);
 
   useEffect(() => {
     createRoutes();
@@ -26,9 +26,9 @@ function MapPage() {
 
   const createRoutes = () => {
     // plotting markers & lines for test routes
-    let tempLocations = [];
+    let tempRoutes = [];
     for (let set of test) {
-      let tempRoutes = [];
+      let tempRoute = [];
       let index = 0;
       for (let coord of set) {
         if (index < set.length - 1) {
@@ -39,16 +39,16 @@ function MapPage() {
           let fromLongitude = coord["longitude"];
           let toLatitude = set[index + 1]["latitude"];
           let toLongitude = set[index + 1]["longitude"];
-          tempRoutes.push({
+          tempRoute.push({
             from: [fromLatitude, fromLongitude],
             to: [toLatitude, toLongitude],
           });
         }
         index++;
       }
-      tempLocations.push(tempRoutes);
+      tempRoutes.push(tempRoute);
     }
-    setLocations(tempLocations);
+    setRoutes(tempRoutes);
     setIsLoading(false);
     
     // axios
@@ -64,7 +64,7 @@ function MapPage() {
     //       const extraRoutes = routes.length % drivers; // extras will be distributed as evenly as possible
 
     //       // console.log(routes);
-    //       let tempLocations = [];
+    //       let tempRoutes = [];
     //       let index = 0;
     //       for (let i = 0; i < drivers; i++) {
     //         let tempRoute = [];
@@ -89,10 +89,10 @@ function MapPage() {
     //           index++;
     //           // console.log("index:", index);
     //         }
-    //         tempLocations.push(tempRoute);
+    //         tempRoutes.push(tempRoute);
     //       }
-    //       // console.log("temp:", tempLocations);
-    //       setLocations(tempLocations);
+    //       // console.log("temp:", tempRoutes);
+    //       setRoutess(tempRoutes);
     //       setIsLoading(false);
     //     }
     //   })
@@ -131,11 +131,11 @@ function MapPage() {
           <div className="map-page">
             <div className="columns" style={{ margin: "auto" }}>
               <div className="column is-4">
-                <DeliveryRoutes locations={locations} />
+                <DeliveryRoutes routes={routes} />
               </div>
               <div className="column" style={{ padding: "0" }}>
                 <div className="sticky">
-                  <LeafletMap locations={locations} />
+                  <LeafletMap routes={routes} />
                 </div>
               </div>
             </div>

@@ -19,8 +19,8 @@ const DEFAULT_LONGITUDE = -121.886329;
 function LeafletMap(props) {
   const [mapMarkers, setMapMarkers] = useState([]);
 
-  const locations = props.locations;
-  const baseLocation = locations[0][0]["from"];
+  const routes = props.routes;
+  const baseLocation = routes[0][0]["from"];
   const latitude = baseLocation ? baseLocation[0] : DEFAULT_LATITUDE;
   const longitude = baseLocation ? baseLocation[1] : DEFAULT_LONGITUDE;
 
@@ -82,7 +82,7 @@ function LeafletMap(props) {
         onLoad={handleMapUpdate}
       />
       <Marker position={baseLocation} icon={Icons.Headquarters} />
-      {locations.map((route, index) => (
+      {routes.map((route, index) => (
         <RouteMarker
           key={index}
           props={{ route, index, baseLocation: [latitude, longitude] }}

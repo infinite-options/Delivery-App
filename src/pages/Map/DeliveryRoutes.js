@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 
-function DeliveryRoutes({ locations }) {
+function DeliveryRoutes({ routes }) {
   return (
     <div>
-      {locations.map((route, index) => (
+      {routes.map((route, index) => (
         <Item key={index} props={{ route, index }} />
       ))}
     </div>
