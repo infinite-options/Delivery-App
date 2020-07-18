@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from "react";
-import { Link, useRouteMatch, Redirect } from "react-router-dom";
+// import { Link, useRouteMatch, Redirect } from "react-router-dom";
 import "./style.css";
 import {
   Map,
   TileLayer,
   Marker,
-  Popup,
-  MapLayer,
+  // Popup,
+  // MapLayer,
   Polyline,
 } from "react-leaflet";
 import { geolocated } from "react-geolocated";
 import Icons from "Icons/Icons";
-import L, { Point } from "leaflet";
+import L from "leaflet";
 // use San Jose, CA as the default center
 const DEFAULT_LATITUDE = 37.338208;
 const DEFAULT_LONGITUDE = -121.886329;

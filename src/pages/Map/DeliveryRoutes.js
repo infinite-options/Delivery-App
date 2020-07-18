@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Icons from "Icons/Icons";
 
@@ -22,10 +22,15 @@ function Item({ props }) {
         <thead>
           <tr>
             <th>
-              <button className="mx-1" onClick={() => setHidden(!hidden)}>
+              <button className="tooltip mx-1" onClick={() => setHidden(!hidden)}>
                 <FontAwesomeIcon icon={hidden ? Icons.faCaretDown : Icons.faCaretUp} />
+                <span className="tooltiptext">{hidden ? "Expand" : "Collapse"}</span>
               </button>
               Driver {props.index + 1}
+              <button className="tooltip mx-1">
+                <FontAwesomeIcon icon={Icons.faComment} />
+                <span className="tooltiptext">Message Driver</span>
+              </button>
             </th>
             <th>Route</th>
             <th>ETA</th>
@@ -45,11 +50,13 @@ function Item({ props }) {
               <td>00:00 am</td>
               <td>00:00 pm</td>
               <td>
-                <button className="button is-rounded is-small mx-1">
+                <button className="tooltip button is-rounded is-small mx-1">
                   <FontAwesomeIcon icon={Icons.faComment} />
+                  <span className="tooltiptext">Message Customer</span>
                 </button>
-                <button className="button is-rounded is-small mx-1">
+                <button className="tooltip button is-rounded is-small mx-1">
                   <FontAwesomeIcon icon={Icons.faEnvelope} />
+                  <span className="tooltiptext">Email Customer</span>
                 </button>
               </td>
             </tr>
