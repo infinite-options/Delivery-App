@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import LeafletMap from "./LeafletMap";
 import DeliveryRoutes from "./DeliveryRoutes";
+import Truck from "Icons/truck.png";
 
 function MapPage() {
   // an array of routes for testing
@@ -105,38 +106,36 @@ function MapPage() {
     <React.Fragment>
       {!isLoading && (
         <React.Fragment>
-          <nav
-            className="navbar is-fixed-top"
-            role="navigation"
-            aria-label="main navigation"
-            style={{
-              height: "10vh",
-              boxShadow: "0 2px 2px -2px rgba(0,0,0,.2)",
-              borderBottom: "1px solid #d8dbdd",
-            }}
-          >
-            <div
-              className="columns"
-              style={{
-                height: "10vh",
-                lineHeight: "10vh",
-                textAlign: "center",
-                minWidth: "100%",
-              }}
-            >
-              <div className="column is-4 is-size-3">Routes</div>
-              <div className="column is-size-3">Map</div>
-            </div>
-          </nav>
+          <div className="header">
+            <img className="has-text-left" src={Truck} alt="Just Delivered" style={{alignSelf: "center"}} />
+            <p className="is-size-3 has-text-centered" style={{width: "100%"}}>ADMIN DASHBOARD - DELIVERY</p>
+          </div>
           <div className="map-page">
-            <div className="columns" style={{ margin: "auto" }}>
-              <div className="column is-4">
-                <DeliveryRoutes routes={routes} />
+            <div className="columns" style={{width: "50%", margin: "auto 0"}}>
+              <div className="column">
+                <button className="button is-fullwidth is-small">Time 0</button>
               </div>
-              <div className="column" style={{ padding: "0" }}>
+              <div className="column">
+                <button className="button is-fullwidth is-small">Time 1</button>
+              </div>
+              <div className="column">
+                <button className="button is-fullwidth is-small">Time 2</button>
+              </div>
+              <div className="column">
+                <button className="button is-fullwidth is-small">Time 3</button>
+              </div>
+              <div className="column">
+                <button className="button is-fullwidth is-small">Time 4</button>
+              </div>
+            </div>
+            <div className="columns" style={{ margin: "auto" }}>
+              <div className="column is-half" style={{ padding: "0" }}>
                 <div className="sticky">
                   <LeafletMap routes={routes} />
                 </div>
+              </div>
+              <div className="column is-half" style={{ padding: "0 0.75rem" }}>
+                <DeliveryRoutes routes={routes} />
               </div>
             </div>
           </div>

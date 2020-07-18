@@ -4,6 +4,17 @@
   z-index: 0;
 }
 
+.header {
+  background-color: white;
+  position: sticky;
+  top: 0px;
+  height: 5vh;
+  /* min-width: 520px; */
+  display: flex;
+  box-shadow: 0 2px 2px -2px rgba(0,0,0,.2);
+  border-bottom: 1px solid #d8dbdd;
+}
+
 .marker-popup {
   width: 250px;
 }
@@ -14,12 +25,12 @@
 .sticky {
   position: -webkit-sticky;
   position: sticky;
-  height: 90vh;
+  height: 95vh;
   width: 100%;
-  top: 10vh;
+  top: 5vh;
 }
 
 .map-page {
-  margin-top: 10vh;
+  /* margin-top: 5vh; */
   background-color: #f8f7fa;
 }

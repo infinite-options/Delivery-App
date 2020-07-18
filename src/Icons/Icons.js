@@ -1,3 +1,4 @@
+import { faComment, faEnvelope, faCaretDown, faCaretUp } from '@fortawesome/free-solid-svg-icons';
 import { Icon } from "leaflet";
 import HeadquartersIcon from "./headquarters.png";
 import TruckIcon from "./truck.png";
@@ -29,4 +30,4 @@ const CustomIcon = (icon, width = 32, height = 41) => {
 const Truck = CustomIcon(TruckIcon);
 const Headquarters = CustomIcon(HeadquartersIcon);
 
-export default { DefaultIcon, Truck, Headquarters };
+export default { DefaultIcon, Truck, Headquarters, faComment, faEnvelope, faCaretDown, faCaretUp };
