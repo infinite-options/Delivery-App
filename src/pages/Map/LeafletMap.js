@@ -94,6 +94,7 @@ function LeafletMap(props) {
 
 const RouteMarker = ({ props }) => {
   const [coords, setCoords] = useState([]);
+  // These two probably need to be declared in MapPage.js, so when they're updated the route lists can be edited as well
   const [driverLocation, setDriverLocation] = useState(props.baseLocation); // useState(CURRENT_DRIVER_LOCATION ? CURRENT_DRIVER_LOCATION : props.baseLocation)
   const [destination, setDestination] = useState(1); // useState(CURRENT_DRIVER_DESTINATION ? CURRENT_DRIVER_DESTINATION : props.baseLocation)
 

@@ -4,7 +4,7 @@ import Icons from "Icons/Icons";
 
 function DeliveryRoutes({ routes }) {
   return (
-    <div>
+    <div className="box" style={{maxHeight: "90vh", overflowY: "auto"}}>
       {routes.map((route, index) => (
         <Item key={index} props={{ route, index }} />
       ))}
@@ -17,8 +17,8 @@ function Item({ props }) {
   // console.log(props.route);
 
   return (
-    <div className="box">
-      <table className="table is-hoverable is-fullwidth is-size-7">
+    <div className="box" style={{backgroundColor: "#f8f7fa"}}>
+      <table className="table is-hoverable is-fullwidth is-size-7" style={{backgroundColor: "#f8f7fa"}}>
         <thead>
           <tr>
             <th>
