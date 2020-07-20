@@ -2,19 +2,40 @@ import React, { useState } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Icons from "Icons/Icons";
 
-function DeliveryRoutes({ routes }) {
+function DeliveryRoutes({ routes, colors, props }) {
+  // const [selectedLocation, setSelectedLocation] = useState({});
+  const selectedLocation = props.selectedLocation;
+  const setSelectedLocation = props.setSelectedLocation;
+
   return (
     <div className="box" style={{maxHeight: "90vh", overflowY: "auto"}}>
       {routes.map((route, index) => (
-        <Item key={index} props={{ route, index }} />
+        <RouteList key={index} props={{ route, color: colors[index] ,index, selectedLocation, setSelectedLocation }} />
       ))}
     </div>
   );
 }
 
-function Item({ props }) {
+function RouteList({ props }) {
   const [hidden, setHidden] = useState(true);
+  // const [selectedLocation, setSelectedLocation] = useState({});
   // console.log(props.route);
+
+  const handleSelect = (driverNumber, locationNumber) => {
+    console.log(`{${driverNumber}, ${locationNumber}}`);
+    props.setSelectedLocation(prevSelectedLocation => {
+      let selectedLocation = {...prevSelectedLocation};
+      if (driverNumber === selectedLocation.driver && locationNumber === selectedLocation.location) {
+        selectedLocation.driver = undefined;
+        selectedLocation.location = undefined;
+        return selectedLocation;
+      }
+
+      if (driverNumber !== selectedLocation.driver) selectedLocation.driver = driverNumber;
+      if (locationNumber !== selectedLocation.location) selectedLocation.location = locationNumber;
+      return selectedLocation;
+    });
+  }
 
   const sendDriverText = (driverNumber) => {
     console.log(`Sending Driver ${driverNumber} a text..`);
@@ -42,8 +63,8 @@ function Item({ props }) {
         <thead>
           <tr>
             <th>
-              {/* <button className="tooltip mx-1" onClick={() => setHidden(!hidden)}> */}
-              <button className="mx-1" onClick={() => setHidden(!hidden)}>
+              {/* <button className="tooltip mx-1" onClick={() => setHidden(prevHidden => !prevHidden)}> */}
+              <button className="mx-1" onClick={() => setHidden(prevHidden => !prevHidden)}>
                 <FontAwesomeIcon icon={hidden ? Icons.faCaretDown : Icons.faCaretUp} />
                 {/* <span className="tooltiptext">{hidden ? "Expand" : "Collapse"}</span> */}
               </button>
@@ -54,7 +75,11 @@ function Item({ props }) {
                 {/* <span className="tooltiptext">Message Driver</span> */}
               </button>
             </th>
-            <th>Route</th>
+            <th>
+              {/* Temporary until I figure out how to create an inline line */}
+              <span style={{ color: `${props.color}` }}>------------ </span>
+              Route
+            </th>
             <th>ETA</th>
             <th>Arrived</th>
             <th>Confirm</th>
@@ -62,9 +87,9 @@ function Item({ props }) {
         </thead>
         <tbody hidden={hidden}>
           {props.route.map((location, idx) => (
-            <tr key={idx}>
+            <tr key={idx} className={(props.selectedLocation.driver === props.index + 1 && props.selectedLocation.location === idx + 1) ? "is-selected" : ""}>
               <td>
-                <button className="button is-rounded is-small mx-1" style={{ padding: "0.69rem" }}>{idx + 1}</button>
+                <button className={"button is-rounded is-small mx-1"} onClick={() => handleSelect(props.index + 1, idx + 1)} style={{ padding: "0.69rem" }}>{idx + 1}</button>
                 <button className="button is-rounded is-small mx-1" onClick={() => skipLocation(idx + 1)}>Skip</button>
                 <button className="button is-rounded is-small mx-1" onClick={() => changeLocation(idx + 1)}>Change</button>
               </td>

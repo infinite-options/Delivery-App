@@ -11,23 +11,46 @@ import {
 } from "react-leaflet";
 import { geolocated } from "react-geolocated";
 import Icons from "Icons/Icons";
-import L from "leaflet";
+import L, { LatLng } from "leaflet";
 // use San Jose, CA as the default center
 const DEFAULT_LATITUDE = 37.338208;
 const DEFAULT_LONGITUDE = -121.886329;
 
-function LeafletMap(props) {
+function LeafletMap({ routes, colors, props }) {
+  const [leafletMap, setLeafletMap] = useState();
   const [mapMarkers, setMapMarkers] = useState([]);
 
-  const routes = props.routes;
+  const selectedLocation = props.selectedLocation;
+  const setSelectedLocation = props.setSelectedLocation;
+
   const baseLocation = routes[0][0]["from"];
   const latitude = baseLocation ? baseLocation[0] : DEFAULT_LATITUDE;
   const longitude = baseLocation ? baseLocation[1] : DEFAULT_LONGITUDE;
+
+  useEffect(() => {
+    const selected = {...selectedLocation};
+    const driver = selected.driver;
+    const location = selected.location;
+    // console.log(routes);
+    // console.log(leafletMap);
+    if (leafletMap && driver && location) {
+      console.log("SUCCESS");
+      const zoom = leafletMap.getZoom() >= 11 ? leafletMap.getZoom() : 11;
+      const route = routes[driver - 1];
+      const latlng = route[location - 1]["to"];
+      // console.log(zoom);
+      // console.log(route);
+      // console.log(latlng);
+
+      leafletMap.setView(latlng, zoom);
+    }
+  }, [selectedLocation])
 
   const handleMapUpdate = (e) => {
     // console.log(e.target);
     // onLoad does not work on Map component, so must be called from its child component (TileLayer)
     const map = e.target instanceof L.Map ? e.target : e.target._map;
+    if (!leafletMap) {setLeafletMap(map); console.log("loading map..")}
     // const mapBounds = map.getBounds();
     // store all Markers if onLoad event has been called (AKA first time loading site)
     if (!mapMarkers.length && e.target instanceof L.TileLayer) {
@@ -85,7 +108,7 @@ function LeafletMap(props) {
       {routes.map((route, index) => (
         <RouteMarker
           key={index}
-          props={{ route, index, baseLocation: [latitude, longitude] }}
+          props={{ route, index, color: colors[index], baseLocation: [latitude, longitude] }}
         />
       ))}
     </Map>
@@ -109,7 +132,7 @@ const RouteMarker = ({ props }) => {
     }
     createManyCoordinates(latlngs, 0); // test
     createDriverCoords(latlngs);
-    setCoords([...latlngs]);
+    setCoords(latlngs);
   };
 
   const createDriverCoords = (routeCoords) => {
@@ -130,17 +153,25 @@ const RouteMarker = ({ props }) => {
   const handleDriverLocation = () => {
     // console.log(coords);
     // console.log(driverLocation);
-    let tempCoords = [...coords];
-    const randomCoords = getRandomCoordinates(props.baseLocation, 0.375); // testing
-    tempCoords[destination - 1][1] = randomCoords; // = driverLocation
-    tempCoords[destination][0] = randomCoords; // = driverLocation
-    setCoords(tempCoords);
+
+    // let tempCoords = [...coords];
+    // const randomCoords = getRandomCoordinates(props.baseLocation, 0.375); // testing
+    // tempCoords[destination - 1][1] = randomCoords; // = driverLocation
+    // tempCoords[destination][0] = randomCoords; // = driverLocation
+    // setCoords(tempCoords);
+    setCoords(prevCoords => {
+      let coords = [...prevCoords];
+      const randomCoords = getRandomCoordinates(props.baseLocation, 0.375); // testing
+      coords[destination - 1][1] = randomCoords; // = driverLocation
+      coords[destination][0] = randomCoords; // = driverLocation
+      return coords;
+    });
   };
 
   const handleDelivery = () => {
-    setDestination(destination + 1);
+    setDestination(prevDestination => prevDestination + 1);
 
-    if (destination === props.route.length) console.log("Final Destination");
+    // if (destination === props.route.length) console.log("Final Destination");
   };
 
   // for testing driver coordinates only
@@ -179,8 +210,8 @@ const RouteMarker = ({ props }) => {
             destination > index
               ? destination === index + 1
                 ? Icons.Truck
-                : Icons.DefaultIcon("green")
-              : Icons.DefaultIcon("red")
+                : Icons.DefaultIcon("#696969")
+              : Icons.DefaultIcon(props.color)
           }
         ></Marker>
       ))}
@@ -190,7 +221,8 @@ const RouteMarker = ({ props }) => {
           <Polyline
             key={index}
             positions={[location[0], location[1]]}
-            color={destination > index ? "green" : "red"}
+            // weight={2}
+            color={destination > index ? "dimgrey" : props.color}
           />
         );
       })}
