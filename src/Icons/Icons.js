@@ -18,15 +18,18 @@ const DefaultIcon = (color, {width=25, height=41, mult=1} = {}) => {
   });
 };
 
-const CustomIcon = (icon, width=32, height=41) => {
+const CustomIcon = (icon, {width=32, height=41} = {}) => {
+  let w = width;
+  let h = height;
+
   return new Icon({
     iconUrl: icon,
     shadowUrl:
       "https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png",
-    iconSize: [width, height],
-    iconAnchor: [12, 41],
-    popupAnchor: [1, -34],
-    shadowSize: [41, 41],
+    iconSize: [w, h],
+    iconAnchor: [w / 2, h],
+    popupAnchor: [1, h * -1.4],
+    shadowSize: [h, h],
   });
 };
 

@@ -77,7 +77,7 @@ function MapPage() {
 
   const [isLoading, setIsLoading] = useState(true);
   // will there ever be a case where there are more drivers than locations?
-  const [drivers, setDrivers] = useState(3); // useState(DRIVER_COUNT)
+  const [drivers, setDrivers] = useState(4); // useState(DRIVER_COUNT)
   const [routes, setRoutes] = useState([]);
   const [timeSlot, setTimeSlot] = useState(-1); // useState(TIME_SLOT)
   const [times, setTimes] = useState([
@@ -173,7 +173,7 @@ function MapPage() {
       for (let i = 0; i < tempRoutes.length; i++) {
         colors.push(rainbow(tempRoutes.length, i));
       }
-      console.log(colors);
+      // console.log(colors);
       return colors;
     });
     setIsLoading(false);

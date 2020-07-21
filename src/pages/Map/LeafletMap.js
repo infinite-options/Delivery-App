@@ -34,7 +34,7 @@ function LeafletMap({ routes, colors, props }) {
     // console.log(routes);
     // console.log(leafletMap);
     if (leafletMap && driver && location) {
-      console.log("SUCCESS");
+      // console.log("SUCCESS");
       const zoom = leafletMap.getZoom() >= 11 ? leafletMap.getZoom() : 11;
       const route = routes[driver - 1];
       const latlng = route[location - 1]["to"];
@@ -229,7 +229,7 @@ const RouteMarker = ({ props }) => {
                     : {}
                 )
           }
-        ></Marker>
+        />
       ))}
       {coords.map((location, index) => {
         // console.log(index, location);

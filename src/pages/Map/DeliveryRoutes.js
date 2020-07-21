@@ -31,7 +31,7 @@ function RouteList({ props }) {
   // console.log(props.route);
 
   const handleSelect = (driverNumber, locationNumber) => {
-    console.log(`{${driverNumber}, ${locationNumber}}`);
+    // console.log(`{${driverNumber}, ${locationNumber}}`);
     props.setSelectedLocation((prevSelectedLocation) => {
       let selectedLocation = { ...prevSelectedLocation };
       if (
