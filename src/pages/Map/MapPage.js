@@ -8,9 +8,67 @@ import Truck from "Icons/truck.png";
 function MapPage() {
   // an array of routes for testing
   const test = [
-    [{'latitude': 36.92639, 'longitude': -121.753155}, {'latitude': 37.317469, 'longitude': -122.019218}, {'latitude': 37.3381255, 'longitude': -122.0300825}, {'latitude': 37.31781, 'longitude': -122.06542}, {'latitude': 37.3185420214271, 'longitude': -122.065159171429}, /*{'latitude': 36.92639, 'longitude': -121.753155}*/],
-    [{'latitude': 36.92639, 'longitude': -121.753155}, {'latitude': 36.96344117, 'longitude': -122.05851283}, {'latitude': 37.22055, 'longitude': -121.89293}, {'latitude': 37.22793, 'longitude': -121.89493}, {'latitude': 37.231342, 'longitude': -121.891046}, {'latitude': 37.23602, 'longitude': -121.87142}, {'latitude': 37.23312, 'longitude': -121.88238}, {'latitude': 37.227124, 'longitude': -121.886943}, {'latitude': 37.22985, 'longitude': -121.8908}, {'latitude': 37.222307, 'longitude': -121.890135}, {'latitude': 37.22168, 'longitude': -121.89274}, {'latitude': 37.221648, 'longitude': -121.876}, {'latitude': 37.22025, 'longitude': -121.86673}, {'latitude': 37.220293, 'longitude': -121.872801}, {'latitude': 37.21393, 'longitude': -121.87324}, {'latitude': 37.21019, 'longitude': -121.87221}, {'latitude': 37.216289, 'longitude': -121.869557}, {'latitude': 37.21958, 'longitude': -121.87582}, {'latitude': 37.212813, 'longitude': -121.875979}, {'latitude': 37.20697, 'longitude': -121.87237}, {'latitude': 37.20921, 'longitude': -121.86601}, /*{'latitude': 36.92639, 'longitude': -121.753155}*/],
-    [{'latitude': 36.92639, 'longitude': -121.753155}, {'latitude': 37.20588, 'longitude': -121.82793}, {'latitude': 37.20447, 'longitude': -121.8289}, {'latitude': 37.21001, 'longitude': -121.82328}, {'latitude': 37.21026, 'longitude': -121.82815}, {'latitude': 37.204775, 'longitude': -121.831414}, {'latitude': 37.20539, 'longitude': -121.83414}, {'latitude': 37.195659, 'longitude': -121.843228}, {'latitude': 37.20666, 'longitude': -121.845314}, {'latitude': 37.2098, 'longitude': -121.84869}, {'latitude': 37.20398, 'longitude': -121.85098}, {'latitude': 37.203119, 'longitude': -121.857549}, {'latitude': 37.206714, 'longitude': -121.858709}, {'latitude': 37.20098, 'longitude': -121.85874}, {'latitude': 37.212021, 'longitude': -121.840744}, {'latitude': 37.22274, 'longitude': -121.84977}, {'latitude': 37.22002, 'longitude': -121.84682}, {'latitude': 37.21856, 'longitude': -121.85627}, {'latitude': 37.226068, 'longitude': -121.861264}, {'latitude': 37.235542, 'longitude': -121.848751}, {'latitude': 37.235976, 'longitude': -121.810059}, {'latitude': 37.282141, 'longitude': -121.859561}, {'latitude': 37.20893, 'longitude': -121.85216}, {'latitude': 37.200639, 'longitude': -121.836549}, {'latitude': 37.199574, 'longitude': -121.837836}, {'latitude': 37.199313, 'longitude': -121.829092}, /*{'latitude': 36.92639, 'longitude': -121.753155}*/],
+    [
+      { latitude: 36.92639, longitude: -121.753155 },
+      { latitude: 37.317469, longitude: -122.019218 },
+      { latitude: 37.3381255, longitude: -122.0300825 },
+      { latitude: 37.31781, longitude: -122.06542 },
+      { latitude: 37.3185420214271, longitude: -122.065159171429},
+       /*{'latitude': 36.92639, 'longitude': -121.753155}*/
+    ],
+    [
+      { latitude: 36.92639, longitude: -121.753155 },
+      { latitude: 36.96344117, longitude: -122.05851283 },
+      { latitude: 37.22055, longitude: -121.89293 },
+      { latitude: 37.22793, longitude: -121.89493 },
+      { latitude: 37.231342, longitude: -121.891046 },
+      { latitude: 37.23602, longitude: -121.87142 },
+      { latitude: 37.23312, longitude: -121.88238 },
+      { latitude: 37.227124, longitude: -121.886943 },
+      { latitude: 37.22985, longitude: -121.8908 },
+      { latitude: 37.222307, longitude: -121.890135 },
+      { latitude: 37.22168, longitude: -121.89274 },
+      { latitude: 37.221648, longitude: -121.876 },
+      { latitude: 37.22025, longitude: -121.86673 },
+      { latitude: 37.220293, longitude: -121.872801 },
+      { latitude: 37.21393, longitude: -121.87324 },
+      { latitude: 37.21019, longitude: -121.87221 },
+      { latitude: 37.216289, longitude: -121.869557 },
+      { latitude: 37.21958, longitude: -121.87582 },
+      { latitude: 37.212813, longitude: -121.875979 },
+      { latitude: 37.20697, longitude: -121.87237 },
+      { latitude: 37.20921, longitude: -121.86601,}, 
+      /*{'latitude': 36.92639, 'longitude': -121.753155}*/
+    ],
+    [
+      { latitude: 36.92639, longitude: -121.753155 },
+      { latitude: 37.20588, longitude: -121.82793 },
+      { latitude: 37.20447, longitude: -121.8289 },
+      { latitude: 37.21001, longitude: -121.82328 },
+      { latitude: 37.21026, longitude: -121.82815 },
+      { latitude: 37.204775, longitude: -121.831414 },
+      { latitude: 37.20539, longitude: -121.83414 },
+      { latitude: 37.195659, longitude: -121.843228 },
+      { latitude: 37.20666, longitude: -121.845314 },
+      { latitude: 37.2098, longitude: -121.84869 },
+      { latitude: 37.20398, longitude: -121.85098 },
+      { latitude: 37.203119, longitude: -121.857549 },
+      { latitude: 37.206714, longitude: -121.858709 },
+      { latitude: 37.20098, longitude: -121.85874 },
+      { latitude: 37.212021, longitude: -121.840744 },
+      { latitude: 37.22274, longitude: -121.84977 },
+      { latitude: 37.22002, longitude: -121.84682 },
+      { latitude: 37.21856, longitude: -121.85627 },
+      { latitude: 37.226068, longitude: -121.861264 },
+      { latitude: 37.235542, longitude: -121.848751 },
+      { latitude: 37.235976, longitude: -121.810059 },
+      { latitude: 37.282141, longitude: -121.859561 },
+      { latitude: 37.20893, longitude: -121.85216 },
+      { latitude: 37.200639, longitude: -121.836549 },
+      { latitude: 37.199574, longitude: -121.837836 },
+      { latitude: 37.199313, longitude: -121.829092,}, 
+      /*{'latitude': 36.92639, 'longitude': -121.753155}*/
+    ],
   ];
 
   // has a bunch of [latitude, longitude] values for testing
@@ -23,11 +81,11 @@ function MapPage() {
   const [routes, setRoutes] = useState([]);
   const [timeSlot, setTimeSlot] = useState(-1); // useState(TIME_SLOT)
   const [times, setTimes] = useState([
-    {value: "00 am - 00 pm"}, 
-    {value: "01 am - 01 pm"},
-    {value: "02 am - 02 pm"},
-    {value: "03 am - 03 pm"},
-    {value: "04 am - 04 pm"},
+    { value: "00 am - 00 pm" },
+    { value: "01 am - 01 pm" },
+    { value: "02 am - 02 pm" },
+    { value: "03 am - 03 pm" },
+    { value: "04 am - 04 pm" },
   ]); // useState(GET_ROUTE_TIMES)
   const [selectedLocation, setSelectedLocation] = useState({});
   const [routeColors, setRouteColors] = useState([]);
@@ -46,16 +104,44 @@ function MapPage() {
     var f = h * 6 - i;
     var q = 1 - f;
     switch (i % 6) {
-        case 0: r = 1; g = f; b = 0; break;
-        case 1: r = q; g = 1; b = 0; break;
-        case 2: r = 0; g = 1; b = f; break;
-        case 3: r = 0; g = q; b = 1; break;
-        case 4: r = f; g = 0; b = 1; break;
-        case 5: r = 1; g = 0; b = q; break;
+      case 0:
+        r = 1;
+        g = f;
+        b = 0;
+        break;
+      case 1:
+        r = q;
+        g = 1;
+        b = 0;
+        break;
+      case 2:
+        r = 0;
+        g = 1;
+        b = f;
+        break;
+      case 3:
+        r = 0;
+        g = q;
+        b = 1;
+        break;
+      case 4:
+        r = f;
+        g = 0;
+        b = 1;
+        break;
+      case 5:
+        r = 1;
+        g = 0;
+        b = q;
+        break;
     }
-    var c = "#" + ("00" + (~ ~(r * 255)).toString(16)).slice(-2) + ("00" + (~ ~(g * 255)).toString(16)).slice(-2) + ("00" + (~ ~(b * 255)).toString(16)).slice(-2);
+    var c =
+      "#" +
+      ("00" + (~~(r * 255)).toString(16)).slice(-2) +
+      ("00" + (~~(g * 255)).toString(16)).slice(-2) +
+      ("00" + (~~(b * 255)).toString(16)).slice(-2);
     return c;
-  }
+  };
 
   const createRoutes = () => {
     // plotting markers & lines for test routes
@@ -91,7 +177,7 @@ function MapPage() {
       return colors;
     });
     setIsLoading(false);
-    
+
     // axios
     //   .get(ROUTE_API)
     //   .then((response) => {
@@ -147,11 +233,27 @@ function MapPage() {
       {!isLoading && (
         <React.Fragment>
           <div className="header">
-            <img className="has-text-left" src={Truck} alt="Just Delivered" style={{alignSelf: "center", maxHeight: "5vh"}} />
-            <p className="has-text-centered" style={{width: "100%", fontSize: "3vh"}}>ADMIN DASHBOARD - DELIVERY</p>
+            <img
+              className="has-text-left"
+              src={Truck}
+              alt="Just Delivered"
+              style={{ alignSelf: "center", maxHeight: "5vh" }}
+            />
+            <p
+              className="has-text-centered"
+              style={{ width: "100%", fontSize: "3vh" }}
+            >
+              ADMIN DASHBOARD - DELIVERY
+            </p>
           </div>
           <div className="map-page">
-            <RouteTimes {...{times: times, timeSlot: timeSlot, setTimeSlot: setTimeSlot}} />
+            <RouteTimes
+              {...{
+                times: times,
+                timeSlot: timeSlot,
+                setTimeSlot: setTimeSlot,
+              }}
+            />
             <div className="columns" style={{ margin: "auto" }}>
               <div className="column is-half" style={{ padding: "0" }}>
                 <div className="sticky">
@@ -162,11 +264,19 @@ function MapPage() {
                       </div>
                     ))}
                   </div> */}
-                  <LeafletMap routes={routes} colors={routeColors} props={{selectedLocation, setSelectedLocation}} />
+                  <LeafletMap
+                    routes={routes}
+                    colors={routeColors}
+                    props={{ selectedLocation, setSelectedLocation }}
+                  />
                 </div>
               </div>
               <div className="column is-half" style={{ padding: "0 0.75rem" }}>
-                <DeliveryRoutes routes={routes} colors={routeColors} props={{selectedLocation, setSelectedLocation}} />
+                <DeliveryRoutes
+                  routes={routes}
+                  colors={routeColors}
+                  props={{ selectedLocation, setSelectedLocation }}
+                />
               </div>
             </div>
           </div>
@@ -180,13 +290,23 @@ function RouteTimes(props) {
   const handleTimeChange = (index) => {
     // console.log(index);
     if (props.timeSlot !== index) props.setTimeSlot(index);
-  }
+  };
 
   return (
-    <div className="columns routes" style={{margin: "0"}}>
+    <div className="columns routes" style={{ margin: "0" }}>
       {props.times.map((time, idx) => (
-        <div key={idx} className="column" style={{maxWidth: `${100/props.times.length}%`}}>
-          <button className="button is-fullwidth is-small" onClick={() => handleTimeChange(idx)} style={{ backgroundColor: props.timeSlot === idx && "yellow" }}>{time.value}</button>
+        <div
+          key={idx}
+          className="column"
+          style={{ maxWidth: `${100 / props.times.length}%` }}
+        >
+          <button
+            className="button is-fullwidth is-small"
+            onClick={() => handleTimeChange(idx)}
+            style={{ backgroundColor: props.timeSlot === idx && "yellow" }}
+          >
+            {time.value}
+          </button>
         </div>
       ))}
     </div>

@@ -28,7 +28,7 @@ function LeafletMap({ routes, colors, props }) {
   const longitude = baseLocation ? baseLocation[1] : DEFAULT_LONGITUDE;
 
   useEffect(() => {
-    const selected = {...selectedLocation};
+    const selected = { ...selectedLocation };
     const driver = selected.driver;
     const location = selected.location;
     // console.log(routes);
@@ -44,13 +44,16 @@ function LeafletMap({ routes, colors, props }) {
 
       leafletMap.setView(latlng, zoom);
     }
-  }, [selectedLocation])
+  }, [selectedLocation]);
 
   const handleMapUpdate = (e) => {
     // console.log(e.target);
     // onLoad does not work on Map component, so must be called from its child component (TileLayer)
     const map = e.target instanceof L.Map ? e.target : e.target._map;
-    if (!leafletMap) {setLeafletMap(map); console.log("loading map..")}
+    if (!leafletMap) {
+      setLeafletMap(map);
+      console.log("loading map..");
+    }
     // const mapBounds = map.getBounds();
     // store all Markers if onLoad event has been called (AKA first time loading site)
     if (!mapMarkers.length && e.target instanceof L.TileLayer) {
@@ -108,7 +111,13 @@ function LeafletMap({ routes, colors, props }) {
       {routes.map((route, index) => (
         <RouteMarker
           key={index}
-          props={{ route, index, color: colors[index], baseLocation: [latitude, longitude] }}
+          props={{
+            route,
+            index,
+            color: colors[index],
+            selectedLocation,
+            baseLocation: [latitude, longitude],
+          }}
         />
       ))}
     </Map>
@@ -120,6 +129,9 @@ const RouteMarker = ({ props }) => {
   // These two probably need to be declared in MapPage.js, so when they're updated the route lists can be edited as well
   const [driverLocation, setDriverLocation] = useState(props.baseLocation); // useState(CURRENT_DRIVER_LOCATION ? CURRENT_DRIVER_LOCATION : props.baseLocation)
   const [destination, setDestination] = useState(1); // useState(CURRENT_DRIVER_DESTINATION ? CURRENT_DRIVER_DESTINATION : props.baseLocation)
+
+  // Might be useful for helping user identify which marker they're looking at
+  const selectedLocation = props.selectedLocation;
 
   useEffect(() => {
     createRouteCoords();
@@ -159,7 +171,7 @@ const RouteMarker = ({ props }) => {
     // tempCoords[destination - 1][1] = randomCoords; // = driverLocation
     // tempCoords[destination][0] = randomCoords; // = driverLocation
     // setCoords(tempCoords);
-    setCoords(prevCoords => {
+    setCoords((prevCoords) => {
       let coords = [...prevCoords];
       const randomCoords = getRandomCoordinates(props.baseLocation, 0.375); // testing
       coords[destination - 1][1] = randomCoords; // = driverLocation
@@ -169,7 +181,7 @@ const RouteMarker = ({ props }) => {
   };
 
   const handleDelivery = () => {
-    setDestination(prevDestination => prevDestination + 1);
+    setDestination((prevDestination) => prevDestination + 1);
 
     // if (destination === props.route.length) console.log("Final Destination");
   };
@@ -207,11 +219,15 @@ const RouteMarker = ({ props }) => {
           key={index}
           position={location[1]}
           icon={
-            destination > index
-              ? destination === index + 1
-                ? Icons.Truck
-                : Icons.DefaultIcon("#696969")
-              : Icons.DefaultIcon(props.color)
+            destination === index + 1
+              ? Icons.Truck
+              : Icons.DefaultIcon(
+                  destination > index ? "#696969" : props.color,
+                  selectedLocation.driver - 1 === props.index &&
+                    selectedLocation.location === index
+                    ? { mult: 1.25 }
+                    : {}
+                )
           }
         ></Marker>
       ))}

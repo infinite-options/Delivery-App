@@ -81,3 +81,16 @@
   visibility: visible;
   opacity: 1;
 }
+
+.route {
+  width: 10vw; 
+  text-align: right; 
+  /* border-bottom: 1px solid #000;  */
+  line-height: 0.1em;
+  margin: 10px 0; 
+} 
+
+.route span { 
+   background:#fff; 
+   padding:0 10px; 
+}
