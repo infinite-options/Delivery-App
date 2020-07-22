@@ -27,6 +27,7 @@ function DeliveryRoutes({ routes, colors, props }) {
 
 function RouteList({ props }) {
   const [hidden, setHidden] = useState(true);
+  const [destination, setDestination] = useState(3);
   // const [selectedLocation, setSelectedLocation] = useState({});
   // console.log(props.route);
 

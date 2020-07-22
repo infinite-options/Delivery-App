@@ -116,6 +116,7 @@ function LeafletMap({ routes, colors, props }) {
             index,
             color: colors[index],
             selectedLocation,
+            setSelectedLocation,
             baseLocation: [latitude, longitude],
           }}
         />
@@ -128,9 +129,8 @@ const RouteMarker = ({ props }) => {
   const [coords, setCoords] = useState([]);
   // These two probably need to be declared in MapPage.js, so when they're updated the route lists can be edited as well
   const [driverLocation, setDriverLocation] = useState(props.baseLocation); // useState(CURRENT_DRIVER_LOCATION ? CURRENT_DRIVER_LOCATION : props.baseLocation)
-  const [destination, setDestination] = useState(1); // useState(CURRENT_DRIVER_DESTINATION ? CURRENT_DRIVER_DESTINATION : props.baseLocation)
+  const [destination, setDestination] = useState(3); // useState(CURRENT_DRIVER_DESTINATION ? CURRENT_DRIVER_DESTINATION : props.baseLocation)
 
-  // Might be useful for helping user identify which marker they're looking at
   const selectedLocation = props.selectedLocation;
 
   useEffect(() => {
@@ -212,23 +212,50 @@ const RouteMarker = ({ props }) => {
   // console.log(props.route);
   // console.log(coords);
 
+  // duplcate code, create function in MapPage.js and send function to children component
+  const handleSelect = (driverNumber, locationNumber) => {
+    // console.log(`{${driverNumber}, ${locationNumber}}`);
+    props.setSelectedLocation((prevSelectedLocation) => {
+      let selectedLocation = { ...prevSelectedLocation };
+      if (
+        driverNumber === selectedLocation.driver &&
+        locationNumber === selectedLocation.location
+      ) {
+        selectedLocation.driver = undefined;
+        selectedLocation.location = undefined;
+        return selectedLocation;
+      }
+
+      if (driverNumber !== selectedLocation.driver)
+        selectedLocation.driver = driverNumber;
+      if (locationNumber !== selectedLocation.location)
+        selectedLocation.location = locationNumber;
+      return selectedLocation;
+    });
+  };
+
+  const handleDriverSelect = (driverNumber) => {
+    console.log(`Hi this is Driver ${driverNumber}!`);
+  }
+
   return (
     <React.Fragment>
-      {coords.map((location, index) => (
+      {coords.map((location, idx) => (
         <Marker
-          key={index}
+          key={idx}
           position={location[1]}
           icon={
-            destination === index + 1
+            destination === idx + 1
               ? Icons.Truck
               : Icons.DefaultIcon(
-                  destination > index ? "#696969" : props.color,
+                  destination > idx ? "#696969" : props.color,
                   selectedLocation.driver - 1 === props.index &&
-                    selectedLocation.location === index
+                    selectedLocation.location === (destination > idx ? idx + 1 : idx)
                     ? { mult: 1.25 }
                     : {}
                 )
           }
+          onClick={() => destination !== idx + 1 ? handleSelect(props.index + 1, destination > idx ? idx + 1: idx) : handleDriverSelect(props.index + 1)}
         />
       ))}
       {coords.map((location, index) => {

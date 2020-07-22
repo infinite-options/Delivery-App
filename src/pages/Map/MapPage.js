@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import LeafletMap from "./LeafletMap";
 import DeliveryRoutes from "./DeliveryRoutes";
 import Truck from "Icons/truck.png";
+import axios from "axios";
 
 function MapPage() {
   // an array of routes for testing
@@ -77,7 +78,7 @@ function MapPage() {
 
   const [isLoading, setIsLoading] = useState(true);
   // will there ever be a case where there are more drivers than locations?
-  const [drivers, setDrivers] = useState(4); // useState(DRIVER_COUNT)
+  const [drivers, setDrivers] = useState(1); // useState(DRIVER_COUNT)
   const [routes, setRoutes] = useState([]);
   const [timeSlot, setTimeSlot] = useState(-1); // useState(TIME_SLOT)
   const [times, setTimes] = useState([
@@ -145,87 +146,95 @@ function MapPage() {
 
   const createRoutes = () => {
     // plotting markers & lines for test routes
-    let tempRoutes = [];
-    for (let set of test) {
-      let tempRoute = [];
-      let index = 0;
-      for (let coord of set) {
-        if (index < set.length - 1) {
-          // console.log("0", coord);
-          // console.log(set.length, set[index + 1]);
+    // let tempRoutes = [];
+    // for (let set of test) {
+    //   let tempRoute = [];
+    //   let index = 0;
+    //   for (let coord of set) {
+    //     if (index < set.length - 1) {
+    //       // console.log("0", coord);
+    //       // console.log(set.length, set[index + 1]);
 
-          let fromLatitude = coord["latitude"];
-          let fromLongitude = coord["longitude"];
-          let toLatitude = set[index + 1]["latitude"];
-          let toLongitude = set[index + 1]["longitude"];
-          tempRoute.push({
-            from: [fromLatitude, fromLongitude],
-            to: [toLatitude, toLongitude],
-          });
-        }
-        index++;
-      }
-      tempRoutes.push(tempRoute);
-    }
-    setRoutes(tempRoutes);
-    setRouteColors(() => {
-      let colors = [];
-      for (let i = 0; i < tempRoutes.length; i++) {
-        colors.push(rainbow(tempRoutes.length, i));
-      }
-      // console.log(colors);
-      return colors;
-    });
-    setIsLoading(false);
-
-    // axios
-    //   .get(ROUTE_API)
-    //   .then((response) => {
-    //     // console.log(response);
-    //     if (response.status === 200) {
-    //       const result = [...response.data.result];
-    //       // cut off head & tail of result, since those values are the HQ location value
-    //       const routes = result.slice(1, result.length - 1);
-    //       // determine average routes per driver
-    //       const routesPerDriver = Math.floor(routes.length / drivers);
-    //       const extraRoutes = routes.length % drivers; // extras will be distributed as evenly as possible
-
-    //       // console.log(routes);
-    //       let tempRoutes = [];
-    //       let index = 0;
-    //       for (let i = 0; i < drivers; i++) {
-    //         let tempRoute = [];
-    //         // if driver is to be assigned an extra route, lengthen the loop by 1 iteration
-    //         let driverRoutes =
-    //           i < extraRoutes ? routesPerDriver + 1 : routesPerDriver;
-    //         for (let j = 0; j < driverRoutes; j++) {
-    //           // destination coords
-    //           let toLatitude = routes[index].latitude;
-    //           let toLongitude = routes[index].longitude;
-    //           // beginning coords, if first route then begin from HQ coords
-    //           let fromLatitude = !j
-    //             ? result[0].latitude
-    //             : routes[index - 1].latitude;
-    //           let fromLongitude = !j
-    //             ? result[0].longitude
-    //             : routes[index - 1].longitude;
-    //           tempRoute.push({
-    //             from: [fromLatitude, fromLongitude],
-    //             to: [toLatitude, toLongitude],
-    //           });
-    //           index++;
-    //           // console.log("index:", index);
-    //         }
-    //         tempRoutes.push(tempRoute);
-    //       }
-    //       // console.log("temp:", tempRoutes);
-    //       setRoutess(tempRoutes);
-    //       setIsLoading(false);
+    //       let fromLatitude = coord["latitude"];
+    //       let fromLongitude = coord["longitude"];
+    //       let toLatitude = set[index + 1]["latitude"];
+    //       let toLongitude = set[index + 1]["longitude"];
+    //       tempRoute.push({
+    //         from: [fromLatitude, fromLongitude],
+    //         to: [toLatitude, toLongitude],
+    //       });
     //     }
-    //   })
-    //   .catch((err) => {
-    //     console.log(err.response ? err.response : err);
-    //   });
+    //     index++;
+    //   }
+    //   tempRoutes.push(tempRoute);
+    // }
+    // setRoutes(tempRoutes);
+    // setRouteColors(() => {
+    //   let colors = [];
+    //   for (let i = 0; i < tempRoutes.length; i++) {
+    //     colors.push(rainbow(tempRoutes.length, i));
+    //   }
+    //   // console.log(colors);
+    //   return colors;
+    // });
+    // setIsLoading(false);
+
+    axios
+      .get(ROUTE_API)
+      .then((response) => {
+        // console.log(response);
+        if (response.status === 200) {
+          const result = [...response.data.result];
+          // cut off head & tail of result, since those values are the HQ location value
+          const route = result.slice(1, result.length - 1);
+          // determine average routes per driver
+          // const routesPerDriver = Math.floor(routes.length / drivers);
+          // const extraRoutes = routes.length % drivers; // extras will be distributed as evenly as possible
+
+          // console.log(route);
+          let tempRoutes = [];
+          let index = 0;
+          for (let i = 0; i < drivers; i++) {
+            let tempRoute = [];
+            // if driver is to be assigned an extra route, lengthen the loop by 1 iteration
+            // let driverRoutes =
+              // i < extraRoutes ? routesPerDriver + 1 : routesPerDriver;
+            for (let j = 0; j < route.length; j++) {
+              // destination coords
+              let toLatitude = route[index].latitude;
+              let toLongitude = route[index].longitude;
+              // beginning coords, if first route then begin from HQ coords
+              let fromLatitude = !j
+                ? result[0].latitude
+                : route[index - 1].latitude;
+              let fromLongitude = !j
+                ? result[0].longitude
+                : route[index - 1].longitude;
+              tempRoute.push({
+                from: [fromLatitude, fromLongitude],
+                to: [toLatitude, toLongitude],
+              });
+              index++;
+              // console.log("index:", index);
+            }
+            tempRoutes.push(tempRoute);
+          }
+          // console.log("temp:", tempRoutes);
+          setRoutes(tempRoutes);
+          setRouteColors(() => {
+            let colors = [];
+            for (let i = 0; i < tempRoutes.length; i++) {
+              colors.push(rainbow(tempRoutes.length, i));
+            }
+            // console.log(colors);
+            return colors;
+          });
+          setIsLoading(false);
+        }
+      })
+      .catch((err) => {
+        console.log(err.response ? err.response : err);
+      });
   };
 
   return (
