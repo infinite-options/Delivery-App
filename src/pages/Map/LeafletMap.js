@@ -236,7 +236,7 @@ const RouteMarker = ({ props }) => {
 
   const handleDriverSelect = (driverNumber) => {
     console.log(`Hi this is Driver ${driverNumber}!`);
-  }
+  };
 
   return (
     <React.Fragment>
@@ -250,12 +250,17 @@ const RouteMarker = ({ props }) => {
               : Icons.DefaultIcon(
                   destination > idx ? "#696969" : props.color,
                   selectedLocation.driver - 1 === props.index &&
-                    selectedLocation.location === (destination > idx ? idx + 1 : idx)
+                    selectedLocation.location ===
+                      (destination > idx ? idx + 1 : idx)
                     ? { mult: 1.25 }
                     : {}
                 )
           }
-          onClick={() => destination !== idx + 1 ? handleSelect(props.index + 1, destination > idx ? idx + 1: idx) : handleDriverSelect(props.index + 1)}
+          onClick={() =>
+            destination !== idx + 1
+              ? handleSelect(props.index + 1, destination > idx ? idx + 1 : idx)
+              : handleDriverSelect(props.index + 1)
+          }
         />
       ))}
       {coords.map((location, index) => {

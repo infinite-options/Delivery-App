@@ -14,8 +14,8 @@ function MapPage() {
       { latitude: 37.317469, longitude: -122.019218 },
       { latitude: 37.3381255, longitude: -122.0300825 },
       { latitude: 37.31781, longitude: -122.06542 },
-      { latitude: 37.3185420214271, longitude: -122.065159171429},
-       /*{'latitude': 36.92639, 'longitude': -121.753155}*/
+      { latitude: 37.3185420214271, longitude: -122.065159171429 },
+      /*{'latitude': 36.92639, 'longitude': -121.753155}*/
     ],
     [
       { latitude: 36.92639, longitude: -121.753155 },
@@ -38,7 +38,7 @@ function MapPage() {
       { latitude: 37.21958, longitude: -121.87582 },
       { latitude: 37.212813, longitude: -121.875979 },
       { latitude: 37.20697, longitude: -121.87237 },
-      { latitude: 37.20921, longitude: -121.86601,}, 
+      { latitude: 37.20921, longitude: -121.86601 },
       /*{'latitude': 36.92639, 'longitude': -121.753155}*/
     ],
     [
@@ -67,7 +67,7 @@ function MapPage() {
       { latitude: 37.20893, longitude: -121.85216 },
       { latitude: 37.200639, longitude: -121.836549 },
       { latitude: 37.199574, longitude: -121.837836 },
-      { latitude: 37.199313, longitude: -121.829092,}, 
+      { latitude: 37.199313, longitude: -121.829092 },
       /*{'latitude': 36.92639, 'longitude': -121.753155}*/
     ],
   ];
@@ -197,8 +197,7 @@ function MapPage() {
           for (let i = 0; i < drivers; i++) {
             let tempRoute = [];
             // if driver is to be assigned an extra route, lengthen the loop by 1 iteration
-            // let driverRoutes =
-              // i < extraRoutes ? routesPerDriver + 1 : routesPerDriver;
+            // let driverRoutes = i < extraRoutes ? routesPerDriver + 1 : routesPerDriver;
             for (let j = 0; j < route.length; j++) {
               // destination coords
               let toLatitude = route[index].latitude;
