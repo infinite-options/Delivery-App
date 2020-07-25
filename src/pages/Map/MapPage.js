@@ -314,8 +314,8 @@ function MapPage() {
             </ul>
           </div>
           {/* Views */}
-          <DeliveryView type="day" visible={onDayView} onClick={handleDayView} />
-          <DeliveryView type="week" visible={onWeekView} onClick={handleWeekView} />
+          <DeliveryView type="day" times={times} visible={onDayView} onClick={handleDayView} />
+          <DeliveryView type="week" times={times} visible={onWeekView} onClick={handleWeekView} />
           <div className="map-page">
             <RouteTimes
               {...{
@@ -361,14 +361,27 @@ function DeliveryView(props) {
   return (
     <div className={"modal" + (props.visible ? " is-active" : "")}>
       <div className="modal-background" onClick={props.onClick} />
-      <div className="modal-card">
+      <div className="modal-card" style={{width: "840px"}}>
         <header className="modal-card-head">
           <p className="modal-card-title">{(props.type === "day" ? "Day" : "Week")}</p>
           {/* <button className="delete" aria-label="close"></button> */}
         </header>
         <section className="modal-card-body">
-          <table>
-            
+          <table className="table is-fullwidth">
+            <thead>
+              <tr>
+                <th>Time Window</th>
+                {props.times.map((time, idx) => (
+                  <th key={idx}>
+                    <p>{time.value}</p>
+                    <div className="level">
+                      <div className="level-left">Min</div>
+                      <div className="level-right">Max</div>
+                    </div>
+                  </th>
+                ))}
+              </tr>
+            </thead>
           </table>
         </section>
       </div>
