@@ -251,17 +251,21 @@ function MapPage() {
     }
   };
 
+  const [onDayView, setOnDayView] = useState(false);
   const handleDayView = () => {
     console.log("Open day view..");
 
     handleBurger(true);
+    setOnDayView(onDayView ? false : true);
     // open day view modal
   };
 
+  const [onWeekView, setOnWeekView] = useState(false);
   const handleWeekView = () => {
     console.log("Open week view");
 
     handleBurger(true);
+    setOnWeekView(onWeekView ? false : true);
     // open week view modal
   };
 
@@ -269,21 +273,6 @@ function MapPage() {
     <React.Fragment>
       {!isLoading && (
         <React.Fragment>
-          {/* <div class="modal is-active">
-              <div class="modal-background"></div>
-              <div class="modal-card">
-                <header class="modal-card-head">
-                  <p class="modal-card-title">Modal title</p>
-                  <button class="delete" aria-label="close"></button>
-                </header>
-                <section class="modal-card-body">
-                </section>
-                <footer class="modal-card-foot">
-                  <button class="button is-success">Save changes</button>
-                  <button class="button">Cancel</button>
-                </footer>
-              </div>
-            </div> */}
           <div className="header">
             <img
               className="has-text-left"
@@ -324,6 +313,9 @@ function MapPage() {
               </li>
             </ul>
           </div>
+          {/* Views */}
+          <DeliveryView type="day" visible={onDayView} onClick={handleDayView} />
+          <DeliveryView type="week" visible={onWeekView} onClick={handleWeekView} />
           <div className="map-page">
             <RouteTimes
               {...{
@@ -361,6 +353,26 @@ function MapPage() {
         </React.Fragment>
       )}
     </React.Fragment>
+  );
+}
+
+function DeliveryView(props) {
+  
+  return (
+    <div className={"modal" + (props.visible ? " is-active" : "")}>
+      <div className="modal-background" onClick={props.onClick} />
+      <div className="modal-card">
+        <header className="modal-card-head">
+          <p className="modal-card-title">{(props.type === "day" ? "Day" : "Week")}</p>
+          {/* <button className="delete" aria-label="close"></button> */}
+        </header>
+        <section className="modal-card-body">
+          <table>
+            
+          </table>
+        </section>
+      </div>
+    </div>
   );
 }
 
