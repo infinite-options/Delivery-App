@@ -5,7 +5,7 @@ import {
   Map,
   TileLayer,
   Marker,
-  // Popup,
+  Popup,
   // MapLayer,
   Polyline,
 } from "react-leaflet";
@@ -127,9 +127,8 @@ function LeafletMap({ routes, colors, props }) {
 
 const RouteMarker = ({ props }) => {
   const [coords, setCoords] = useState([]);
-  // These two probably need to be declared in MapPage.js, so when they're updated the route lists can be edited as well
   const [driverLocation, setDriverLocation] = useState(props.baseLocation); // useState(CURRENT_DRIVER_LOCATION ? CURRENT_DRIVER_LOCATION : props.baseLocation)
-  const [destination, setDestination] = useState(3); // useState(CURRENT_DRIVER_DESTINATION ? CURRENT_DRIVER_DESTINATION : props.baseLocation)
+  const [destination, setDestination] = useState(1); // useState(CURRENT_DRIVER_DESTINATION ? CURRENT_DRIVER_DESTINATION : props.baseLocation)
 
   const selectedLocation = props.selectedLocation;
 
@@ -213,7 +212,7 @@ const RouteMarker = ({ props }) => {
   // console.log(coords);
 
   // duplcate code, create function in MapPage.js and send function to children component
-  const handleSelect = (driverNumber, locationNumber) => {
+  const handleSelect = (event, driverNumber, locationNumber) => {
     // console.log(`{${driverNumber}, ${locationNumber}}`);
     props.setSelectedLocation((prevSelectedLocation) => {
       let selectedLocation = { ...prevSelectedLocation };
@@ -234,7 +233,7 @@ const RouteMarker = ({ props }) => {
     });
   };
 
-  const handleDriverSelect = (driverNumber) => {
+  const handleDriverSelect = (event, driverNumber) => {
     console.log(`Hi this is Driver ${driverNumber}!`);
   };
 
@@ -256,12 +255,28 @@ const RouteMarker = ({ props }) => {
                     : {}
                 )
           }
-          onClick={() =>
+          onClick={(e) =>
             destination !== idx + 1
-              ? handleSelect(props.index + 1, destination > idx ? idx + 1 : idx)
-              : handleDriverSelect(props.index + 1)
+              ? handleSelect(e, props.index + 1, destination > idx ? idx + 1 : idx)
+              : handleDriverSelect(e, props.index + 1)
           }
-        />
+          onDblClick={() => false} // disabling zoom on double click
+        >
+          <Popup closeButton={false}>
+            <p>{destination !== idx + 1 ? `Destination ${destination > idx ? idx + 1 : idx}` : `Driver ${props.index + 1}`}</p>
+            {destination !== idx + 1 ? (
+              <React.Fragment>
+                <p>{`Address: (${location[1][0]}, ${location[1][1]})`}</p>
+                <p>{`ETA: 00:00 am`}</p>
+                <p>{`Arrived: 00:00 pm`}</p>
+              </React.Fragment>
+            ) : (
+              <React.Fragment>
+                <p>Driver Info</p>
+              </React.Fragment>
+            )}
+          </Popup>
+        </Marker>
       ))}
       {coords.map((location, index) => {
         // console.log(index, location);
