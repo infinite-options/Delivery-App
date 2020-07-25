@@ -1,12 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
-// import axios from "axios";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import Icons from "Icons/Icons";
 import LeafletMap from "./LeafletMap";
 import DeliveryRoutes from "./DeliveryRoutes";
 import Truck from "Icons/truck.png";
 import axios from "axios";
 
 function MapPage() {
+  console.log("rendering..");
   // an array of routes for testing
   const test = [
     [
@@ -236,10 +238,41 @@ function MapPage() {
       });
   };
 
+  const handleBurger = (e) => {
+    console.log("Burger interaction..");
+
+    const element = document.getElementById("selections");
+    element.style.display =
+      element.style.display === "block" ? "none" : "block";
+  };
+
+  const handleDayView = () => {
+    console.log("Open day view..");
+  };
+
+  const handleWeekView = () => {
+    console.log("Open week view");
+  };
+
   return (
     <React.Fragment>
       {!isLoading && (
         <React.Fragment>
+          {/* <div class="modal is-active">
+              <div class="modal-background"></div>
+              <div class="modal-card">
+                <header class="modal-card-head">
+                  <p class="modal-card-title">Modal title</p>
+                  <button class="delete" aria-label="close"></button>
+                </header>
+                <section class="modal-card-body">
+                </section>
+                <footer class="modal-card-foot">
+                  <button class="button is-success">Save changes</button>
+                  <button class="button">Cancel</button>
+                </footer>
+              </div>
+            </div> */}
           <div className="header">
             <img
               className="has-text-left"
@@ -253,6 +286,32 @@ function MapPage() {
             >
               ADMIN DASHBOARD - DELIVERY
             </p>
+            <button
+              className="button is-white"
+              onClick={handleBurger}
+              // onBlur={handleBurger}
+              style={{ alignSelf: "center", height: "4.5vh" }}
+            >
+              <FontAwesomeIcon icon={Icons.faBars} />
+            </button>
+            <ul id="selections">
+              <li>
+                <button 
+                  className="button is-white is-fullwidth"
+                  onClick={handleDayView}  
+                >
+                  Day View
+                </button>
+              </li>
+              <li>
+                <button 
+                  className="button is-white is-fullwidth"
+                  onClick={handleWeekView}
+                >
+                  Week View
+                </button>
+              </li>
+            </ul>
           </div>
           <div className="map-page">
             <RouteTimes
