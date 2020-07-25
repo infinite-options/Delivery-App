@@ -7,6 +7,9 @@ import DeliveryRoutes from "./DeliveryRoutes";
 import Truck from "Icons/truck.png";
 import axios from "axios";
 
+const BASE_API_URL =
+  "https://wrguk721j7.execute-api.us-west-1.amazonaws.com/dev/api/v1/";
+
 function MapPage() {
   console.log("rendering..");
   // an array of routes for testing
@@ -74,15 +77,11 @@ function MapPage() {
     ],
   ];
 
-  // has a bunch of [latitude, longitude] values for testing
-  const ROUTE_API =
-    "https://wrguk721j7.execute-api.us-west-1.amazonaws.com/dev/api/v1/deliveryRoute";
-
   const [isLoading, setIsLoading] = useState(true);
   // will there ever be a case where there are more drivers than locations?
   const [drivers, setDrivers] = useState(1); // useState(DRIVER_COUNT)
   const [routes, setRoutes] = useState([]);
-  const [timeSlot, setTimeSlot] = useState(-1); // useState(TIME_SLOT)
+  const [timeSlot, setTimeSlot] = useState(0); // useState(TIME_SLOT)
   const [times, setTimes] = useState([
     { value: "00 am - 00 pm" },
     { value: "01 am - 01 pm" },
@@ -182,7 +181,7 @@ function MapPage() {
     // setIsLoading(false);
 
     axios
-      .get(ROUTE_API)
+      .get(BASE_API_URL + "deliveryRoute")
       .then((response) => {
         // console.log(response);
         if (response.status === 200) {
@@ -314,26 +313,27 @@ function MapPage() {
             </ul>
           </div>
           {/* Views */}
-          <DeliveryView type="day" times={times} visible={onDayView} onClick={handleDayView} />
-          <DeliveryView type="week" times={times} visible={onWeekView} onClick={handleWeekView} />
+          <DeliveryView 
+            type="day" 
+            times={times} 
+            visible={onDayView} 
+            onClick={handleDayView} 
+          />
+          <DeliveryView 
+            type="week" 
+            times={times} 
+            visible={onWeekView} 
+            onClick={handleWeekView} 
+          />
           <div className="map-page">
             <RouteTimes
-              {...{
-                times: times,
-                timeSlot: timeSlot,
-                setTimeSlot: setTimeSlot,
-              }}
+              times={times}
+              timeSlot={timeSlot}
+              setTimeSlot={setTimeSlot}
             />
             <div className="columns" style={{ margin: "auto" }}>
               <div className="column is-half" style={{ padding: "0" }}>
                 <div className="sticky">
-                  {/* <div className="columns routes" style={{margin: "0"}}>
-                    {times.map((time, idx) => (
-                      <div key={idx} className="column" style={{maxWidth: `${100/times.length}%`}}>
-                        <button className="button is-fullwidth is-small">{time.value}</button>
-                      </div>
-                    ))}
-                  </div> */}
                   <LeafletMap
                     routes={routes}
                     colors={routeColors}
@@ -357,31 +357,64 @@ function MapPage() {
 }
 
 function DeliveryView(props) {
+  const weekdays = [
+    { value: "Sunday" },
+    { value: "Monday" },
+    { value: "Tuesday" },
+    { value: "Wednesday" },
+    { value: "Thursday" },
+    { value: "Friday" },
+    { value: "Saturday" },
+  ];
+  const columns = props.type === "day" ? props.times : weekdays;
   
   return (
     <div className={"modal" + (props.visible ? " is-active" : "")}>
       <div className="modal-background" onClick={props.onClick} />
-      <div className="modal-card" style={{width: "840px"}}>
+      <div className="modal-card" style={{width: "1000px"}}>
         <header className="modal-card-head">
           <p className="modal-card-title">{(props.type === "day" ? "Day" : "Week")}</p>
-          {/* <button className="delete" aria-label="close"></button> */}
         </header>
         <section className="modal-card-body">
-          <table className="table is-fullwidth">
+          <table className="table is-fullwidth is-bordered">
             <thead>
               <tr>
-                <th>Time Window</th>
-                {props.times.map((time, idx) => (
-                  <th key={idx}>
-                    <p>{time.value}</p>
-                    <div className="level">
-                      <div className="level-left">Min</div>
-                      <div className="level-right">Max</div>
+                <th>{props.type === "day" ? "Time Window" : "Day"}</th>
+                {columns.map((time, idx) => (
+                  <th className="has-text-centered" key={idx}>
+                    <p style={{width: "100%", display: "inline-block", borderBottom: "1px solid lightgrey"}}>{time.value}</p>
+                    <div className="level has-text-weight-light">
+                      <div className="level-left" style={{width: "50%", display: "inline-block", borderRight: "1px solid lightgrey"}}>
+                        <div className="level-item" style={{width: "100%"}}>Min</div>
+                      </div>
+                      <div className="level-right" style={{width: "50%"}}>
+                        <div className="level-item" style={{width: "100%"}}>Max</div>
+                      </div>
                     </div>
                   </th>
                 ))}
               </tr>
             </thead>
+            <tbody>
+              <tr>
+                <th># Drivers</th>
+              </tr>
+              <tr>
+                <th>Distance Driven</th>
+              </tr>
+              <tr>
+                <th># Deliveries</th>
+              </tr>
+              <tr>
+                <th>Time Taken / Delivery</th>
+              </tr>
+              <tr>
+                <th>Time Taken @ Location</th>
+              </tr>
+              <tr>
+                <th>Total Deliveries Time</th>
+              </tr>
+            </tbody>
           </table>
         </section>
       </div>
