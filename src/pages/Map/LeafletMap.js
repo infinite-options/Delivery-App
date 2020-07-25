@@ -17,6 +17,7 @@ const DEFAULT_LATITUDE = 37.338208;
 const DEFAULT_LONGITUDE = -121.886329;
 
 function LeafletMap({ routes, colors, props }) {
+  console.log("rendering map..");
   const [leafletMap, setLeafletMap] = useState();
   const [mapMarkers, setMapMarkers] = useState([]);
 
@@ -262,6 +263,7 @@ const RouteMarker = ({ props }) => {
           }
           onDblClick={() => false} // disabling zoom on double click
         >
+          {/* TODO: Learn how to set conditional popups, i.e. if Marker is already selected, do not show popup on click */}
           <Popup closeButton={false}>
             <p>{destination !== idx + 1 ? `Destination ${destination > idx ? idx + 1 : idx}` : `Driver ${props.index + 1}`}</p>
             {destination !== idx + 1 ? (

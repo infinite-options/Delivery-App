@@ -238,20 +238,31 @@ function MapPage() {
       });
   };
 
-  const handleBurger = (e) => {
+  const handleBurger = (onItemSelect=false) => {
     console.log("Burger interaction..");
 
     const element = document.getElementById("selections");
-    element.style.display =
-      element.style.display === "block" ? "none" : "block";
+    if (onItemSelect) {
+      element.style.display = "none";
+    }
+    else {
+      element.style.display =
+        element.style.display === "block" ? "none" : "block";
+    }
   };
 
   const handleDayView = () => {
     console.log("Open day view..");
+
+    handleBurger(true);
+    // open day view modal
   };
 
   const handleWeekView = () => {
     console.log("Open week view");
+
+    handleBurger(true);
+    // open week view modal
   };
 
   return (
@@ -288,7 +299,7 @@ function MapPage() {
             </p>
             <button
               className="button is-white"
-              onClick={handleBurger}
+              onClick={() => handleBurger()}
               // onBlur={handleBurger}
               style={{ alignSelf: "center", height: "4.5vh" }}
             >
