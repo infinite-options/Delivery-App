@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Icons from "Icons/Icons";
 
@@ -28,8 +28,14 @@ function DeliveryRoutes({ routes, colors, props }) {
 function RouteList({ props }) {
   const [hidden, setHidden] = useState(true);
   const [destination, setDestination] = useState(3);
-  // const [selectedLocation, setSelectedLocation] = useState({});
   // console.log(props.route);
+
+  useEffect(() => {
+    // console.log(props.selectedLocation);
+    if (props.selectedLocation.driver === props.index + 1) {
+      if (hidden) setHidden(false);
+    }
+  }, [props.selectedLocation]);
 
   const handleSelect = (driverNumber, locationNumber) => {
     // console.log(`{${driverNumber}, ${locationNumber}}`);
@@ -152,9 +158,7 @@ function RouteList({ props }) {
                   Change
                 </button>
               </td>
-              <td>
-                ({location["to"][0]}, {location["to"][1]})
-              </td>
+              <td>{location["address"]}</td>
               <td>00:00 am</td>
               <td>00:00 pm</td>
               <td>

@@ -140,7 +140,7 @@ const RouteMarker = ({ props }) => {
   const createRouteCoords = () => {
     let latlngs = [];
     for (let location of props.route) {
-      latlngs.push([location["from"], location["to"]]);
+      latlngs.push([location["from"], location["to"], location["address"]]); // calling it coords/latlngs is a bit misleading now that it also contains the address string
     }
     createManyCoordinates(latlngs, 0); // test
     createDriverCoords(latlngs);
@@ -264,11 +264,11 @@ const RouteMarker = ({ props }) => {
           onDblClick={() => false} // disabling zoom on double click
         >
           {/* TODO: Learn how to set conditional popups, i.e. if Marker is already selected, do not show popup on click */}
-          <Popup closeButton={false}>
+          {/* <Popup closeButton={false}>
             <p>{destination !== idx + 1 ? `Destination ${destination > idx ? idx + 1 : idx}` : `Driver ${props.index + 1}`}</p>
             {destination !== idx + 1 ? (
               <React.Fragment>
-                <p>{`Address: (${location[1][0]}, ${location[1][1]})`}</p>
+                <p>{`Address: ${location[2]}`}</p>
                 <p>{`ETA: 00:00 am`}</p>
                 <p>{`Arrived: 00:00 pm`}</p>
               </React.Fragment>
@@ -277,7 +277,7 @@ const RouteMarker = ({ props }) => {
                 <p>Driver Info</p>
               </React.Fragment>
             )}
-          </Popup>
+          </Popup> */}
         </Marker>
       ))}
       {coords.map((location, index) => {

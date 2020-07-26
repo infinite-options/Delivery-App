@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Icons from "Icons/Icons";
 import LeafletMap from "./LeafletMap";
 import DeliveryRoutes from "./DeliveryRoutes";
+import DeliveryView from "./DeliveryView";
 import Truck from "Icons/truck.png";
 import axios from "axios";
 
@@ -188,17 +189,12 @@ function MapPage() {
           const result = [...response.data.result];
           // cut off head & tail of result, since those values are the HQ location value
           const route = result.slice(1, result.length - 1);
-          // determine average routes per driver
-          // const routesPerDriver = Math.floor(routes.length / drivers);
-          // const extraRoutes = routes.length % drivers; // extras will be distributed as evenly as possible
 
-          // console.log(route);
+          console.log(route);
           let tempRoutes = [];
           let index = 0;
           for (let i = 0; i < drivers; i++) {
             let tempRoute = [];
-            // if driver is to be assigned an extra route, lengthen the loop by 1 iteration
-            // let driverRoutes = i < extraRoutes ? routesPerDriver + 1 : routesPerDriver;
             for (let j = 0; j < route.length; j++) {
               // destination coords
               let toLatitude = route[index].latitude;
@@ -210,9 +206,16 @@ function MapPage() {
               let fromLongitude = !j
                 ? result[0].longitude
                 : route[index - 1].longitude;
+              // destination address
+              let street = route[index].house_address.trim();
+              let city = route[index].city.trim();
+              let state = route[index].state.trim().toUpperCase();
+              let zip = route[index].zipcode.trim();
+              let address = `${street}, ${city}, ${state} ${zip}`;
               tempRoute.push({
                 from: [fromLatitude, fromLongitude],
                 to: [toLatitude, toLongitude],
+                address: address,
               });
               index++;
               // console.log("index:", index);
@@ -243,8 +246,7 @@ function MapPage() {
     const element = document.getElementById("selections");
     if (onItemSelect) {
       element.style.display = "none";
-    }
-    else {
+    } else {
       element.style.display =
         element.style.display === "block" ? "none" : "block";
     }
@@ -295,15 +297,15 @@ function MapPage() {
             </button>
             <ul id="selections">
               <li>
-                <button 
+                <button
                   className="button is-white is-fullwidth"
-                  onClick={handleDayView}  
+                  onClick={handleDayView}
                 >
                   Day View
                 </button>
               </li>
               <li>
-                <button 
+                <button
                   className="button is-white is-fullwidth"
                   onClick={handleWeekView}
                 >
@@ -313,26 +315,26 @@ function MapPage() {
             </ul>
           </div>
           {/* Views */}
-          <DeliveryView 
-            type="day" 
-            times={times} 
-            visible={onDayView} 
-            onClick={handleDayView} 
+          <DeliveryView
+            type="day"
+            times={times}
+            visible={onDayView}
+            onClick={handleDayView}
           />
-          <DeliveryView 
-            type="week" 
-            times={times} 
-            visible={onWeekView} 
-            onClick={handleWeekView} 
+          <DeliveryView
+            type="week"
+            times={times}
+            visible={onWeekView}
+            onClick={handleWeekView}
           />
           <div className="map-page">
-            <RouteTimes
-              times={times}
-              timeSlot={timeSlot}
-              setTimeSlot={setTimeSlot}
-            />
             <div className="columns" style={{ margin: "auto" }}>
               <div className="column is-half" style={{ padding: "0" }}>
+                <RouteTimes
+                  times={times}
+                  timeSlot={timeSlot}
+                  setTimeSlot={setTimeSlot}
+                />
                 <div className="sticky">
                   <LeafletMap
                     routes={routes}
@@ -341,7 +343,10 @@ function MapPage() {
                   />
                 </div>
               </div>
-              <div className="column is-half" style={{ padding: "0 0.75rem" }}>
+              <div
+                className="column is-half"
+                style={{ padding: "0 0.75rem", marginTop: "5vh" }}
+              >
                 <DeliveryRoutes
                   routes={routes}
                   colors={routeColors}
@@ -353,72 +358,6 @@ function MapPage() {
         </React.Fragment>
       )}
     </React.Fragment>
-  );
-}
-
-function DeliveryView(props) {
-  const weekdays = [
-    { value: "Sunday" },
-    { value: "Monday" },
-    { value: "Tuesday" },
-    { value: "Wednesday" },
-    { value: "Thursday" },
-    { value: "Friday" },
-    { value: "Saturday" },
-  ];
-  const columns = props.type === "day" ? props.times : weekdays;
-  
-  return (
-    <div className={"modal" + (props.visible ? " is-active" : "")}>
-      <div className="modal-background" onClick={props.onClick} />
-      <div className="modal-card" style={{width: "1000px"}}>
-        <header className="modal-card-head">
-          <p className="modal-card-title">{(props.type === "day" ? "Day" : "Week")}</p>
-        </header>
-        <section className="modal-card-body">
-          <table className="table is-fullwidth is-bordered">
-            <thead>
-              <tr>
-                <th>{props.type === "day" ? "Time Window" : "Day"}</th>
-                {columns.map((time, idx) => (
-                  <th className="has-text-centered" key={idx}>
-                    <p style={{width: "100%", display: "inline-block", borderBottom: "1px solid lightgrey"}}>{time.value}</p>
-                    <div className="level has-text-weight-light">
-                      <div className="level-left" style={{width: "50%", display: "inline-block", borderRight: "1px solid lightgrey"}}>
-                        <div className="level-item" style={{width: "100%"}}>Min</div>
-                      </div>
-                      <div className="level-right" style={{width: "50%"}}>
-                        <div className="level-item" style={{width: "100%"}}>Max</div>
-                      </div>
-                    </div>
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <th># Drivers</th>
-              </tr>
-              <tr>
-                <th>Distance Driven</th>
-              </tr>
-              <tr>
-                <th># Deliveries</th>
-              </tr>
-              <tr>
-                <th>Time Taken / Delivery</th>
-              </tr>
-              <tr>
-                <th>Time Taken @ Location</th>
-              </tr>
-              <tr>
-                <th>Total Deliveries Time</th>
-              </tr>
-            </tbody>
-          </table>
-        </section>
-      </div>
-    </div>
   );
 }
 
