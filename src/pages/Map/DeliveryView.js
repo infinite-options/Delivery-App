@@ -7,21 +7,6 @@ import 'moment-timezone';
 import DayPicker from 'react-day-picker';
 import 'react-day-picker/lib/style.css';
 
-// function getWeekDays(weekStart) {
-//   const days = [weekStart];
-//   for (let i = 1; i < 7; i += 1) {
-//     days.push(moment(weekStart).add(i, 'days').toDate());
-//   }
-//   return days;
-// }
-
-// function getWeekRange(date) {
-//   return {
-//     from: moment(date).startOf('week').toDate(),
-//     to: moment(date).endOf('week').toDate(),
-//   };
-// }
-
 function DeliveryView(props) {
   const times = Object.keys(props.times).map((idx) => [props.times[idx].value]);
   const weekdays = moment.weekdays();
@@ -33,37 +18,21 @@ function DeliveryView(props) {
   const [week, setWeek] = useState(toweek);
   // console.log(day, week);
 
-  // const [hoverRange, setHoverRange] = useState();
-  // const [selectedDays, setSelectedDays] = useState([]);  
-
-  // const daysAreSelected = selectedDays.length > 0;
-  // const modifiers = {
-  //   hoverRange : hoverRange,
-  //   selectedRange: daysAreSelected && {
-  //     from: selectedDays[0],
-  //     to: selectedDays[6],
-  //   },
-  //   hoverRangeStart: hoverRange && hoverRange.from,
-  //   hoverRangeEnd: hoverRange && hoverRange.to,
-  //   selectedRangeStart: daysAreSelected && selectedDays[0],
-  //   selectedRangeEnd: daysAreSelected && selectedDays[6],
-  // };
-
-  // const handleDayChange = (date) => {
-  //   setSelectedDays(getWeekDays(getWeekRange(date).from));
-  // };
-
-  // const handleDayEnter = (date) => {
-  //   setHoverRange(getWeekRange(date));
-  // };
-
-  // const handleDayLeave = () => {
-  //   setHoverRange();
-  // };
-
-  // const handleWeekClick = (weekNumber, days, e) => {
-  //   setSelectedDays(days);
-  // };
+  // Temp table values
+  let drivers = [];
+  let distance = [];
+  // max min
+  let amtDeliveries = [];
+  let timeDelivery = [];
+  let timeDestination = [];
+  let totalTimeDeliveries =[];
+  for (let idx in columns) drivers.push(Math.floor(Math.random() * (10 - 1) + 1));
+  for (let idx in columns) distance.push(Math.floor(Math.random() * (50 - 5) + 5));
+  // max min
+  for (let idx in columns) amtDeliveries.push(Math.floor(Math.random() * (15 - 2) + 15));
+  for (let idx in columns) timeDelivery.push(Math.floor(Math.random() * (90 - 15) + 15));
+  for (let idx in columns) timeDestination.push(Math.floor(Math.random() * (15 - 2) + 2));
+  for (let idx in columns) totalTimeDeliveries.push(Math.floor(Math.random() * (300 - 50) + 50));
 
   const handleTodayClick = (type) => {
     if (day !== today) setDay(today);
@@ -73,9 +42,9 @@ function DeliveryView(props) {
   const handleCalendarShift = (type, direction=1) => {
     if (type === "day") {
       setDay(prevDay => {
-        const currentWeek = moment(prevDay).week();
+        const currentWeek = prevDay.week();
         const nextDay = prevDay.clone().add(direction, "d");
-        const nextWeek = moment(nextDay).week();
+        const nextWeek = nextDay.week();
         if (nextWeek !== currentWeek) setWeek(nextWeek);
         return nextDay;
       });
@@ -84,7 +53,7 @@ function DeliveryView(props) {
       setWeek(prevWeek => {
         const date = day.clone().add(direction * 7, "d");
         // console.log(date);
-        return moment(date).week();
+        return date.week();
       });
       setDay(prevDay => prevDay.clone().add(direction * 7, "d"));
     }
@@ -93,7 +62,7 @@ function DeliveryView(props) {
   return (
     <div className={"modal" + (props.visible ? " is-active" : "")}>
       <div className="modal-background" onClick={props.onClick} />
-      <div className="modal-card" style={{ width: "75vw" }}>
+      <div className="modal-card" style={{ width: "80vw" }}>
         <header className="modal-card-head">
           <div className="buttons has-addons">
             <button className="button mr-4" onClick={() => handleTodayClick(props.type)}>Today</button>
@@ -120,7 +89,7 @@ function DeliveryView(props) {
                         borderBottom: "1px solid lightgrey",
                       }}
                     >
-                      {value + (props.type === "week" ? ` [${day.clone().add(idx - moment(day).weekday(), "d").format("MM/DD")}]` : "")}
+                      {value + (props.type === "week" ? ` [${day.clone().add(idx - day.weekday(), "d").format("MM/DD")}]` : "")}
                                                            
                     </p>
                     <div className="level has-text-weight-light">
@@ -156,21 +125,39 @@ function DeliveryView(props) {
             <tbody>
               <tr>
                 <th># Drivers</th>
+                {drivers.map((value, idx) => (
+                  <td key={idx}>{value}</td>
+                ))}
               </tr>
               <tr>
                 <th>Distance Driven</th>
+                {distance.map((value, idx) => (
+                  <td key={idx}>{value}</td>
+                ))}
               </tr>
               <tr>
                 <th># Deliveries</th>
+                {amtDeliveries.map((value, idx) => (
+                  <td key={idx}>{value}</td>
+                ))}
               </tr>
               <tr>
                 <th>Time Taken / Delivery</th>
+                {timeDelivery.map((value, idx) => (
+                  <td key={idx}>{value}</td>
+                ))}
               </tr>
               <tr>
                 <th>Time Taken @ Location</th>
+                {timeDestination.map((value, idx) => (
+                  <td key={idx}>{value}</td>
+                ))}
               </tr>
               <tr>
                 <th>Total Deliveries Time</th>
+                {totalTimeDeliveries.map((value, idx) => (
+                  <td key={idx}>{value}</td>
+                ))}
               </tr>
             </tbody>
           </table>
