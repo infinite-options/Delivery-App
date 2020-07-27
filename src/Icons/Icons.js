@@ -1,5 +1,6 @@
 import { faComment, faEnvelope, faCaretDown, faCaretUp, faBars, faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { Icon } from "leaflet";
+import AppIcon from "./app_icon.png";
 import HeadquartersIcon from "./headquarters.png";
 import TruckIcon from "./truck.png";
 
@@ -33,7 +34,8 @@ const CustomIcon = (icon, {width=32, height=41} = {}) => {
   });
 };
 
+const App = CustomIcon(AppIcon);
 const Truck = CustomIcon(TruckIcon);
 const Headquarters = CustomIcon(HeadquartersIcon);
 
-export default { DefaultIcon, Truck, Headquarters, faComment, faEnvelope, faCaretDown, faCaretUp ,faBars, faChevronLeft, faChevronRight };
+export default { DefaultIcon, App, Truck, Headquarters, faComment, faEnvelope, faCaretDown, faCaretUp ,faBars, faChevronLeft, faChevronRight };

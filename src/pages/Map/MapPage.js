@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Icons from "Icons/Icons";
 import LeafletMap from "./LeafletMap";
 import DeliveryRoutes from "./DeliveryRoutes";
 import DeliveryView from "./DeliveryView";
-import Truck from "Icons/truck.png";
+import AppIcon from "Icons/app_icon.png";
 import axios from "axios";
 
 const BASE_API_URL =
@@ -277,7 +277,7 @@ function MapPage() {
           <div className="header">
             <img
               className="has-text-left"
-              src={Truck}
+              src={AppIcon}
               alt="Just Delivered"
               style={{ alignSelf: "center", maxHeight: "5vh" }}
             />
@@ -318,12 +318,13 @@ function MapPage() {
           <DeliveryView
             type="day"
             times={times}
+            timeSlot={timeSlot}
             visible={onDayView}
             onClick={handleDayView}
           />
           <DeliveryView
             type="week"
-            times={times}
+            // times={times}
             visible={onWeekView}
             onClick={handleWeekView}
           />

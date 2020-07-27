@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Icons from "Icons/Icons";
@@ -8,14 +8,28 @@ import DayPicker from 'react-day-picker';
 import 'react-day-picker/lib/style.css';
 
 function DeliveryView(props) {
-  const times = Object.keys(props.times).map((idx) => [props.times[idx].value]);
+  console.log("rendering view..");
   const weekdays = moment.weekdays();
-  const columns = props.type === "day" ? times : weekdays;
+  const [columns, setColumns] = useState([]);
 
   const today = moment();
   const toweek = today.week() // TOday.. TOweek... haha funny
   const [day, setDay] = useState(today);
   const [week, setWeek] = useState(toweek);
+  const [index, setIndex] = useState();
+
+  // is it better to use useEffect to declare column & index values vs declaring them outside?
+  // does this increase or decrease the page's response times?
+  useEffect(() => {
+    console.log("effecty");
+    const times = props.times && Object.keys(props.times).map((idx) => [props.times[idx].value]);
+    setColumns(props.type === "day" ? times : weekdays);
+  }, []);
+
+  useEffect(() => {
+    if (props.type === "day" && day.isSame(today, "d")) setIndex(props.timeSlot);
+    else if (props.type === "week" && week === toweek) setIndex(today.weekday());
+  }, [props.timeSlot, today.weekday()]);
   // console.log(day, week);
 
   // Temp table values
@@ -36,26 +50,31 @@ function DeliveryView(props) {
 
   const handleTodayClick = (type) => {
     if (day !== today) setDay(today);
-    if (week != toweek) setWeek(toweek);
+    if (week !== toweek) setWeek(toweek);
+    if (index === -1) setIndex(props.type === "day" ? props.timeSlot : today.weekday());
   };
   
   const handleCalendarShift = (type, direction=1) => {
     if (type === "day") {
       setDay(prevDay => {
+        const date = prevDay.clone().add(direction, "d");
         const currentWeek = prevDay.week();
-        const nextDay = prevDay.clone().add(direction, "d");
-        const nextWeek = nextDay.week();
+        const nextWeek = date.week();
         if (nextWeek !== currentWeek) setWeek(nextWeek);
-        return nextDay;
+        if (today.isSame(date, "d")) setIndex(props.timeSlot);
+        else setIndex(-1);
+        return date;
       });
     }
     else {
-      setWeek(prevWeek => {
-        const date = day.clone().add(direction * 7, "d");
-        // console.log(date);
-        return date.week();
+      setDay(prevDay => {
+        const date = prevDay.clone().add(direction * 7, "d");
+        setWeek(date.week());
+        if (today.isSame(date, "d")) setIndex(today.weekday()); 
+        else setIndex(-1)
+        return date;
       });
-      setDay(prevDay => prevDay.clone().add(direction * 7, "d"));
+      
     }
   };
 
@@ -75,13 +94,13 @@ function DeliveryView(props) {
             <button className="button is-small is-static ml-4" style={{width: "150px"}}>{props.type === "day" ? `${weekdays[day.weekday()]}: ${day.format("MM-DD-YYYY")}` : `Week ${week} - ${day.clone().weekday(6).format("YYYY")}`}</button>
           </div>
         </header>
-        <section className="modal-card-body">
-          <table className="table is-fullwidth is-bordered">
+        <section className="modal-card-body" style={{padding: "0"}}>
+          <table className="table is-fullwidth is-bordered is-view">
             <thead>
               <tr>
                 <th>{props.type === "day" ? "Time Window" : "Day"}</th>
                 {columns.map((value, idx) => (
-                  <th className="has-text-centered" key={idx}>
+                  <th className={"has-text-centered" + (index === idx ? " is-today" : "")} key={idx}>
                     <p
                       style={{
                         width: "100%",
@@ -126,42 +145,43 @@ function DeliveryView(props) {
               <tr>
                 <th># Drivers</th>
                 {drivers.map((value, idx) => (
-                  <td key={idx}>{value}</td>
+                  <td key={idx} className={index === idx ? " is-today" : ""}>{value}</td>
                 ))}
               </tr>
               <tr>
                 <th>Distance Driven</th>
                 {distance.map((value, idx) => (
-                  <td key={idx}>{value}</td>
+                  <td key={idx} className={index === idx ? " is-today" : ""}>{value}</td>
                 ))}
               </tr>
               <tr>
                 <th># Deliveries</th>
                 {amtDeliveries.map((value, idx) => (
-                  <td key={idx}>{value}</td>
+                  <td key={idx} className={index === idx ? " is-today" : ""}>{value}</td>
                 ))}
               </tr>
               <tr>
                 <th>Time Taken / Delivery</th>
                 {timeDelivery.map((value, idx) => (
-                  <td key={idx}>{value}</td>
+                  <td key={idx} className={index === idx ? " is-today" : ""}>{value}</td>
                 ))}
               </tr>
               <tr>
                 <th>Time Taken @ Location</th>
                 {timeDestination.map((value, idx) => (
-                  <td key={idx}>{value}</td>
+                  <td key={idx} className={index === idx ? " is-today" : ""}>{value}</td>
                 ))}
               </tr>
               <tr>
                 <th>Total Deliveries Time</th>
                 {totalTimeDeliveries.map((value, idx) => (
-                  <td key={idx}>{value}</td>
+                  <td key={idx} className={index === idx ? " is-today-end" : ""}>{value}</td>
                 ))}
               </tr>
             </tbody>
           </table>
         </section>
+        <footer className="modal-card-foot" />
       </div>
     </div>
   );

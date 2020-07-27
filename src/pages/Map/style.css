@@ -112,3 +112,22 @@
   background: #fff;
   padding: 0 10px;
 }
+
+/* view classes */
+table.is-view th.is-today {
+  border: 1px double deepskyblue;
+  border-bottom: 0;
+  background-color: lightcyan;
+}
+
+table.is-view td.is-today {
+  border-left: 1px double deepskyblue;
+  border-right: 1px double deepskyblue;
+  background-color: lightcyan;
+}
+
+table.is-view td.is-today-end {
+  border: 1px double deepskyblue;
+  border-top: 0;
+  background-color: lightcyan;
+}
