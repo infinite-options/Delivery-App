@@ -181,44 +181,100 @@ function MapPage() {
     // });
     // setIsLoading(false);
 
+    // axios
+    //   .get(BASE_API_URL + "deliveryRoute")
+    //   .then((response) => {
+    //     // console.log(response);
+    //     if (response.status === 200) {
+    //       const result = [...response.data.result];
+    //       // cut off head & tail of result, since those values are the HQ location value
+    //       const route = result.slice(1, result.length - 1);
+
+    //       console.log(route);
+    //       let tempRoutes = [];
+    //       let index = 0;
+    //       for (let i = 0; i < drivers; i++) {
+    //         let tempRoute = [];
+    //         for (let j = 0; j < route.length; j++) {
+    //           // destination coords
+    //           let toLatitude = route[index].latitude;
+    //           let toLongitude = route[index].longitude;
+    //           // beginning coords, if first route then begin from HQ coords
+    //           let fromLatitude = !j
+    //             ? result[0].latitude
+    //             : route[index - 1].latitude;
+    //           let fromLongitude = !j
+    //             ? result[0].longitude
+    //             : route[index - 1].longitude;
+    //           // destination address
+    //           let street = route[index].house_address.trim();
+    //           let city = route[index].city.trim();
+    //           let state = route[index].state.trim().toUpperCase();
+    //           let zip = route[index].zipcode.trim();
+    //           let address = `${street}, ${city}, ${state} ${zip}`;
+    //           tempRoute.push({
+    //             from: [fromLatitude, fromLongitude],
+    //             to: [toLatitude, toLongitude],
+    //             address: address,
+    //           });
+    //           index++;
+    //           // console.log("index:", index);
+    //         }
+    //         tempRoutes.push(tempRoute);
+    //       }
+    //       // console.log("temp:", tempRoutes);
+    //       setRoutes(tempRoutes);
+    //       setRouteColors(() => {
+    //         let colors = [];
+    //         for (let i = 0; i < tempRoutes.length; i++) {
+    //           colors.push(rainbow(tempRoutes.length, i));
+    //         }
+    //         // console.log(colors);
+    //         return colors;
+    //       });
+    //       setIsLoading(false);
+    //     }
+    //   })
+    //   .catch((err) => {
+    //     console.log(err.response ? err.response : err);
+    //   });
+
     axios
-      .get(BASE_API_URL + "deliveryRoute")
+      .get(BASE_API_URL + "multiDrivers")
       .then((response) => {
         // console.log(response);
         if (response.status === 200) {
           const result = [...response.data.result];
-          // cut off head & tail of result, since those values are the HQ location value
-          const route = result.slice(1, result.length - 1);
-
-          console.log(route);
+          setDrivers(result.length);
           let tempRoutes = [];
-          let index = 0;
-          for (let i = 0; i < drivers; i++) {
+          for (let element of result) {
+            // cut off head & tail of each result route, since those values are the HQ location value
+            const route = element.slice(1, element.length - 1);
+            // console.log("route:", route);
             let tempRoute = [];
-            for (let j = 0; j < route.length; j++) {
+            for (let i = 0; i < route.length; i++) {
               // destination coords
-              let toLatitude = route[index].latitude;
-              let toLongitude = route[index].longitude;
+              console.log(route[i]);
+              let toLatitude = route[i].latitude;
+              let toLongitude = route[i].longitude;
               // beginning coords, if first route then begin from HQ coords
-              let fromLatitude = !j
-                ? result[0].latitude
-                : route[index - 1].latitude;
-              let fromLongitude = !j
-                ? result[0].longitude
-                : route[index - 1].longitude;
+              let fromLatitude = !i
+                ? element[0].latitude
+                : route[i - 1].latitude;
+              let fromLongitude = !i
+                ? element[0].longitude
+                : route[i - 1].longitude;
               // destination address
-              let street = route[index].house_address.trim();
-              let city = route[index].city.trim();
-              let state = route[index].state.trim().toUpperCase();
-              let zip = route[index].zipcode.trim();
+              let street = route[i].house_address.trim();
+              let city = route[i].city.trim();
+              let state = route[i].state.trim().toUpperCase();
+              let zip = route[i].zipcode.trim();
               let address = `${street}, ${city}, ${state} ${zip}`;
               tempRoute.push({
                 from: [fromLatitude, fromLongitude],
                 to: [toLatitude, toLongitude],
                 address: address,
               });
-              index++;
-              // console.log("index:", index);
             }
             tempRoutes.push(tempRoute);
           }
