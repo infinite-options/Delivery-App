@@ -114,20 +114,22 @@
 }
 
 /* view classes */
-table.is-view th.is-today {
+table.is-view th.is-today, 
+table.is-view td.is-today, 
+table.is-view td.is-today-end {
   border: 1px double deepskyblue;
-  border-bottom: 0;
   background-color: lightcyan;
+}
+
+table.is-view th.is-today {
+  border-bottom: 1px double lightgrey;
 }
 
 table.is-view td.is-today {
-  border-left: 1px double deepskyblue;
-  border-right: 1px double deepskyblue;
-  background-color: lightcyan;
+  border-top: 1px double lightgrey;
+  border-bottom: 1px double lightgrey;
 }
 
 table.is-view td.is-today-end {
-  border: 1px double deepskyblue;
-  border-top: 0;
-  background-color: lightcyan;
+  border-top: 1px double lightgrey;
 }
