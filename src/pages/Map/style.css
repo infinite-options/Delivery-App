@@ -133,3 +133,18 @@ table.is-view td.is-today {
 table.is-view td.is-today-end {
   border-top: 1px double lightgrey;
 }
+
+/* level classes */
+.level .level-left.is-split,
+.level .level-right.is-split {
+  width: 50%;
+  display: inline-block;
+}
+
+.level .level-left.is-split {
+  border-right: 1px solid lightgrey;
+}
+
+.level .level-right.is-split {
+  margin: auto;
+}

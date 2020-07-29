@@ -73,7 +73,6 @@ function DeliveryView(props) {
         else setIndex(-1)
         return date;
       });
-      
     }
   };
 
@@ -82,7 +81,7 @@ function DeliveryView(props) {
       <div className="modal-background" onClick={props.onClick} />
       <div className="modal-card" style={{ width: "80vw" }}>
         <header className="modal-card-head">
-          <div className="buttons has-addons">
+          <div className="buttons has-addons" style={{minWidth: "220px"}}>
             <button className="button mr-4" onClick={() => handleTodayClick(props.type)}>Today</button>
             <button className="button" onClick={() => handleCalendarShift(props.type, -1)}>
               <FontAwesomeIcon icon={Icons.faChevronLeft} />
@@ -94,48 +93,16 @@ function DeliveryView(props) {
           </div>
         </header>
         <section className="modal-card-body" style={{padding: "0"}}>
-          <table className="table is-fullwidth is-bordered is-view">
+          <table className="table is-fullwidth is-bordered is-view" style={{minWidth: "880px"}}>
             <thead>
               <tr>
                 <th>{props.type === "day" ? "Time Window" : "Day"}</th>
                 {columns.map((value, idx) => (
                   <th className={"has-text-centered" + (index === idx ? " is-today" : "")} key={idx}>
-                    <p
-                      style={{
-                        width: "100%",
-                        display: "inline-block",
-                        borderBottom: "1px solid lightgrey",
-                      }}
-                    >
-                      {value + (props.type === "week" ? ` [${day.clone().add(idx - day.weekday(), "d").format("MM/DD")}]` : "")}
-                                                           
+                    <p style={{borderBottom: "1px solid lightgrey"}}>
+                      {value + (props.type === "week" ? ` [${day.clone().add(idx - day.weekday(), "d").format("MM/DD")}]` : "")}                                     
                     </p>
-                    <div className="level has-text-weight-light">
-                      <div
-                        className="level-left"
-                        style={{
-                          width: "50%",
-                          display: "inline-block",
-                          borderRight: "1px solid lightgrey",
-                        }}
-                      >
-                        <div className="level-item" style={{ width: "100%" }}>
-                          Min
-                        </div>
-                      </div>
-                      <div
-                        className="level-right"
-                        style={{
-                          width: "50%",
-                          display: "inline-block",
-                          margin: "auto",
-                        }}
-                      >
-                        <div className="level-item" style={{ width: "100%" }}>
-                          Max
-                        </div>
-                      </div>
-                    </div>
+                    <ValueRange min="Min" max="Max" isHeader={true} />
                   </th>
                 ))}
               </tr>
@@ -143,44 +110,68 @@ function DeliveryView(props) {
             <tbody>
               <tr>
                 <th># Drivers</th>
-                {drivers.map((value, idx) => (
-                  <td key={idx} className={index === idx ? " is-today" : ""}>{value}</td>
-                ))}
+                <RowItems items={drivers} index={index} />
               </tr>
               <tr>
                 <th>Distance Driven</th>
-                {distance.map((value, idx) => (
-                  <td key={idx} className={index === idx ? " is-today" : ""}>{value}</td>
-                ))}
+                <RowItems items={distance} index={index} />
               </tr>
               <tr>
                 <th># Deliveries</th>
-                {amtDeliveries.map((value, idx) => (
-                  <td key={idx} className={index === idx ? " is-today" : ""}>{value}</td>
-                ))}
+                <RowItems items={amtDeliveries} index={index} hasRange={true} />
               </tr>
               <tr>
                 <th>Time Taken / Delivery</th>
-                {timeDelivery.map((value, idx) => (
-                  <td key={idx} className={index === idx ? " is-today" : ""}>{value}</td>
-                ))}
+                <RowItems items={timeDelivery} index={index} hasRange={true} />
               </tr>
               <tr>
                 <th>Time Taken @ Location</th>
-                {timeDestination.map((value, idx) => (
-                  <td key={idx} className={index === idx ? " is-today" : ""}>{value}</td>
-                ))}
+                <RowItems items={timeDestination} index={index} hasRange={true} />
               </tr>
               <tr>
                 <th>Total Deliveries Time</th>
-                {totalTimeDeliveries.map((value, idx) => (
-                  <td key={idx} className={index === idx ? " is-today-end" : ""}>{value}</td>
-                ))}
+                <RowItems items={totalTimeDeliveries} index={index} hasRange={true} isLast={true} />
               </tr>
             </tbody>
           </table>
         </section>
         <footer className="modal-card-foot" />
+      </div>
+    </div>
+  );
+}
+
+function RowItems(props) {
+  return (
+    <React.Fragment>
+      {props.items.map((value, idx) => (
+        <td key={idx} className={props.index === idx ? " is-today" + (props.isLast ? "-end" : "") : ""}>
+          {props.hasRange ? (
+            <ValueRange min={value} max={value} />
+          ) : (
+            <div className="has-text-centered">
+              {value}
+            </div>
+          )}
+        </td>
+      ))}
+    </React.Fragment>
+  );
+}
+
+function ValueRange(props) {
+  return (
+    <div className={"level has-text-light-weight" + (props.isHeader ? " has-text-weight-light" : "")}>
+      <div
+        className="level-left is-split">
+        <div className="level-item">
+          {props.min}
+        </div>
+      </div>
+      <div className="level-right is-split">
+        <div className="level-item">
+          {props.max}
+        </div>
       </div>
     </div>
   );
