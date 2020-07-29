@@ -71,9 +71,8 @@ function LeafletMap({ routes, colors, props }) {
       });
       // console.log(markers);
       setMapMarkers(markers);
-    } else {
-      manageMarkers(map); // updating Markers' visibility as user drags map around
     }
+    else if (e.target instanceof L.Map) manageMarkers(map); // updating Markers' visibility as user drags map around
     // console.log(mapMarkers);
   };
 
@@ -81,10 +80,11 @@ function LeafletMap({ routes, colors, props }) {
     // console.log(mapMarkers);
     for (let i = mapMarkers.length - 1; i >= 0; i--) {
       const marker = mapMarkers[i];
+      // console.log("Marker:", marker);
       const mapBounds = map.getBounds();
       const isVisible = mapBounds.contains(marker.getLatLng());
       if (marker._icon && !isVisible) map.removeLayer(marker);
-      else if (!marker.icon && isVisible) map.addLayer(marker);
+      else if (!marker._icon && isVisible) map.addLayer(marker);
     }
   };
 
@@ -99,6 +99,7 @@ function LeafletMap({ routes, colors, props }) {
       ]}
       maxBoundsViscosity={0.9375}
       // preferCanvas={true}
+      // onMove={handleMapUpdate}
       onMoveEnd={handleMapUpdate}
     >
       <TileLayer

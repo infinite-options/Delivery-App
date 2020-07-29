@@ -21,7 +21,6 @@ function DeliveryView(props) {
   // is it better to use useEffect to declare column & index values vs declaring them outside?
   // does this increase or decrease the page's response times?
   useEffect(() => {
-    console.log("effecty");
     const times = props.times && Object.keys(props.times).map((idx) => [props.times[idx].value]);
     setColumns(props.type === "day" ? times : weekdays);
   }, []);
