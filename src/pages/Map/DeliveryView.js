@@ -89,7 +89,9 @@ function DeliveryView(props) {
             <button className="button" onClick={() => handleCalendarShift(props.type)}>
               <FontAwesomeIcon icon={Icons.faChevronRight} />
             </button>
-            <button className="button is-small is-static ml-4" style={{width: "150px"}}>{props.type === "day" ? `${weekdays[day.weekday()]}: ${day.format("MM-DD-YYYY")}` : `Week ${week} - ${day.clone().weekday(6).format("YYYY")}`}</button>
+            <button className="button is-small is-static ml-4" style={{width: "150px"}}>
+              {props.type === "day" ? `${weekdays[day.weekday()]}: ${day.format("MM-DD-YYYY")}` : `Week ${week} - ${day.clone().weekday(6).format("YYYY")}`}
+            </button>
           </div>
         </header>
         <section className="modal-card-body" style={{padding: "0"}}>
@@ -109,27 +111,27 @@ function DeliveryView(props) {
             </thead>
             <tbody>
               <tr>
-                <th># Drivers</th>
+                <th title="Current number of drivers"># Drivers</th>
                 <RowItems items={drivers} index={index} />
               </tr>
               <tr>
-                <th>Distance Driven</th>
+                <th title="Total distance driven">Dist. Driven</th>
                 <RowItems items={distance} index={index} />
               </tr>
               <tr>
-                <th># Deliveries</th>
+                <th title="Number of deliveries made"># Deliveries</th>
                 <RowItems items={amtDeliveries} index={index} hasRange={true} />
               </tr>
               <tr>
-                <th>Time Taken / Delivery</th>
+                <th title="Time spent to deliver each product">Time/Delivery</th>
                 <RowItems items={timeDelivery} index={index} hasRange={true} />
               </tr>
               <tr>
-                <th>Time Taken @ Location</th>
+                <th title="Time spent at each product destination">Time/Location</th>
                 <RowItems items={timeDestination} index={index} hasRange={true} />
               </tr>
               <tr>
-                <th>Total Deliveries Time</th>
+                <th title="Total time spent">Total Time</th>
                 <RowItems items={totalTimeDeliveries} index={index} hasRange={true} isLast={true} />
               </tr>
             </tbody>
@@ -149,9 +151,7 @@ function RowItems(props) {
           {props.hasRange ? (
             <ValueRange min={value} max={value} />
           ) : (
-            <div className="has-text-centered">
-              {value}
-            </div>
+            <div className="has-text-centered">{value}</div>
           )}
         </td>
       ))}
@@ -164,14 +164,10 @@ function ValueRange(props) {
     <div className={"level has-text-light-weight" + (props.isHeader ? " has-text-weight-light" : "")}>
       <div
         className="level-left is-split">
-        <div className="level-item">
-          {props.min}
-        </div>
+        <div className="level-item">{props.min}</div>
       </div>
       <div className="level-right is-split">
-        <div className="level-item">
-          {props.max}
-        </div>
+        <div className="level-item">{props.max}</div>
       </div>
     </div>
   );

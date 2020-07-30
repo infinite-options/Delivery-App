@@ -1,22 +1,51 @@
+.map-page {
+  /* margin-top: 5vh; */
+  background-color: #f8f7fa;
+}
+
+/* Leaflet map classes */
 .leaflet-container {
   width: 100%;
   height: 100%;
   z-index: 0;
 }
 
-.header {
+.sticky {
+  position: -webkit-sticky;
+  position: sticky;
+  height: 90vh;
+  width: 100%;
+  top: 10vh;
+}
+
+/* Header classes */
+.header-parent {
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.header-parent::-webkit-scrollbar {
+  height: 3px;
+  background: auto;
+}
+.header-parent::-webkit-scrollbar-thumb:horizontal {
+  background: lightgrey;
+  border-radius: 10px;
+}
+
+.header-parent .header-main {
   background-color: white;
   position: sticky;
   top: 0px;
   height: 5vh;
-  /* min-width: 520px; */
+  min-width: 1000px;
   display: flex;
   box-shadow: 0 2px 2px -2px rgba(0, 0, 0, 0.2);
   border-bottom: 1px solid #d8dbdd;
   z-index: 1;
 }
 
-.header #selections {
+.header-parent .header-burger {
   display: none;
   position: absolute;
   top: 5vh;
@@ -28,11 +57,12 @@
   z-index: 1;
 }
 
-.header #selections button {
+.header-parent .header-burger button {
   display: block;
   text-align: left;
 }
 
+/* Popup classes */
 .marker-popup {
   width: 250px;
 }
@@ -40,19 +70,7 @@
   font-size: 14px;
 }
 
-.sticky {
-  position: -webkit-sticky;
-  position: sticky;
-  height: 90vh;
-  width: 100%;
-  top: 10vh;
-}
-
-.map-page {
-  /* margin-top: 5vh; */
-  background-color: #f8f7fa;
-}
-
+/* Route times classes */
 .routes {
   width: 100%;
   height: 5vh;
@@ -100,6 +118,7 @@
   opacity: 1;
 }
 
+/* Delivery route classes */
 .route {
   width: 10vw;
   text-align: right;
@@ -113,7 +132,7 @@
   padding: 0 10px;
 }
 
-/* view classes */
+/* Delivery view classes */
 table.is-view th.is-today, 
 table.is-view td.is-today, 
 table.is-view td.is-today-end {
@@ -134,7 +153,7 @@ table.is-view td.is-today-end {
   border-top: 1px double lightgrey;
 }
 
-/* level classes */
+/* Level classes */
 .level .level-left.is-split,
 .level .level-right.is-split {
   width: 50%;
@@ -147,4 +166,13 @@ table.is-view td.is-today-end {
 
 .level .level-right.is-split {
   margin: auto;
+}
+
+/* Button classes */
+.button.is-square {
+  border-radius: 0;
+}
+
+.button.is-fullheight {
+  height: 100%;
 }

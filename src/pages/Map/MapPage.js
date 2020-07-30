@@ -326,94 +326,95 @@ function MapPage() {
     // open week view modal
   };
 
-  return (
+  return !isLoading && (
     <React.Fragment>
-      {!isLoading && (
-        <React.Fragment>
-          <div className="header">
-            <img
-              className="has-text-left"
-              src={AppIcon}
-              alt="Just Delivered"
-              style={{ alignSelf: "center", maxHeight: "5vh" }}
-            />
-            <p
-              className="has-text-centered"
-              style={{ width: "100%", fontSize: "3vh" }}
-            >
-              ADMIN DASHBOARD - DELIVERY
-            </p>
+      <div className="header-parent">
+        <ul id= "selections" className="header-burger">
+          <li>
             <button
-              className="button is-white"
-              onClick={() => handleBurger()}
-              // onBlur={handleBurger}
-              style={{ alignSelf: "center", height: "4.5vh" }}
+              className="button is-white is-fullwidth"
+              onClick={handleDayView}
             >
-              <FontAwesomeIcon icon={Icons.faBars} />
+              Day View
             </button>
-            <ul id="selections">
-              <li>
-                <button
-                  className="button is-white is-fullwidth"
-                  onClick={handleDayView}
-                >
-                  Day View
-                </button>
-              </li>
-              <li>
-                <button
-                  className="button is-white is-fullwidth"
-                  onClick={handleWeekView}
-                >
-                  Week View
-                </button>
-              </li>
-            </ul>
-          </div>
-          {/* Views */}
-          <DeliveryView
-            type="day"
-            times={times}
-            timeSlot={timeSlot}
-            visible={onDayView}
-            onClick={handleDayView}
+          </li>
+          <li>
+            <button
+              className="button is-white is-fullwidth"
+              onClick={handleWeekView}
+            >
+              Week View
+            </button>
+          </li>
+        </ul>
+        <div className="header-main">
+          <img
+            className="has-text-left"
+            src={AppIcon}
+            alt="Just Delivered"
+            style={{ alignSelf: "center", maxHeight: "5vh" }}
           />
-          <DeliveryView
-            type="week"
-            // times={times}
-            visible={onWeekView}
-            onClick={handleWeekView}
-          />
-          <div className="map-page">
-            <div className="columns" style={{ margin: "auto" }}>
-              <div className="column is-half" style={{ padding: "0" }}>
-                <RouteTimes
-                  times={times}
-                  timeSlot={timeSlot}
-                  setTimeSlot={setTimeSlot}
-                />
-                <div className="sticky">
-                  <LeafletMap
-                    routes={routes}
-                    colors={routeColors}
-                    props={{ selectedLocation, setSelectedLocation }}
-                  />
-                </div>
-              </div>
-              <div
-                className="column is-half"
-                style={{ padding: "0 0.75rem", marginTop: "5vh" }}
-              >
-                <DeliveryRoutes
-                  routes={routes}
-                  colors={routeColors}
-                  props={{ selectedLocation, setSelectedLocation }}
-                />
-              </div>
+          <p
+            className="has-text-centered"
+            style={{ width: "100%", fontSize: "3vh" }}
+          >
+            ADMIN DASHBOARD - DELIVERY
+          </p>
+          <a className="button is-light is-square is-fullheight" href="#home">Home</a>
+          <a className="button is-light is-square is-fullheight" href="#news">News</a>
+          <a className="button is-light is-square is-fullheight" href="#contact">Contact</a>
+          <a className="button is-light is-square is-fullheight" href="#about">About</a>
+          <button
+            className="button is-white is-fullheight"
+            onClick={() => handleBurger()}
+            // onBlur={handleBurger}
+          >
+            <FontAwesomeIcon icon={Icons.faBars} />
+          </button>
+        </div>
+      </div>
+      {/* Views */}
+      <DeliveryView
+        type="day"
+        times={times}
+        timeSlot={timeSlot}
+        visible={onDayView}
+        onClick={handleDayView}
+      />
+      <DeliveryView
+        type="week"
+        // times={times}
+        visible={onWeekView}
+        onClick={handleWeekView}
+      />
+      <div className="map-page">
+        <div className="columns" style={{ margin: "auto" }}>
+          <div className="column is-half" style={{ padding: "0" }}>
+            <RouteTimes
+              times={times}
+              timeSlot={timeSlot}
+              setTimeSlot={setTimeSlot}
+            />
+            <div className="sticky">
+              <LeafletMap
+                routes={routes}
+                colors={routeColors}
+                props={{ selectedLocation, setSelectedLocation }}
+              />
             </div>
           </div>
-        </React.Fragment>
-      )}
+          <div
+            className="column is-half"
+            style={{ padding: "0 0.75rem", marginTop: "5vh" }}
+          >
+            <DeliveryRoutes
+              routes={routes}
+              colors={routeColors}
+              props={{ selectedLocation, setSelectedLocation }}
+            />
+          </div>
+        </div>
+      </div>
     </React.Fragment>
   );
 }
