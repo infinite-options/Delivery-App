@@ -360,10 +360,12 @@ function MapPage() {
           >
             ADMIN DASHBOARD - DELIVERY
           </p>
-          <a className="button is-light is-square is-fullheight" href="#home">Home</a>
-          <a className="button is-light is-square is-fullheight" href="#news">News</a>
-          <a className="button is-light is-square is-fullheight" href="#contact">Contact</a>
-          <a className="button is-light is-square is-fullheight" href="#about">About</a>
+          <a className="button is-light is-square is-fullheight" href="#home">Delivery</a>
+          <a className="button is-light is-square is-fullheight" href="#news">Drivers</a>
+          <a className="button is-light is-square is-fullheight" href="#contact">Businesses</a>
+          <a className="button is-light is-square is-fullheight" href="#about">Customers</a>
+          <a className="button is-light is-square is-fullheight" href="#about">Orders</a>
+          <a className="button is-light is-square is-fullheight" href="#about">Shipments</a>
           <button
             className="button is-white is-fullheight"
             onClick={() => handleBurger()}
