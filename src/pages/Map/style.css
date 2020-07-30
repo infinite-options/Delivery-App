@@ -171,8 +171,13 @@ table.is-view td.is-today-end {
 /* Button classes */
 .button.is-square {
   border-radius: 0;
+  transform: skew(-10deg);
 }
 
 .button.is-fullheight {
   height: 100%;
+}
+
+.button.is-lightgrey {
+  background-color: #ededed;
 }

@@ -8,9 +8,9 @@ function DeliveryRoutes({ routes, colors, props }) {
   const setSelectedLocation = props.setSelectedLocation;
 
   return (
-    <div className="box" style={{ maxHeight: "90vh", overflowY: "scroll" }}>
+    <React.Fragment>
       {routes.map((route, index) => (
-        <RouteList
+        <RouteItem
           key={index}
           props={{
             route,
@@ -21,13 +21,12 @@ function DeliveryRoutes({ routes, colors, props }) {
           }}
         />
       ))}
-    </div>
+    </React.Fragment>
   );
 }
 
-function RouteList({ props }) {
+function RouteItem({ props }) {
   const [hidden, setHidden] = useState(true);
-  const [destination, setDestination] = useState(3);
   // console.log(props.route);
 
   useEffect(() => {

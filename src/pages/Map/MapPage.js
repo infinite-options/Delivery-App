@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Icons from "Icons/Icons";
 import LeafletMap from "./LeafletMap";
 import DeliveryRoutes from "./DeliveryRoutes";
+import DriverList from "./DriverList";
 import DeliveryView from "./DeliveryView";
 import AppIcon from "Icons/app_icon.png";
 import axios from "axios";
@@ -80,9 +81,10 @@ function MapPage() {
 
   const [isLoading, setIsLoading] = useState(true);
   // will there ever be a case where there are more drivers than locations?
-  const [drivers, setDrivers] = useState(1); // useState(DRIVER_COUNT)
+  const [drivers, setDrivers] = useState([]);
   const [routes, setRoutes] = useState([]);
-  const [timeSlot, setTimeSlot] = useState(0); // useState(TIME_SLOT)
+  const [timeSlot, setTimeSlot] = useState(0); // useState(TIME_SLOT_LOCAL_STORAGE)
+  const [headerTab, setHeaderTab] = useState(0); // useState(HEADER_TAB_LOCAL_STORAGE)
   const [times, setTimes] = useState([
     { value: "00 am - 00 pm" },
     { value: "01 am - 01 pm" },
@@ -192,7 +194,7 @@ function MapPage() {
           console.log(route);
           let tempRoutes = [];
           let index = 0;
-          for (let i = 0; i < drivers; i++) {
+          for (let i = 0; i < 1; i++) { // This endpoint responds with a single route
             let tempRoute = [];
             for (let j = 0; j < route.length; j++) {
               // destination coords
@@ -223,6 +225,33 @@ function MapPage() {
           }
           // console.log("temp:", tempRoutes);
           setRoutes(tempRoutes);
+          // hardcoded driver data since this endpoint doesn't give me any driver information
+          setDrivers([{
+            first_name: "John",
+            last_name: "Doe",
+            ssn: "123-45-6789",
+            drivers_license: "QWEASD123",
+
+            weekly_workload: 40,
+            day_availability: [
+              "Monday", 
+              "Wednesday", 
+              "Thursday"
+            ],
+            time_availability: {
+              Sunday: undefined, 
+              Monday: 1, 
+              Tuesday: undefined, 
+              Wednesday: 1, 
+              Thursday: 1, 
+              Friday: undefined, 
+              Saturday: undefined,
+            }, 
+            expiration: "2021-03-22",
+
+            preferred_routes: [1], // only one choice with this endpoint!
+            rating: 4.6,
+          }]);
           setRouteColors(() => {
             let colors = [];
             for (let i = 0; i < tempRoutes.length; i++) {
@@ -247,7 +276,10 @@ function MapPage() {
     //       const result = [...response.data.result];
     //       setDrivers(result.length);
     //       let tempRoutes = [];
+    //       // let tempDrivers = [];
     //       for (let element of result) {
+    //         // const driverData = await axios.get(DRIVER_API_URL + element.driver_id);
+    //         // tempDrivers.push(driverData);
     //         // cut off head & tail of each result route, since those values are the HQ location value
     //         const route = element.slice(1, element.length - 1);
     //         // console.log("route:", route);
@@ -280,6 +312,7 @@ function MapPage() {
     //       }
     //       console.log("temp:", tempRoutes);
     //       setRoutes(tempRoutes);
+    //       // setDrivers(tempDrivers);
     //       setRouteColors(() => {
     //         let colors = [];
     //         for (let i = 0; i < tempRoutes.length; i++) {
@@ -326,55 +359,54 @@ function MapPage() {
     // open week view modal
   };
 
+  const handleHeaderTab = () => {
+    switch (headerTab) {
+      case 0:
+        return (
+          <DeliveryRoutes
+            routes={routes}
+            colors={routeColors}
+            props={{ selectedLocation, setSelectedLocation }}
+          />
+        );
+      case 1:
+        return (
+          // <p>WIP</p>
+          <DriverList
+            drivers={drivers}
+            colors={routeColors}
+          />
+        );
+      case 2:
+        return (
+          <p>WIP</p>
+        );
+      case 3:
+        return (
+          <p>WIP</p>
+        );
+      case 4:
+        return (
+          <p>WIP</p>
+        );
+      case 5:
+        return (
+          <p>WIP</p>
+        );
+      default:
+        setHeaderTab(0);
+    }
+  };
+
   return !isLoading && (
     <React.Fragment>
-      <div className="header-parent">
-        <ul id= "selections" className="header-burger">
-          <li>
-            <button
-              className="button is-white is-fullwidth"
-              onClick={handleDayView}
-            >
-              Day View
-            </button>
-          </li>
-          <li>
-            <button
-              className="button is-white is-fullwidth"
-              onClick={handleWeekView}
-            >
-              Week View
-            </button>
-          </li>
-        </ul>
-        <div className="header-main">
-          <img
-            className="has-text-left"
-            src={AppIcon}
-            alt="Just Delivered"
-            style={{ alignSelf: "center", maxHeight: "5vh" }}
-          />
-          <p
-            className="has-text-centered"
-            style={{ width: "100%", fontSize: "3vh" }}
-          >
-            ADMIN DASHBOARD - DELIVERY
-          </p>
-          <a className="button is-light is-square is-fullheight" href="#home">Delivery</a>
-          <a className="button is-light is-square is-fullheight" href="#news">Drivers</a>
-          <a className="button is-light is-square is-fullheight" href="#contact">Businesses</a>
-          <a className="button is-light is-square is-fullheight" href="#about">Customers</a>
-          <a className="button is-light is-square is-fullheight" href="#about">Orders</a>
-          <a className="button is-light is-square is-fullheight" href="#about">Shipments</a>
-          <button
-            className="button is-white is-fullheight"
-            onClick={() => handleBurger()}
-            // onBlur={handleBurger}
-          >
-            <FontAwesomeIcon icon={Icons.faBars} />
-          </button>
-        </div>
-      </div>
+      <Header 
+        tab={headerTab}
+        changeTab={setHeaderTab}
+        handleBurger={handleBurger} 
+        handleDayView={handleDayView}
+        handleWeekView={handleWeekView}
+      />
       {/* Views */}
       <DeliveryView
         type="day"
@@ -409,15 +441,75 @@ function MapPage() {
             className="column is-half"
             style={{ padding: "0 0.75rem", marginTop: "5vh" }}
           >
-            <DeliveryRoutes
-              routes={routes}
-              colors={routeColors}
-              props={{ selectedLocation, setSelectedLocation }}
-            />
+            <div className="box" style={{ maxHeight: "90vh", overflowY: "scroll" }}>
+              {handleHeaderTab()}
+            </div>
           </div>
         </div>
       </div>
     </React.Fragment>
+  );
+}
+
+function Header(props) {
+  const tabs = ["Delivery", "Drivers", "Businesses", "Customers", "Orders", "Shipments"];
+
+  const handleTabChange = (index) => {
+    if (props.tab !== index) props.changeTab(index);
+  }
+
+  return (
+    <div className="header-parent">
+      <div className="header-main">
+        <img
+          className="has-text-left"
+          src={AppIcon}
+          alt="Just Delivered"
+          style={{ alignSelf: "center", maxHeight: "5vh" }}
+        />
+        <p
+          className="has-text-centered"
+          style={{ width: "100%", fontSize: "3vh" }}
+        >
+          ADMIN DASHBOARD
+        </p>
+        {tabs.map((value, idx) => (
+          <button 
+            key={idx} 
+            className="button is-lightgrey is-square is-fullheight"
+            onClick={() => handleTabChange(idx)}
+            style={{ backgroundColor: props.tab === idx && "yellow" }}
+          >
+            {value}
+          </button>
+        ))}
+        <button
+          className="button is-white is-fullheight ml-1"
+          onClick={() => props.handleBurger()}
+          // onBlur={props.handleBurger}
+        >
+          <FontAwesomeIcon icon={Icons.faBars} />
+        </button>
+      </div>
+      <ul id= "selections" className="header-burger">
+        <li>
+          <button
+            className="button is-white is-fullwidth"
+            onClick={props.handleDayView}
+          >
+            Day View
+          </button>
+        </li>
+        <li>
+          <button
+            className="button is-white is-fullwidth"
+            onClick={props.handleWeekView}
+          >
+            Week View
+          </button>
+        </li>
+      </ul>
+    </div>
   );
 }
 
