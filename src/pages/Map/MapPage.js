@@ -83,8 +83,11 @@ function MapPage() {
   // will there ever be a case where there are more drivers than locations?
   const [drivers, setDrivers] = useState([]);
   const [routes, setRoutes] = useState([]);
-  const [timeSlot, setTimeSlot] = useState(0); // useState(TIME_SLOT_LOCAL_STORAGE)
-  const [headerTab, setHeaderTab] = useState(0); // useState(HEADER_TAB_LOCAL_STORAGE)
+  const headerTabLocal = Number(window.localStorage.getItem("headerTab"));
+  const timeSlotLocal = Number(window.localStorage.getItem("timeSlot")); // User editing localStorage messes this up
+  console.log(timeSlotLocal);
+  const [timeSlot, setTimeSlot] = useState(timeSlotLocal ? timeSlotLocal : 0); // useState(TIME_SLOT_LOCAL_STORAGE)
+  const [headerTab, setHeaderTab] = useState(headerTabLocal ? headerTabLocal : 0); // useState(HEADER_TAB_LOCAL_STORAGE)
   const [times, setTimes] = useState([
     { value: "00 am - 00 pm" },
     { value: "01 am - 01 pm" },
@@ -94,6 +97,14 @@ function MapPage() {
   ]); // useState(GET_ROUTE_TIMES)
   const [selectedLocation, setSelectedLocation] = useState({});
   const [routeColors, setRouteColors] = useState([]);
+
+  useEffect(() => {
+    window.localStorage.setItem("headerTab", headerTab);
+  }, [headerTab]);
+
+  useEffect(() => {
+    window.localStorage.setItem("timeSlot", timeSlot);
+  }, [timeSlot]);
 
   useEffect(() => {
     createRoutes();
