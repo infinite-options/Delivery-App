@@ -1,8 +1,56 @@
 import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Icons from "Icons/Icons";
+import axios from "axios";
+
+// const DRIVERS_API_URL = "https://lu636s0qy3.execute-api.us-west-1.amazonaws.com/dev/api/v2/getDrivers";
 
 function DriverList({ drivers, colors, props }) {
+  // const [loading, setLoading] = useState(true);
+  // const [drivers, setDrivers] = useState({});
+  //Object.values(drivers)
+  
+  // useEffect(() => {
+  //   axios.get(DRIVERS_API_URL).then(response => {
+  //     // console.log("response_drivers:", response);
+  //     const result = response.data.result.result;
+  //     let tempDrivers = {};
+  //     for (let driver of result) {
+  //       const driver_id = driver.driver_id;
+  //       const driver_data = {
+  //         first_name: driver.driver_first_name,
+  //         last_name: driver.driver_last_name,
+  //         ssn: driver.driver_ssn,
+  //         drivers_license: driver.driver_license,
+  //         insurance_number: driver.driver_insurance_num,
+  //         password: driver.driver_password,
+  //         time_availability: driver.driver_hours,
+
+  //         weekly_workload: -1,
+  //         day_availability: "PLACEHOLDER",
+  //         // time_availability: {
+  //         //   Sunday: undefined, 
+  //         //   Monday: 1, 
+  //         //   Tuesday: undefined, 
+  //         //   Wednesday: 1, 
+  //         //   Thursday: 1, 
+  //         //   Friday: undefined, 
+  //         //   Saturday: undefined,
+  //         // }, 
+  //         expiration: "PLACEHOLDER",
+
+  //         preferred_routes: "PLACEHOLDER", // only one choice with this endpoint!
+  //         rating: -1,
+  //       }
+  //       tempDrivers[driver_id] = driver_data;
+  //     }
+  //     console.log("tempdrivers:", tempDrivers);
+  //     setDrivers(tempDrivers);
+  //   }).catch(err => {
+  //     console.log(err.response ? err.response : err);
+  //   });
+  // }, []);
+
   return (
     <React.Fragment>
       {drivers.map((driver, index) => (
@@ -100,7 +148,20 @@ function DriverItem({ props }) {
             <th />
             <th />
             <th />
-            <th />
+            <th style={{width: "10.25em"}}>
+              <button
+                className="button is-rounded is-small mx-1"
+                // onClick={() => sendText(idx + 1)}
+              >
+                <FontAwesomeIcon icon={Icons.faComment} />
+              </button>
+              <button
+                className="button is-rounded is-small mx-1"
+                // onClick={() => sendEmail(idx + 1)}
+              >
+                <FontAwesomeIcon icon={Icons.faComment} />
+              </button>
+            </th>
             {/* <th
               style={{ backgroundColor: "#ededed", borderRadius: "8px 0 0 0" }}
             >
@@ -120,14 +181,14 @@ function DriverItem({ props }) {
             </th> */}
           </tr>
         </thead>
-        <tbody hidden={hidden}>
+        <tbody className="has-text-centered" hidden={hidden}>
           <tr>
             <td className="pr-0">
                 First Name
                 <hr style={{margin: 0, backgroundColor: "#ededed"}}/>
                 Last Name
             </td>
-            <td className="pl-0">
+            <td className="pl-0 has-text-left">
                 {props.driver.first_name}
                 <hr style={{margin: 0, backgroundColor: "#ededed"}}/>
                 {props.driver.last_name}
@@ -156,7 +217,7 @@ function DriverItem({ props }) {
                 Days Available<br />{props.driver.day_availability}
             </td>
             <td>
-                Times Available<br />PLACEHOLDER
+                Times Available<br />{props.driver.time_availability}
             </td>
           </tr>
         </tbody>

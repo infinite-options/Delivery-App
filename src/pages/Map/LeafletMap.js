@@ -24,9 +24,9 @@ function LeafletMap({ routes, colors, props }) {
   const selectedLocation = props.selectedLocation;
   const setSelectedLocation = props.setSelectedLocation;
 
-  const baseLocation = routes[0][0]["from"];
-  const latitude = baseLocation ? baseLocation[0] : DEFAULT_LATITUDE;
-  const longitude = baseLocation ? baseLocation[1] : DEFAULT_LONGITUDE;
+  const baseLocation = routes.length ? routes[0][0]["from"] : [DEFAULT_LATITUDE, DEFAULT_LONGITUDE];
+  const latitude = baseLocation[0];
+  const longitude = baseLocation[1];
 
   useEffect(() => {
     const selected = { ...selectedLocation };

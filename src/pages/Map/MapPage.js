@@ -9,80 +9,20 @@ import DeliveryView from "./DeliveryView";
 import AppIcon from "Icons/app_icon.png";
 import axios from "axios";
 
+// NOTE: just remember to change this
 const BASE_API_URL =
   "https://wrguk721j7.execute-api.us-west-1.amazonaws.com/dev/api/v1/";
+const BASE_URL = 
+  "https://lu636s0qy3.execute-api.us-west-1.amazonaws.com/dev/api/v2/";
 
 function MapPage() {
   console.log("rendering..");
-  // an array of routes for testing
-  const test = [
-    [
-      { latitude: 36.92639, longitude: -121.753155 },
-      { latitude: 37.317469, longitude: -122.019218 },
-      { latitude: 37.3381255, longitude: -122.0300825 },
-      { latitude: 37.31781, longitude: -122.06542 },
-      { latitude: 37.3185420214271, longitude: -122.065159171429 },
-      /*{'latitude': 36.92639, 'longitude': -121.753155}*/
-    ],
-    [
-      { latitude: 36.92639, longitude: -121.753155 },
-      { latitude: 36.96344117, longitude: -122.05851283 },
-      { latitude: 37.22055, longitude: -121.89293 },
-      { latitude: 37.22793, longitude: -121.89493 },
-      { latitude: 37.231342, longitude: -121.891046 },
-      { latitude: 37.23602, longitude: -121.87142 },
-      { latitude: 37.23312, longitude: -121.88238 },
-      { latitude: 37.227124, longitude: -121.886943 },
-      { latitude: 37.22985, longitude: -121.8908 },
-      { latitude: 37.222307, longitude: -121.890135 },
-      { latitude: 37.22168, longitude: -121.89274 },
-      { latitude: 37.221648, longitude: -121.876 },
-      { latitude: 37.22025, longitude: -121.86673 },
-      { latitude: 37.220293, longitude: -121.872801 },
-      { latitude: 37.21393, longitude: -121.87324 },
-      { latitude: 37.21019, longitude: -121.87221 },
-      { latitude: 37.216289, longitude: -121.869557 },
-      { latitude: 37.21958, longitude: -121.87582 },
-      { latitude: 37.212813, longitude: -121.875979 },
-      { latitude: 37.20697, longitude: -121.87237 },
-      { latitude: 37.20921, longitude: -121.86601 },
-      /*{'latitude': 36.92639, 'longitude': -121.753155}*/
-    ],
-    [
-      { latitude: 36.92639, longitude: -121.753155 },
-      { latitude: 37.20588, longitude: -121.82793 },
-      { latitude: 37.20447, longitude: -121.8289 },
-      { latitude: 37.21001, longitude: -121.82328 },
-      { latitude: 37.21026, longitude: -121.82815 },
-      { latitude: 37.204775, longitude: -121.831414 },
-      { latitude: 37.20539, longitude: -121.83414 },
-      { latitude: 37.195659, longitude: -121.843228 },
-      { latitude: 37.20666, longitude: -121.845314 },
-      { latitude: 37.2098, longitude: -121.84869 },
-      { latitude: 37.20398, longitude: -121.85098 },
-      { latitude: 37.203119, longitude: -121.857549 },
-      { latitude: 37.206714, longitude: -121.858709 },
-      { latitude: 37.20098, longitude: -121.85874 },
-      { latitude: 37.212021, longitude: -121.840744 },
-      { latitude: 37.22274, longitude: -121.84977 },
-      { latitude: 37.22002, longitude: -121.84682 },
-      { latitude: 37.21856, longitude: -121.85627 },
-      { latitude: 37.226068, longitude: -121.861264 },
-      { latitude: 37.235542, longitude: -121.848751 },
-      { latitude: 37.235976, longitude: -121.810059 },
-      { latitude: 37.282141, longitude: -121.859561 },
-      { latitude: 37.20893, longitude: -121.85216 },
-      { latitude: 37.200639, longitude: -121.836549 },
-      { latitude: 37.199574, longitude: -121.837836 },
-      { latitude: 37.199313, longitude: -121.829092 },
-      /*{'latitude': 36.92639, 'longitude': -121.753155}*/
-    ],
-  ];
 
   const [isLoading, setIsLoading] = useState(true);
   // will there ever be a case where there are more drivers than locations?
-  const [drivers, setDrivers] = useState([]);
+  const [drivers, setDrivers] = useState({});
   const [routes, setRoutes] = useState([]);
+  const [businesses, setBusinesses] = useState({});
   const headerTabLocal = Number(window.localStorage.getItem("headerTab"));
   const timeSlotLocal = Number(window.localStorage.getItem("timeSlot")); // User editing localStorage messes this up
   const [times, setTimes] = useState([
@@ -106,7 +46,15 @@ function MapPage() {
   }, [timeSlot]);
 
   useEffect(() => {
-    createRoutes();
+    Promise.allSettled([
+      createRoutes(), 
+      createDrivers(),
+      createBusinesses(),
+    ]).then((result) => {
+      console.log("API responses:", result);
+      setIsLoading(false);
+    });
+    // setIsLoading(false);
   }, []);
 
   const rainbow = (numOfSteps, step) => {
@@ -159,123 +107,88 @@ function MapPage() {
   };
 
   const createRoutes = () => {
-    // plotting markers & lines for test routes
-    // let tempRoutes = [];
-    // for (let set of test) {
-    //   let tempRoute = [];
-    //   let index = 0;
-    //   for (let coord of set) {
-    //     if (index < set.length - 1) {
-    //       // console.log("0", coord);
-    //       // console.log(set.length, set[index + 1]);
-    //       let fromLatitude = coord["latitude"];
-    //       let fromLongitude = coord["longitude"];
-    //       let toLatitude = set[index + 1]["latitude"];
-    //       let toLongitude = set[index + 1]["longitude"];
-    //       tempRoute.push({
-    //         from: [fromLatitude, fromLongitude],
-    //         to: [toLatitude, toLongitude],
-    //       });
-    //     }
-    //     index++;
-    //   }
-    //   tempRoutes.push(tempRoute);
-    // }
-    // setRoutes(tempRoutes);
-    // setRouteColors(() => {
-    //   let colors = [];
-    //   for (let i = 0; i < tempRoutes.length; i++) {
-    //     colors.push(rainbow(tempRoutes.length, i));
-    //   }
-    //   // console.log(colors);
-    //   return colors;
-    // });
-    // setIsLoading(false);
-
-
-    axios
-      .get(BASE_API_URL + "deliveryRoute")
-      .then((response) => {
-        // console.log(response);
-        if (response.status === 200) {
-          const result = [...response.data.result];
-          // cut off head & tail of result, since those values are the HQ location value
-          const route = result.slice(1, result.length - 1);
-          console.log(route);
-          let tempRoutes = [];
-          let index = 0;
-          for (let i = 0; i < 1; i++) { // This endpoint responds with a single route
-            let tempRoute = [];
-            for (let j = 0; j < route.length; j++) {
-              // destination coords
-              let toLatitude = route[index].latitude;
-              let toLongitude = route[index].longitude;
-              // beginning coords, if first route then begin from HQ coords
-              let fromLatitude = !j
-                ? result[0].latitude
-                : route[index - 1].latitude;
-              let fromLongitude = !j
-                ? result[0].longitude
-                : route[index - 1].longitude;
-              // destination address
-              let street = route[index].house_address.trim();
-              let city = route[index].city.trim();
-              let state = route[index].state.trim().toUpperCase();
-              let zip = route[index].zipcode.trim();
-              let address = `${street}, ${city}, ${state} ${zip}`;
-              tempRoute.push({
-                from: [fromLatitude, fromLongitude],
-                to: [toLatitude, toLongitude],
-                address: address,
-              });
-              index++;
-              // console.log("index:", index);
-            }
-            tempRoutes.push(tempRoute);
+    return axios.get(BASE_API_URL + "deliveryRoute")
+    .then((response) => {
+      // console.log(response);
+      if (response.status === 200) {
+        const result = [...response.data.result];
+        // cut off head & tail of result, since those values are the HQ location value
+        const route = result.slice(1, result.length - 1);
+        // console.log(route);
+        let tempRoutes = [];
+        let index = 0;
+        for (let i = 0; i < 1; i++) { // This endpoint responds with a single route
+          let tempRoute = [];
+          for (let j = 0; j < route.length; j++) {
+            // destination coords
+            let toLatitude = route[index].latitude;
+            let toLongitude = route[index].longitude;
+            // beginning coords, if first route then begin from HQ coords
+            let fromLatitude = !j
+              ? result[0].latitude
+              : route[index - 1].latitude;
+            let fromLongitude = !j
+              ? result[0].longitude
+              : route[index - 1].longitude;
+            // destination address
+            let street = route[index].house_address.trim();
+            let city = route[index].city.trim();
+            let state = route[index].state.trim().toUpperCase();
+            let zip = route[index].zipcode.trim();
+            let address = `${street}, ${city}, ${state} ${zip}`;
+            tempRoute.push({
+              from: [fromLatitude, fromLongitude],
+              to: [toLatitude, toLongitude],
+              address: address,
+            });
+            index++;
+            // console.log("index:", index);
           }
-          // console.log("temp:", tempRoutes);
-          setRoutes(tempRoutes);
-          // hardcoded driver data since this endpoint doesn't give me any driver information
-          setDrivers([{
-            first_name: "John",
-            last_name: "Doe",
-            ssn: "123-45-6789",
-            drivers_license: "QWEASD123",
-
-            weekly_workload: 40,
-            day_availability: [
-              "Monday", 
-              "Wednesday", 
-              "Thursday"
-            ],
-            time_availability: {
-              Sunday: undefined, 
-              Monday: 1, 
-              Tuesday: undefined, 
-              Wednesday: 1, 
-              Thursday: 1, 
-              Friday: undefined, 
-              Saturday: undefined,
-            }, 
-            expiration: "2021-03-22",
-
-            preferred_routes: [1], // only one choice with this endpoint!
-            rating: 4.6,
-          }]);
-          setRouteColors(() => {
-            let colors = [];
-            for (let i = 0; i < tempRoutes.length; i++) {
-              colors.push(rainbow(tempRoutes.length, i));
-            }
-            // console.log(colors);
-            return colors;
-          });
-          setIsLoading(false);
+          tempRoutes.push(tempRoute);
         }
-      })
-      .catch((err) => {
-        console.log(err.response ? err.response : err);
-      });
+        // console.log("temp:", tempRoutes);
+        setRoutes(tempRoutes);
+        // hardcoded driver data since this endpoint doesn't give me any driver information
+        // setDrivers([{
+        //   first_name: "John",
+        //   last_name: "Doe",
+        //   ssn: "123-45-6789",
+        //   drivers_license: "QWEASD123",
+
+        //   weekly_workload: 40,
+        //   day_availability: [
+        //     "Monday", 
+        //     "Wednesday", 
+        //     "Thursday"
+        //   ],
+        //   time_availability: {
+        //     Sunday: undefined, 
+        //     Monday: 1, 
+        //     Tuesday: undefined, 
+        //     Wednesday: 1, 
+        //     Thursday: 1, 
+        //     Friday: undefined, 
+        //     Saturday: undefined,
+        //   }, 
+        //   expiration: "2021-03-22",
+
+        //   preferred_routes: [1], // only one choice with this endpoint!
+        //   rating: 4.6,
+        // }]);
+        setRouteColors(() => {
+          let colors = [];
+          for (let i = 0; i < tempRoutes.length; i++) {
+            colors.push(rainbow(tempRoutes.length, i));
+          }
+          // console.log(colors);
+          return colors;
+        });
+        // setIsLoading(false);
+      }
+    })
+    // .catch((err) => {
+    //   console.log(err.response ? err.response : err);
+    // });
 
       
     // axios
@@ -339,6 +252,82 @@ function MapPage() {
     //   });
   };
 
+  const createDrivers = () => {
+    return axios.get(BASE_URL + "getDrivers")
+    .then(response => {
+      // console.log("response_drivers:", response);
+      const result = response.data.result.result;
+      let tempDrivers = {};
+      for (let driver of result) {
+        const driver_id = driver.driver_id;
+        const driver_data = {
+          first_name: driver.driver_first_name,
+          last_name: driver.driver_last_name,
+          ssn: driver.driver_ssn,
+          drivers_license: driver.driver_license,
+          insurance_number: driver.driver_insurance_num,
+          password: driver.driver_password,
+          time_availability: driver.driver_hours,
+
+          weekly_workload: -1,
+          day_availability: "PLACEHOLDER",
+          // time_availability: {
+          //   Sunday: undefined, 
+          //   Monday: 1, 
+          //   Tuesday: undefined, 
+          //   Wednesday: 1, 
+          //   Thursday: 1, 
+          //   Friday: undefined, 
+          //   Saturday: undefined,
+          // }, 
+          expiration: "PLACEHOLDER",
+
+          preferred_routes: "PLACEHOLDER", // only one choice with this endpoint!
+          rating: -1,
+        }
+        tempDrivers[driver_id] = driver_data;
+      }
+      // console.log("tempdrivers:", tempDrivers);
+      setDrivers(tempDrivers);
+    })
+    // .catch(err => {
+    //   console.log(err.response ? err.response : err);
+    // });
+  };
+
+  const createBusinesses = () => {
+    return axios.get(BASE_URL + "getBusinesses")
+    .then(response => {
+      const result = response.data.result.result;
+      let tempBusinesses = {};
+      for (let business of result) {
+        const business_id = business.business_id;
+        const business_data = {
+          name: business.business_name,
+          description: business.business_desc,
+          type: business.business_tyoe,
+          hours: business.business_hours,
+          street: business.business_street,
+          unit: business.business_unit,
+          city: business.business_city,
+          state: business.business_state,
+          zip: business.business_zip,
+          phone: business.business_phone_num,
+          email: business.business_email,
+          phone2: business.business_phone_num2,
+          latitude: business.business_latitude,
+          longitude: business.business_longitude,
+        }
+        tempBusinesses[business_id] = business_data;
+      }
+      // console.log("tempbusi:", tempBusinesses);
+      setBusinesses(tempBusinesses);
+    })
+    // .catch(err => {
+    //   console.log(err.response ? err.response : err);
+    // });
+  }
+
   const handleBurger = (onItemSelect=false) => {
     console.log("Burger interaction..");
 
@@ -386,7 +375,7 @@ function MapPage() {
         return (
           // <p>WIP</p>
           <DriverList
-            drivers={drivers}
+            drivers={Object.values(drivers)}
             colors={routeColors}
           />
         );
