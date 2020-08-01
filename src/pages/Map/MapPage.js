@@ -85,9 +85,6 @@ function MapPage() {
   const [routes, setRoutes] = useState([]);
   const headerTabLocal = Number(window.localStorage.getItem("headerTab"));
   const timeSlotLocal = Number(window.localStorage.getItem("timeSlot")); // User editing localStorage messes this up
-  console.log(timeSlotLocal);
-  const [timeSlot, setTimeSlot] = useState(timeSlotLocal ? timeSlotLocal : 0); // useState(TIME_SLOT_LOCAL_STORAGE)
-  const [headerTab, setHeaderTab] = useState(headerTabLocal ? headerTabLocal : 0); // useState(HEADER_TAB_LOCAL_STORAGE)
   const [times, setTimes] = useState([
     { value: "00 am - 00 pm" },
     { value: "01 am - 01 pm" },
@@ -95,6 +92,8 @@ function MapPage() {
     { value: "03 am - 03 pm" },
     { value: "04 am - 04 pm" },
   ]); // useState(GET_ROUTE_TIMES)
+  const [timeSlot, setTimeSlot] = useState(timeSlotLocal ? timeSlotLocal : 0); // useState(TIME_SLOT_LOCAL_STORAGE)
+  const [headerTab, setHeaderTab] = useState(headerTabLocal ? headerTabLocal : 0); // useState(HEADER_TAB_LOCAL_STORAGE)
   const [selectedLocation, setSelectedLocation] = useState({});
   const [routeColors, setRouteColors] = useState([]);
 
@@ -371,6 +370,9 @@ function MapPage() {
   };
 
   const handleHeaderTab = () => {
+    // might as well also handle time slots here!
+    if (Math.floor(timeSlot) !== timeSlot || timeSlot < 0 || timeSlot > times.length - 1) setTimeSlot(0);
+
     switch (headerTab) {
       case 0:
         return (
