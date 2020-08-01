@@ -2,18 +2,19 @@ import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Icons from "Icons/Icons";
 
-function DeliveryRoutes({ routes, colors, props }) {
+function DeliveryList({ routes, colors, props }) {
   // const [selectedLocation, setSelectedLocation] = useState({});
   const selectedLocation = props.selectedLocation;
   const setSelectedLocation = props.setSelectedLocation;
 
   return (
     <React.Fragment>
-      {routes.map((route, index) => (
+      {Object.keys(routes).map((route_id, index) => (
         <RouteItem
           key={index}
           props={{
-            route,
+            route: routes[route_id].route_data,
+            id: route_id,
             color: colors[index],
             index,
             selectedLocation,
@@ -126,7 +127,7 @@ function RouteItem({ props }) {
           </tr>
         </thead>
         <tbody hidden={hidden}>
-          {props.route.map((location, idx) => (
+          {Object.values(props.route).map((location, idx) => (
             <tr
               key={idx}
               className={
@@ -194,4 +195,4 @@ function RouteItem({ props }) {
   );
 }
 
-export default DeliveryRoutes;
+export default DeliveryList;

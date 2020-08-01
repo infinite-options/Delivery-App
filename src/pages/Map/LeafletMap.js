@@ -24,7 +24,9 @@ function LeafletMap({ routes, colors, props }) {
   const selectedLocation = props.selectedLocation;
   const setSelectedLocation = props.setSelectedLocation;
 
-  const baseLocation = routes.length ? routes[0][0]["from"] : [DEFAULT_LATITUDE, DEFAULT_LONGITUDE];
+  // What if there are multiple businesses on the map?
+  // console.log("HERE:", Object.values(routes)[0].route_data[0].from);
+  const baseLocation = Object.keys(routes).length ? (Object.values(routes)[0].route_data[0].from ? Object.values(routes)[0].route_data[0].from : [DEFAULT_LATITUDE, DEFAULT_LONGITUDE]) : [DEFAULT_LATITUDE, DEFAULT_LONGITUDE];
   const latitude = baseLocation[0];
   const longitude = baseLocation[1];
 
@@ -37,7 +39,8 @@ function LeafletMap({ routes, colors, props }) {
     if (leafletMap && driver && location) {
       // console.log("SUCCESS");
       const zoom = leafletMap.getZoom() >= 11 ? leafletMap.getZoom() : 11;
-      const route = routes[driver - 1];
+      const route = Object.values(routes)[driver - 1].route_data;
+      // console.log("HERE2:", route);
       const latlng = route[location - 1]["to"];
       // console.log(zoom);
       // console.log(route);
@@ -110,11 +113,11 @@ function LeafletMap({ routes, colors, props }) {
         onLoad={handleMapUpdate}
       />
       <Marker position={baseLocation} icon={Icons.Headquarters} />
-      {routes.map((route, index) => (
+      {Object.values(routes).map((route, index) => (
         <RouteMarker
           key={index}
           props={{
-            route,
+            route: route.route_data,
             index,
             color: colors[index],
             selectedLocation,
@@ -145,6 +148,7 @@ const RouteMarker = ({ props }) => {
     }
     createManyCoordinates(latlngs, 0); // test
     createDriverCoords(latlngs);
+    // console.log(latlngs);
     setCoords(latlngs);
   };
 
@@ -231,6 +235,8 @@ const RouteMarker = ({ props }) => {
         selectedLocation.driver = driverNumber;
       if (locationNumber !== selectedLocation.location)
         selectedLocation.location = locationNumber;
+      
+      // console.log(selectedLocation);
       return selectedLocation;
     });
   };
@@ -286,7 +292,7 @@ const RouteMarker = ({ props }) => {
         return (
           <Polyline
             key={index}
-            positions={[location[0], location[1]]}
+            positions={[location[0] ? location[0] : [DEFAULT_LATITUDE, DEFAULT_LONGITUDE], location[1]]}
             // weight={2}
             color={destination > index ? "dimgrey" : props.color}
           />
