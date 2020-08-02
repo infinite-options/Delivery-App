@@ -18,6 +18,8 @@ const DEFAULT_LONGITUDE = -121.886329;
 
 function LeafletMap({ routes, colors, props }) {
   console.log("rendering map..");
+  const routes_values = Object.values(routes);
+  const routes_keys = Object.keys(routes);
   const [leafletMap, setLeafletMap] = useState();
   const [mapMarkers, setMapMarkers] = useState([]);
 
@@ -25,10 +27,10 @@ function LeafletMap({ routes, colors, props }) {
   const setSelectedLocation = props.setSelectedLocation;
   
   let baseLocations = {};
-  for (let route of Object.values(routes)) {
+  for (let route_id in routes) {
     // console.log(route);
-    const latlng = route.route_data[0].from;
-    if (!baseLocations[route.business_id]) baseLocations[route.business_id] = latlng;
+    const latlng = routes[route_id].route_data[0].from;
+    if (!baseLocations[routes[route_id].business_id]) baseLocations[routes[route_id].business_id] = latlng;
   }
   // console.log(baseLocations);
   // console.log(routes);
@@ -45,7 +47,7 @@ function LeafletMap({ routes, colors, props }) {
     if (leafletMap && driver && location) {
       // console.log("SUCCESS");
       const zoom = leafletMap.getZoom() >= 11 ? leafletMap.getZoom() : 11;
-      const route = Object.values(routes)[driver - 1].route_data;
+      const route = routes_values[driver - 1].route_data;
       // console.log("HERE2:", route);
       const latlng = route[location - 1]["to"];
       // console.log(zoom);
@@ -118,21 +120,21 @@ function LeafletMap({ routes, colors, props }) {
         // updateWhenIdle={true}
         onLoad={handleMapUpdate}
       />
-      {Object.keys(baseLocations).map((key, index) => (
-        <Marker key={index} position={baseLocations[key]} icon={Icons.Headquarters} onClick={() => console.log(`Hi this is Business ${key}`)} />
+      {Object.keys(baseLocations).map((business_id, index) => (
+        <Marker key={index} position={baseLocations[business_id]} icon={Icons.Headquarters} onClick={() => console.log(`Hi this is Business ${business_id}`)} />
       ))}
-      {Object.keys(routes).map((id, index) => (
+      {routes_keys.map((route_id, index) => (
         <RouteMarker
           key={index}
           props={{
-            id: id,
-            driver_id: routes[id].driver_id,
-            route: routes[id].route_data,
+            id: route_id,
+            driver_id: routes[route_id].driver_id,
+            route: routes[route_id].route_data,
             index,
             color: colors[index],
             selectedLocation,
             setSelectedLocation,
-            baseLocation: routes[id].route_data[0].from,
+            baseLocation: routes[route_id].route_data[0].from,
           }}
         />
       ))}

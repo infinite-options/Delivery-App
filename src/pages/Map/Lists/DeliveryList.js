@@ -29,6 +29,7 @@ function DeliveryList({ routes, colors, props }) {
 
 function RouteItem({ props }) {
   const [hidden, setHidden] = useState(true);
+  const route_values = Object.values(props.route);
   // console.log(props.route);
 
   useEffect(() => {
@@ -128,7 +129,7 @@ function RouteItem({ props }) {
           </tr>
         </thead>
         <tbody hidden={hidden}>
-          {Object.values(props.route).map((location, idx) => (
+          {route_values.map((location, idx) => (
             <tr
               key={idx}
               className={

@@ -21,14 +21,10 @@ function MapPage() {
   console.log("rendering..");
 
   const [isLoading, setIsLoading] = useState(true);
-  // Combine these hooks into one hook to reduce re-rendering?
-  const [drivers, setDrivers] = useState({});
-  const [routes, setRoutes] = useState({});
-  const [businesses, setBusinesses] = useState({});
-  const [customers, setCustomers] = useState({});
+  const [data, setData] = useState({});
 
   const headerTabLocal = Number(window.localStorage.getItem("headerTab"));
-  const timeSlotLocal = Number(window.localStorage.getItem("timeSlot")); // User editing localStorage messes this up
+  const timeSlotLocal = Number(window.localStorage.getItem("timeSlot")); 
   const [times, setTimes] = useState([
     { value: "00 am - 00 pm" },
     { value: "01 am - 01 pm" },
@@ -36,8 +32,8 @@ function MapPage() {
     { value: "03 am - 03 pm" },
     { value: "04 am - 04 pm" },
   ]); // useState(GET_ROUTE_TIMES)
-  const [timeSlot, setTimeSlot] = useState(timeSlotLocal ? timeSlotLocal : 0); // useState(TIME_SLOT_LOCAL_STORAGE)
-  const [headerTab, setHeaderTab] = useState(headerTabLocal ? headerTabLocal : 0); // useState(HEADER_TAB_LOCAL_STORAGE)
+  const [timeSlot, setTimeSlot] = useState(timeSlotLocal ? timeSlotLocal : 0); 
+  const [headerTab, setHeaderTab] = useState(headerTabLocal ? headerTabLocal : 0); 
   const [selectedLocation, setSelectedLocation] = useState({});
   const [routeColors, setRouteColors] = useState([]);
 
@@ -54,18 +50,22 @@ function MapPage() {
       createDrivers(),
       createBusinesses(),
       createCustomers(),
-      // createRoutes(), 
     ])
     .then((result) => {
       console.log("API responses:", result);
-      setDrivers(result[0].value);
-      setBusinesses(result[1].value);
-      setCustomers(result[2].value);
-      // setRoutes(result[3].value);
+      // setDrivers(result[0].value);
+      // setBusinesses(result[1].value);
+      // setCustomers(result[2].value);
       createRoutes(result[1].value)
-      .then(result => {
-        // console.log("route resp:", result);
-        setRoutes(result);
+      .then(response => {
+        console.log("route resp:", response);
+        // setRoutes(response);
+        setData(() => ({
+          routes: response,
+          drivers: result[0].value,
+          businesses: result[1].value,
+          customers: result[2].value,
+        }));
         setIsLoading(false);
       });
 
@@ -84,39 +84,14 @@ function MapPage() {
     var f = h * 6 - i;
     var q = 1 - f;
     switch (i % 6) {
-      case 0:
-        r = 1;
-        g = f;
-        b = 0;
-        break;
-      case 1:
-        r = q;
-        g = 1;
-        b = 0;
-        break;
-      case 2:
-        r = 0;
-        g = 1;
-        b = f;
-        break;
-      case 3:
-        r = 0;
-        g = q;
-        b = 1;
-        break;
-      case 4:
-        r = f;
-        g = 0;
-        b = 1;
-        break;
-      case 5:
-        r = 1;
-        g = 0;
-        b = q;
-        break;
+      case 0: r = 1; g = f; b = 0; break;
+      case 1: r = q; g = 1; b = 0; break;
+      case 2: r = 0; g = 1; b = f; break;
+      case 3: r = 0; g = q; b = 1; break;
+      case 4: r = f; g = 0; b = 1; break;
+      case 5: r = 1; g = 0; b = q; break;
     }
-    var c =
-      "#" +
+    var c = "#" +
       ("00" + (~~(r * 255)).toString(16)).slice(-2) +
       ("00" + (~~(g * 255)).toString(16)).slice(-2) +
       ("00" + (~~(b * 255)).toString(16)).slice(-2);
@@ -129,6 +104,7 @@ function MapPage() {
    *   route_id: {
    *     business_id,
    *     driver_id,
+   *     color, // maybe?
    *     route_data: [
    *       {
    *         customer_id,
@@ -171,8 +147,9 @@ function MapPage() {
       }
       setRouteColors(() => {
         let colors = [];
-        for (let i = 0; i < Object.keys(tempRoutes).length; i++) {
-          colors.push(rainbow(Object.keys(tempRoutes).length, i));
+        const routes_length = Object.keys(tempRoutes).length;
+        for (let i = 0; i < routes_length; i++) {
+          colors.push(rainbow(routes_length, i));
         }
         // console.log(colors);
         return colors;
@@ -332,7 +309,7 @@ function MapPage() {
       case 0:
         return (
           <DeliveryList
-            routes={routes}
+            routes={data.routes}
             colors={routeColors}
             props={{ selectedLocation, setSelectedLocation }}
           />
@@ -341,20 +318,20 @@ function MapPage() {
         return (
           // <p>WIP</p>
           <DriverList
-            drivers={drivers}
+            drivers={data.drivers}
             colors={routeColors}
           />
         );
       case 2:
         return (
           <BusinessList 
-            businesses={businesses}
+            businesses={data.businesses}
           />
         );
       case 3:
         return (
           <CustomerList 
-            customers={customers}
+            customers={data.customers}
           />
         );
       case 4:
@@ -403,7 +380,7 @@ function MapPage() {
             />
             <div className="sticky">
               <LeafletMap
-                routes={routes}
+                routes={data.routes}
                 colors={routeColors}
                 props={{ selectedLocation, setSelectedLocation }}
               />
