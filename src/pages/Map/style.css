@@ -181,3 +181,26 @@ table.is-view td.is-today-end {
 .button.is-lightgrey {
   background-color: #ededed;
 }
+
+/* loading screen classes */
+.loading-screen {
+  margin: calc(50vh - 12vw) auto;
+  border: 1vw solid darkgrey;
+  border-radius: 50%;
+  border-top: 1vw solid #dbdbdb;
+  width: 10vw;
+  height: 10vw;
+  -webkit-animation: spin 2s linear infinite; /* Safari */
+  animation: spin 2s linear infinite;
+}
+
+/* Safari */
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

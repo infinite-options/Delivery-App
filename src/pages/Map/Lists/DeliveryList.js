@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Icons from "Icons/Icons";
 
-function DeliveryList({ routes, colors, props }) {
+function DeliveryList({ routes, props }) {
   // const [selectedLocation, setSelectedLocation] = useState({});
   const selectedLocation = props.selectedLocation;
   const setSelectedLocation = props.setSelectedLocation;
@@ -16,7 +16,7 @@ function DeliveryList({ routes, colors, props }) {
             route: routes[route_id].route_data,
             id: route_id,
             driver_id: routes[route_id].driver_id,
-            color: colors[index],
+            color: routes[route_id].route_color,
             index,
             selectedLocation,
             setSelectedLocation,

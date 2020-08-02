@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Icons from "Icons/Icons";
 import axios from "axios";
 
-function DriverList({ drivers, colors, props }) {
+function DriverList({ drivers, routes, props }) {
   return (
     <React.Fragment>
       {Object.keys(drivers).map((driver_id, index) => (
@@ -12,7 +12,7 @@ function DriverList({ drivers, colors, props }) {
           props={{
             driver: drivers[driver_id],
             id: driver_id,
-            colors: colors,
+            routes: routes,
             index,
           }}
         />

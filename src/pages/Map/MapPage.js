@@ -35,7 +35,7 @@ function MapPage() {
   const [timeSlot, setTimeSlot] = useState(timeSlotLocal ? timeSlotLocal : 0); 
   const [headerTab, setHeaderTab] = useState(headerTabLocal ? headerTabLocal : 0); 
   const [selectedLocation, setSelectedLocation] = useState({});
-  const [routeColors, setRouteColors] = useState([]);
+  // const [routeColors, setRouteColors] = useState([]);
 
   useEffect(() => {
     window.localStorage.setItem("headerTab", headerTab);
@@ -53,13 +53,9 @@ function MapPage() {
     ])
     .then((result) => {
       console.log("API responses:", result);
-      // setDrivers(result[0].value);
-      // setBusinesses(result[1].value);
-      // setCustomers(result[2].value);
       createRoutes(result[1].value)
       .then(response => {
-        console.log("route resp:", response);
-        // setRoutes(response);
+        // console.log("route resp:", response);
         setData(() => ({
           routes: response,
           drivers: result[0].value,
@@ -68,10 +64,7 @@ function MapPage() {
         }));
         setIsLoading(false);
       });
-
-      // setIsLoading(false);
     });
-    // setIsLoading(false);
   }, []);
 
   const rainbow = (numOfSteps, step) => {
@@ -101,19 +94,19 @@ function MapPage() {
   /* New route structure:
    *
    * Object > {
-   *   route_id: {
-   *     business_id,
-   *     driver_id,
-   *     color, // maybe?
-   *     route_data: [
-   *       {
-   *         customer_id,
-   *         from: [prevLatitude OR businessLatitude, prevLongitude OR businessLongitude], 
-   *         to: [latitude, longitude], 
-   *         address,
-   *       },
-   *     ]
-   *   },
+   *     route_id: {
+   *         business_id,
+   *         driver_id,
+   *         route_color,
+   *         route_data: [
+   *             {
+   *                 customer_id,
+   *                 from: [prevLatitude, prevLongitude], 
+   *                 to: [latitude, longitude], 
+   *                 address,
+   *             }, ...
+   *         ]
+   *     }, ...
    * }
   */
   const createRoutes = (businesses) => {
@@ -136,7 +129,7 @@ function MapPage() {
           tempRoutes[route_id].route_data.push(location_data);
         }
         else {
-          console.log("what", businesses[location.business_id]);
+          // console.log("route's business", businesses[location.business_id]);
           location_data.from = [businesses[location.business_id].latitude, businesses[location.business_id].longitude];
           tempRoutes[route_id] = {
             business_id: location.business_id,
@@ -145,15 +138,20 @@ function MapPage() {
           };
         }
       }
-      setRouteColors(() => {
-        let colors = [];
-        const routes_length = Object.keys(tempRoutes).length;
-        for (let i = 0; i < routes_length; i++) {
-          colors.push(rainbow(routes_length, i));
-        }
-        // console.log(colors);
-        return colors;
-      });
+      // let colors = [];
+      let i = 0;
+      const routes_length = Object.keys(tempRoutes).length;
+      for (let route_id in tempRoutes) tempRoutes[route_id].route_color = rainbow(routes_length, i++);
+
+      // setRouteColors(() => {
+      //   let colors = [];
+      //   const routes_length = Object.keys(tempRoutes).length;
+      //   for (let i = 0; i < routes_length; i++) {
+      //     colors.push(rainbow(routes_length, i));
+      //   }
+      //   // console.log(colors);
+      //   return colors;
+      // });
       return tempRoutes;
     })
     // .catch(err => {
@@ -310,7 +308,6 @@ function MapPage() {
         return (
           <DeliveryList
             routes={data.routes}
-            colors={routeColors}
             props={{ selectedLocation, setSelectedLocation }}
           />
         );
@@ -319,7 +316,7 @@ function MapPage() {
           // <p>WIP</p>
           <DriverList
             drivers={data.drivers}
-            colors={routeColors}
+            routes={data.routes} // for creating route preferences, probably
           />
         );
       case 2:
@@ -347,7 +344,7 @@ function MapPage() {
     }
   };
 
-  return !isLoading && (
+  return (
     <React.Fragment>
       <Header 
         tab={headerTab}
@@ -370,32 +367,35 @@ function MapPage() {
         visible={onWeekView}
         onClick={handleWeekView}
       />
-      <div className="map-page">
-        <div className="columns" style={{ margin: "auto" }}>
-          <div className="column is-half" style={{ padding: "0" }}>
-            <RouteTimes
-              times={times}
-              timeSlot={timeSlot}
-              setTimeSlot={setTimeSlot}
-            />
-            <div className="sticky">
-              <LeafletMap
-                routes={data.routes}
-                colors={routeColors}
-                props={{ selectedLocation, setSelectedLocation }}
+      {isLoading ? (
+        <div className="loading-screen" />
+      ) : (
+        <div className="map-page">
+          <div className="columns" style={{ margin: "auto" }}>
+            <div className="column is-half" style={{ padding: "0" }}>
+              <RouteTimes
+                times={times}
+                timeSlot={timeSlot}
+                setTimeSlot={setTimeSlot}
               />
+              <div className="sticky">
+                <LeafletMap
+                  routes={data.routes}
+                  props={{ selectedLocation, setSelectedLocation }}
+                />
+              </div>
             </div>
-          </div>
-          <div
-            className="column is-half"
-            style={{ padding: "0 0.75rem", marginTop: "5vh" }}
-          >
-            <div className="box" style={{ maxHeight: "90vh", overflowY: "scroll" }}>
-              {handleHeaderTab()}
+            <div
+              className="column is-half"
+              style={{ padding: "0 0.75rem", marginTop: "5vh" }}
+            >
+              <div className="box" style={{ maxHeight: "90vh", overflowY: "scroll" }}>
+                {handleHeaderTab()}
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
     </React.Fragment>
   );
 }

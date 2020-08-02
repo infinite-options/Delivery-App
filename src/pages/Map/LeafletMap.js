@@ -16,7 +16,7 @@ import L, { LatLng } from "leaflet";
 const DEFAULT_LATITUDE = 37.338208;
 const DEFAULT_LONGITUDE = -121.886329;
 
-function LeafletMap({ routes, colors, props }) {
+function LeafletMap({ routes, props }) {
   console.log("rendering map..");
   const routes_values = Object.values(routes);
   const routes_keys = Object.keys(routes);
@@ -131,7 +131,7 @@ function LeafletMap({ routes, colors, props }) {
             driver_id: routes[route_id].driver_id,
             route: routes[route_id].route_data,
             index,
-            color: colors[index],
+            color: routes[route_id].route_color,
             selectedLocation,
             setSelectedLocation,
             baseLocation: routes[route_id].route_data[0].from,
