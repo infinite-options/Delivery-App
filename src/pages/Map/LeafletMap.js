@@ -23,12 +23,18 @@ function LeafletMap({ routes, colors, props }) {
 
   const selectedLocation = props.selectedLocation;
   const setSelectedLocation = props.setSelectedLocation;
+  
+  let baseLocations = {};
+  for (let route of Object.values(routes)) {
+    // console.log(route);
+    const latlng = route.route_data[0].from;
+    if (!baseLocations[route.business_id]) baseLocations[route.business_id] = latlng;
+  }
+  // console.log(baseLocations);
+  // console.log(routes);
 
-  // What if there are multiple businesses on the map?
-  // console.log("HERE:", Object.values(routes)[0].route_data[0].from);
-  const baseLocation = Object.keys(routes).length ? (Object.values(routes)[0].route_data[0].from ? Object.values(routes)[0].route_data[0].from : [DEFAULT_LATITUDE, DEFAULT_LONGITUDE]) : [DEFAULT_LATITUDE, DEFAULT_LONGITUDE];
-  const latitude = baseLocation[0];
-  const longitude = baseLocation[1];
+  const latitude = Object.values(baseLocations)[0][0];
+  const longitude = Object.values(baseLocations)[0][1];
 
   useEffect(() => {
     const selected = { ...selectedLocation };
@@ -112,17 +118,21 @@ function LeafletMap({ routes, colors, props }) {
         // updateWhenIdle={true}
         onLoad={handleMapUpdate}
       />
-      <Marker position={baseLocation} icon={Icons.Headquarters} />
-      {Object.values(routes).map((route, index) => (
+      {Object.keys(baseLocations).map((key, index) => (
+        <Marker key={index} position={baseLocations[key]} icon={Icons.Headquarters} onClick={() => console.log(`Hi this is Business ${key}`)} />
+      ))}
+      {Object.keys(routes).map((id, index) => (
         <RouteMarker
           key={index}
           props={{
-            route: route.route_data,
+            id: id,
+            driver_id: routes[id].driver_id,
+            route: routes[id].route_data,
             index,
             color: colors[index],
             selectedLocation,
             setSelectedLocation,
-            baseLocation: [latitude, longitude],
+            baseLocation: routes[id].route_data[0].from,
           }}
         />
       ))}
@@ -168,14 +178,6 @@ const RouteMarker = ({ props }) => {
   };
 
   const handleDriverLocation = () => {
-    // console.log(coords);
-    // console.log(driverLocation);
-
-    // let tempCoords = [...coords];
-    // const randomCoords = getRandomCoordinates(props.baseLocation, 0.375); // testing
-    // tempCoords[destination - 1][1] = randomCoords; // = driverLocation
-    // tempCoords[destination][0] = randomCoords; // = driverLocation
-    // setCoords(tempCoords);
     setCoords((prevCoords) => {
       let coords = [...prevCoords];
       const randomCoords = getRandomCoordinates(props.baseLocation, 0.375); // testing
@@ -266,7 +268,7 @@ const RouteMarker = ({ props }) => {
           onClick={(e) =>
             destination !== idx + 1
               ? handleSelect(e, props.index + 1, destination > idx ? idx + 1 : idx)
-              : handleDriverSelect(e, props.index + 1)
+              : handleDriverSelect(e, props.driver_id)
           }
           onDblClick={() => false} // disabling zoom on double click
         >

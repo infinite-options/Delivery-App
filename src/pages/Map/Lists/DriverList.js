@@ -3,8 +3,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Icons from "Icons/Icons";
 import axios from "axios";
 
-// const DRIVERS_API_URL = "https://lu636s0qy3.execute-api.us-west-1.amazonaws.com/dev/api/v2/getDrivers";
-
 function DriverList({ drivers, colors, props }) {
   return (
     <React.Fragment>
@@ -25,33 +23,6 @@ function DriverList({ drivers, colors, props }) {
 
 function DriverItem({ props }) {
   const [hidden, setHidden] = useState(true);
-
-//   useEffect(() => {
-//     if (props.selectedLocation.driver === props.index + 1) {
-//       if (hidden) setHidden(false);
-//     }
-//   }, [props.selectedLocation]);
-
-//   const handleSelect = (driverNumber, locationNumber) => {
-//     // console.log(`{${driverNumber}, ${locationNumber}}`);
-//     props.setSelectedLocation((prevSelectedLocation) => {
-//       let selectedLocation = { ...prevSelectedLocation };
-//       if (
-//         driverNumber === selectedLocation.driver &&
-//         locationNumber === selectedLocation.location
-//       ) {
-//         selectedLocation.driver = undefined;
-//         selectedLocation.location = undefined;
-//         return selectedLocation;
-//       }
-
-//       if (driverNumber !== selectedLocation.driver)
-//         selectedLocation.driver = driverNumber;
-//       if (locationNumber !== selectedLocation.location)
-//         selectedLocation.location = locationNumber;
-//       return selectedLocation;
-//     });
-//   };
 
 //   const sendDriverText = (driverNumber) => {
 //     console.log(`Sending Driver ${driverNumber} a text..`);

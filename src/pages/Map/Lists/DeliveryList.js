@@ -15,6 +15,7 @@ function DeliveryList({ routes, colors, props }) {
           props={{
             route: routes[route_id].route_data,
             id: route_id,
+            driver_id: routes[route_id].driver_id,
             color: colors[index],
             index,
             selectedLocation,
@@ -97,11 +98,11 @@ function RouteItem({ props }) {
                 />
                 {/* <span className="tooltiptext">{hidden ? "Expand" : "Collapse"}</span> */}
               </button>
-              Driver {props.index + 1}
+              Driver {props.driver_id}
               {/* <button className="tooltip mx-1"> */}
               <button
                 className="mx-1"
-                onClick={() => sendDriverText(props.index + 1)}
+                onClick={() => sendDriverText(props.driver_id)}
               >
                 <FontAwesomeIcon icon={Icons.faComment} />
                 {/* <span className="tooltiptext">Message Driver</span> */}

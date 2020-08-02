@@ -62,8 +62,7 @@ function MapPage() {
       setBusinesses(result[1].value);
       setCustomers(result[2].value);
       // setRoutes(result[3].value);
-
-      createRoutes()
+      createRoutes(result[1].value)
       .then(result => {
         // console.log("route resp:", result);
         setRoutes(result);
@@ -124,49 +123,31 @@ function MapPage() {
     return c;
   };
 
-  // New route structure:
-  /*
-    {
-      route_id: {
-        business_id,
-        driver_id,
-        route_data: [
-          {
-            customer_id,
-            from: [prevLatitude OR businessLatitude, prevLongitude OR businessLongitude], 
-            to: [latitude, longitude], 
-            address,
-          },
-        ]
-      },
-    }
+  /* New route structure:
+   *
+   * Object > {
+   *   route_id: {
+   *     business_id,
+   *     driver_id,
+   *     route_data: [
+   *       {
+   *         customer_id,
+   *         from: [prevLatitude OR businessLatitude, prevLongitude OR businessLongitude], 
+   *         to: [latitude, longitude], 
+   *         address,
+   *       },
+   *     ]
+   *   },
+   * }
   */
-  const createRoutes = () => {
+  const createRoutes = (businesses) => {
     return axios.get(BASE_URL + "getCustomerRoutes")
     .then(response => {
+      console.log("temprouteS:", response);
       const result = response.data.result.result;
       let tempRoutes = {};
       for (let location of result) {
         const route_id = location.route_id;
-        // const temp_location_data = {
-        //   driver_id: location.driver_id,
-        //   driver_first_name: location.driver_first_name,
-        //   driver_last_name: location.driver_last_name,
-
-        //   customer_id: location.customer_id,
-        //   customer_first_name: location.customer_first_name,
-        //   customer_last_name: location.customer_last_name,
-        //   customer_email: location.customer_email,
-        //   customer_phone: location.customer_phone_num,
-
-        //   latitude: location.customer.latitude,
-        //   longitude: location.customer.longitude,
-        //   street: location.customer_street,
-        //   city: location.customer_city,
-        //   state: location.customer_state,
-        //   zip: location.customer_zip,
-        // }
-
         const location_data = {
           customer_id: location.customer_id,
           address: `${location.customer_street} ${location.customer_city} ${location.customer_state} ${location.customer_zip}`,
@@ -179,24 +160,21 @@ function MapPage() {
           tempRoutes[route_id].route_data.push(location_data);
         }
         else {
-          location_data.from = businesses[location.business_id];
+          console.log("what", businesses[location.business_id]);
+          location_data.from = [businesses[location.business_id].latitude, businesses[location.business_id].longitude];
           tempRoutes[route_id] = {
             business_id: location.business_id,
             driver_id: location.driver_id,
             route_data: [location_data],
           };
-          // const route_data = [];
-          // route_data.push()
-          // tempRoutes[route_id]
         }
       }
-      console.log("temproutes:", tempRoutes);
       setRouteColors(() => {
         let colors = [];
         for (let i = 0; i < Object.keys(tempRoutes).length; i++) {
           colors.push(rainbow(Object.keys(tempRoutes).length, i));
         }
-        console.log(colors);
+        // console.log(colors);
         return colors;
       });
       return tempRoutes;
@@ -204,130 +182,12 @@ function MapPage() {
     // .catch(err => {
     //   console.log(err.response ? err.response : err);
     // });
-
-
-    // return axios.get(BASE_API_URL + "deliveryRoute")
-    // .then((response) => {
-    //   // console.log(response);
-    //   if (response.status === 200) {
-    //     const result = [...response.data.result];
-    //     // cut off head & tail of result, since those values are the HQ location value
-    //     const route = result.slice(1, result.length - 1);
-    //     // console.log(route);
-    //     let tempRoutes = [];
-    //     let index = 0;
-    //     for (let i = 0; i < 1; i++) { // This endpoint responds with a single route
-    //       let tempRoute = [];
-    //       for (let j = 0; j < route.length; j++) {
-    //         // destination coords
-    //         let toLatitude = route[index].latitude;
-    //         let toLongitude = route[index].longitude;
-    //         // beginning coords, if first route then begin from HQ coords
-    //         let fromLatitude = !j
-    //           ? result[0].latitude
-    //           : route[index - 1].latitude;
-    //         let fromLongitude = !j
-    //           ? result[0].longitude
-    //           : route[index - 1].longitude;
-    //         // destination address
-    //         let street = route[index].house_address.trim();
-    //         let city = route[index].city.trim();
-    //         let state = route[index].state.trim().toUpperCase();
-    //         let zip = route[index].zipcode.trim();
-    //         let address = `${street}, ${city}, ${state} ${zip}`;
-    //         tempRoute.push({
-    //           from: [fromLatitude, fromLongitude],
-    //           to: [toLatitude, toLongitude],
-    //           address: address,
-    //         });
-    //         index++;
-    //         // console.log("index:", index);
-    //       }
-    //       tempRoutes.push(tempRoute);
-    //     }
-    //     console.log("temp:", tempRoutes);
-    //     // setRoutes(tempRoutes);
-    //     setRouteColors(() => {
-    //       let colors = [];
-    //       for (let i = 0; i < tempRoutes.length; i++) {
-    //         colors.push(rainbow(tempRoutes.length, i));
-    //       }
-    //       // console.log(colors);
-    //       return colors;
-    //     });
-    //     return tempRoutes;
-    //   }
-    // })
-    // .catch((err) => {
-    //   console.log(err.response ? err.response : err);
-    // });
-
-      
-    // axios
-    //   .get(BASE_API_URL + "multiDrivers")
-    //   .then((response) => {
-    //     // console.log(response);
-    //     if (response.status === 200) {
-    //       const result = [...response.data.result];
-    //       setDrivers(result.length);
-    //       let tempRoutes = [];
-    //       // let tempDrivers = [];
-    //       for (let element of result) {
-    //         // const driverData = await axios.get(DRIVER_API_URL + element.driver_id);
-    //         // tempDrivers.push(driverData);
-    //         // cut off head & tail of each result route, since those values are the HQ location value
-    //         const route = element.slice(1, element.length - 1);
-    //         // console.log("route:", route);
-    //         let tempRoute = [];
-    //         for (let i = 0; i < route.length; i++) {
-    //           // destination coords
-    //           console.log(route[i]);
-    //           let toLatitude = route[i].latitude;
-    //           let toLongitude = route[i].longitude;
-    //           // beginning coords, if first route then begin from HQ coords
-    //           let fromLatitude = !i
-    //             ? element[0].latitude
-    //             : route[i - 1].latitude;
-    //           let fromLongitude = !i
-    //             ? element[0].longitude
-    //             : route[i - 1].longitude;
-    //           // destination address
-    //           let street = route[i].house_address.trim();
-    //           let city = route[i].city.trim();
-    //           let state = route[i].state.trim().toUpperCase();
-    //           let zip = route[i].zipcode.trim();
-    //           let address = `${street}, ${city}, ${state} ${zip}`;
-    //           tempRoute.push({
-    //             from: [fromLatitude, fromLongitude],
-    //             to: [toLatitude, toLongitude],
-    //             address: address,
-    //           });
-    //         }
-    //         tempRoutes.push(tempRoute);
-    //       }
-    //       console.log("temp:", tempRoutes);
-    //       setRoutes(tempRoutes);
-    //       // setDrivers(tempDrivers);
-    //       setRouteColors(() => {
-    //         let colors = [];
-    //         for (let i = 0; i < tempRoutes.length; i++) {
-    //           colors.push(rainbow(tempRoutes.length, i));
-    //         }
-    //         // console.log(colors);
-    //         return colors;
-    //       });
-    //       setIsLoading(false);
-    //     }
-    //   })
-    //   .catch((err) => {
-    //     console.log(err.response ? err.response : err);
-    //   });
   };
 
   const createDrivers = () => {
     return axios.get(BASE_URL + "getDrivers")
     .then(response => {
-      // console.log("response_drivers:", response);
+      console.log("response_drivers:", response);
       const result = response.data.result.result;
       let tempDrivers = {};
       for (let driver of result) {
@@ -359,7 +219,6 @@ function MapPage() {
         }
         tempDrivers[driver_id] = driver_data;
       }
-      // console.log("tempdrivers:", tempDrivers);
       // setDrivers(tempDrivers);
       return tempDrivers;
     })
@@ -371,6 +230,7 @@ function MapPage() {
   const createBusinesses = () => {
     return axios.get(BASE_URL + "getBusinesses")
     .then(response => {
+      console.log("tempbusines", response);
       const result = response.data.result.result;
       let tempBusinesses = {};
       for (let business of result) {
@@ -393,7 +253,6 @@ function MapPage() {
         }
         tempBusinesses[business_id] = business_data;
       }
-      console.log("tempbusi:", tempBusinesses);
       // setBusinesses(tempBusinesses);
       return tempBusinesses;
     })
@@ -405,6 +264,7 @@ function MapPage() {
   const createCustomers = () => {
     return axios.get(BASE_URL + "getCustomers")
     .then(response => {
+      console.log("tempcust", response);
       const result = response.data.result.result;
       let tempCustomers = {};
       for (let customer of result) {
@@ -426,7 +286,6 @@ function MapPage() {
         }
         tempCustomers[customer_id] = customer_data;
       }
-      console.log("tempcust:", tempCustomers);
       // setCustomers(tempCustomers);
       return tempCustomers;
     })
