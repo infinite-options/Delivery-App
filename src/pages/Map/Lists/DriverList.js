@@ -45,7 +45,7 @@ function DriverItem({ props }) {
 //   };
 
   return (
-    <div className="box" style={{ backgroundColor: "#f8f7fa", display:"inline-block", width: "800px", minWidth: "100%" }}>
+    <div className="box list-item" style={{ backgroundColor: "#f8f7fa", display: "inline-block", width: "800px", minWidth: "100%" }}>
       <table
         className="table is-hoverable is-fullwidth is-size-7"
         style={{ backgroundColor: "#f8f7fa" }}

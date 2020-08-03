@@ -85,14 +85,14 @@ function RouteItem({ props }) {
   };
 
   return (
-    <div className="box" style={{ backgroundColor: "#f8f7fa", display:"inline-block", minWidth: "100%" }}>
+    <div className="box list-item" style={{ backgroundColor: "#f8f7fa", display: "inline-block", minWidth: "100%" }}>
       <table
         className="table is-hoverable is-fullwidth is-size-7"
         style={{ backgroundColor: "#f8f7fa" }}
       >
         <thead>
           <tr>
-            <th style={{minWidth: "210px"}}>
+            <th style={{ backgroundColor: "#ededed", minWidth: "210px" }}>
               {/* <button className="tooltip mx-1" onClick={() => setHidden(prevHidden => !prevHidden)}> */}
               <button
                 className="mx-1"
@@ -106,7 +106,7 @@ function RouteItem({ props }) {
               Driver {props.index + 1}
             </th>
             <th
-              style={{ backgroundColor: "#ededed", borderRadius: "8px 0 0 0", minWidth: "250px" }}
+              style={{ backgroundColor: "#ededed", minWidth: "250px" }}
             >
               <div
                 className="route"
@@ -118,7 +118,7 @@ function RouteItem({ props }) {
             <th style={{ backgroundColor: "#ededed", minWidth: "75px" }} />
             <th style={{ backgroundColor: "#ededed", minWidth: "70px" }} />
             <th style={{ backgroundColor: "#ededed", minWidth: "70px" }} />
-            <th style={{ backgroundColor: "#ededed", borderRadius: "0 8px 0 0", minWidth: "125px" }}/>
+            <th style={{ backgroundColor: "#ededed", minWidth: "125px" }}/>
           </tr>
         </thead>
         <tbody hidden={hidden}>

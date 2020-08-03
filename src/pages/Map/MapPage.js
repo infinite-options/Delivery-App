@@ -7,6 +7,7 @@ import DeliveryList from "./Lists/DeliveryList";
 import DriverList from "./Lists/DriverList";
 import BusinessList from "./Lists/BusinessList";
 import CustomerList from "./Lists/CustomerList";
+import OrderList from "./Lists/OrderList";
 import DeliveryView from "./DeliveryView";
 import AppIcon from "Icons/app_icon.png";
 import axios from "axios";
@@ -62,7 +63,7 @@ function MapPage() {
           drivers: result[0].value,
           businesses: result[1].value,
           customers: result[2].value,
-          orders: result[2].value,
+          orders: result[3].value,
         }));
         setIsLoading(false);
       });
@@ -367,7 +368,9 @@ function MapPage() {
         );
       case 4:
         return (
-          <p>WIP</p>
+          <OrderList 
+            orders={data.orders}
+          />
         );
       case 5:
         return (
@@ -425,7 +428,7 @@ function MapPage() {
               className={"column" + (headerTab < 4 ? " is-half" : "")}
               style={{ padding: "0 0.75rem", marginTop: "5vh" }}
             >
-              <div className="box" style={{ maxHeight: "90vh", overflowY: "scroll" }}>
+              <div className={"box" + (headerTab < 4 ? " map" : " no-map")}>
                 {handleHeaderTab()}
               </div>
             </div>

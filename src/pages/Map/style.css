@@ -118,7 +118,28 @@
   opacity: 1;
 }
 
-/* Delivery route classes */
+/* List classes */
+/* WHY DOESN'T THIS WORK PROPERLY?? STYLE CHANGES WHEN IT'S NOT INLINE CSS */
+.box.map {
+  max-height: 90vh; 
+  overflow-y: scroll;
+}
+
+.box.no-map {
+  min-height: 90vh; 
+  -webkit-box-shadow: none;
+	-moz-box-shadow: none;
+	box-shadow: none;
+}
+
+.list-item {
+  background-color: #f8f7fa; 
+  display: inline-block; 
+  /* width: 800px;  */
+  min-width: 100%;
+}
+
+/* Route classes */
 .route {
   width: 10vw;
   text-align: right;
@@ -189,14 +210,14 @@ table.is-view td.is-today-end {
   background-color: #ededed;
 }
 
-/* loading screen classes */
+/* Loading screen classes */
 .loading-screen {
-  margin: calc(50vh - 12vw) auto;
-  border: 1vw solid darkgrey;
+  margin: calc(50vh - 8vw) auto;
+  border: 0.8vw solid darkgrey;
   border-radius: 50%;
-  border-top: 1vw solid #dbdbdb;
-  width: 10vw;
-  height: 10vw;
+  border-top: 0.8vw solid #dbdbdb;
+  width: 8vw;
+  height: 8vw;
   -webkit-animation: spin 2s linear infinite; /* Safari */
   animation: spin 2s linear infinite;
 }
