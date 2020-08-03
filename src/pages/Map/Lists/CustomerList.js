@@ -25,7 +25,7 @@ function CustomerItem({ props }) {
   const [hidden, setHidden] = useState(true);
 
   return (
-    <div className="box" style={{ backgroundColor: "#f8f7fa" }}>
+    <div className="box" style={{ backgroundColor: "#f8f7fa", display:"inline-block", width: "800px", minWidth: "100%" }}>
       <table
         className="table is-hoverable is-fullwidth is-size-7"
         style={{ backgroundColor: "#f8f7fa" }}
@@ -52,7 +52,7 @@ function CustomerItem({ props }) {
         <tbody className="has-text-centered" hidden={hidden}>
           <tr>
             <td className="pr-0">
-                Name<br />{props.customer.first_name, props.customer.last_name}
+                Name<br />{`${props.customer.first_name} ${props.customer.last_name}`}
             </td>
             <td>
                 Address<br />{props.customer.street, props.customer.unit, props.customer.city, props.customer.state, props.customer.zip}

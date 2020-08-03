@@ -50,17 +50,19 @@ function MapPage() {
       createDrivers(),
       createBusinesses(),
       createCustomers(),
+      createOrders(),
     ])
     .then((result) => {
       console.log("API responses:", result);
       createRoutes(result[1].value)
       .then(response => {
-        // console.log("route resp:", response);
+        console.log("route resp:", response);
         setData(() => ({
           routes: response,
           drivers: result[0].value,
           businesses: result[1].value,
           customers: result[2].value,
+          orders: result[2].value,
         }));
         setIsLoading(false);
       });
@@ -112,7 +114,7 @@ function MapPage() {
   const createRoutes = (businesses) => {
     return axios.get(BASE_URL + "getCustomerRoutes")
     .then(response => {
-      console.log("temprouteS:", response);
+      // console.log("temprouteS:", response);
       const result = response.data.result.result;
       let tempRoutes = {};
       for (let location of result) {
@@ -142,16 +144,7 @@ function MapPage() {
       let i = 0;
       const routes_length = Object.keys(tempRoutes).length;
       for (let route_id in tempRoutes) tempRoutes[route_id].route_color = rainbow(routes_length, i++);
-
-      // setRouteColors(() => {
-      //   let colors = [];
-      //   const routes_length = Object.keys(tempRoutes).length;
-      //   for (let i = 0; i < routes_length; i++) {
-      //     colors.push(rainbow(routes_length, i));
-      //   }
-      //   // console.log(colors);
-      //   return colors;
-      // });
+      console.log(tempRoutes);
       return tempRoutes;
     })
     // .catch(err => {
@@ -162,7 +155,7 @@ function MapPage() {
   const createDrivers = () => {
     return axios.get(BASE_URL + "getDrivers")
     .then(response => {
-      console.log("response_drivers:", response);
+      // console.log("response_drivers:", response);
       const result = response.data.result.result;
       let tempDrivers = {};
       for (let driver of result) {
@@ -205,7 +198,7 @@ function MapPage() {
   const createBusinesses = () => {
     return axios.get(BASE_URL + "getBusinesses")
     .then(response => {
-      console.log("tempbusines", response);
+      // console.log("tempbusines", response);
       const result = response.data.result.result;
       let tempBusinesses = {};
       for (let business of result) {
@@ -239,7 +232,7 @@ function MapPage() {
   const createCustomers = () => {
     return axios.get(BASE_URL + "getCustomers")
     .then(response => {
-      console.log("tempcust", response);
+      // console.log("tempcust", response);
       const result = response.data.result.result;
       let tempCustomers = {};
       for (let customer of result) {
@@ -263,6 +256,44 @@ function MapPage() {
       }
       // setCustomers(tempCustomers);
       return tempCustomers;
+    })
+    // .catch(err => {
+    //   console.log(err.response ? err.response : err);
+    // });
+  };
+
+  const createOrders = () => {
+    return axios.get(BASE_URL + "getCustomerOrders")
+    .then(response => {
+      // console.log("temporders", response);
+      const result = response.data.result.result;
+      let tempOrders = {};
+      for (let order of result) {
+        const order_id = order.order_id;
+        const order_data = {
+          customer_id: order.customer_id,
+          customer_first_name: order.customer_first_name,
+          customer_last_name: order.customer_last_name,
+          customer_street: order.customer_street,
+          // unit: order.order_unit,
+          customer_city: order.customer_city,
+          customer_state: order.customer_state,
+          customer_zip: order.customer_zip,
+          customer_phone: order.customer_phone_num,
+          customer_email: order.customer_email,
+          customer_latitude: order.customer_latitude,
+          customer_longitude: order.customer_longitude,
+          
+          items: order.items,
+          cost: order.amount,
+          order_instructions: order.order_instructions,
+          delivery_instructions: order.delivery_instructions,
+          type: order.order_type,
+          status: order.order_status,
+        }
+        tempOrders[order_id] = order_data;
+      }
+      return tempOrders;
     })
     // .catch(err => {
     //   console.log(err.response ? err.response : err);
@@ -308,6 +339,9 @@ function MapPage() {
         return (
           <DeliveryList
             routes={data.routes}
+            drivers={data.drivers}
+            businesses={data.businesses}
+            customers={data.customers}
             props={{ selectedLocation, setSelectedLocation }}
           />
         );
@@ -372,21 +406,23 @@ function MapPage() {
       ) : (
         <div className="map-page">
           <div className="columns" style={{ margin: "auto" }}>
-            <div className="column is-half" style={{ padding: "0" }}>
-              <RouteTimes
-                times={times}
-                timeSlot={timeSlot}
-                setTimeSlot={setTimeSlot}
-              />
-              <div className="sticky">
-                <LeafletMap
-                  routes={data.routes}
-                  props={{ selectedLocation, setSelectedLocation }}
+            {headerTab < 4 && (
+              <div className="column is-half" style={{ padding: "0" }}>
+                <RouteTimes
+                  times={times}
+                  timeSlot={timeSlot}
+                  setTimeSlot={setTimeSlot}
                 />
+                <div className="sticky">
+                  <LeafletMap
+                    routes={data.routes}
+                    props={{ selectedLocation, setSelectedLocation }}
+                  />
+                </div>
               </div>
-            </div>
+            )}
             <div
-              className="column is-half"
+              className={"column" + (headerTab < 4 ? " is-half" : "")}
               style={{ padding: "0 0.75rem", marginTop: "5vh" }}
             >
               <div className="box" style={{ maxHeight: "90vh", overflowY: "scroll" }}>
@@ -401,7 +437,7 @@ function MapPage() {
 }
 
 function Header(props) {
-  const tabs = ["Delivery", "Drivers", "Businesses", "Customers", "Orders", "Shipments"];
+  const tabs = ["Delivery", "Drivers", "Businesses", "Customers", "Orders & Shipments", "Constraints"];
 
   const handleTabChange = (index) => {
     if (props.tab !== index) props.changeTab(index);

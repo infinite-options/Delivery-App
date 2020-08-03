@@ -45,7 +45,7 @@ function DriverItem({ props }) {
 //   };
 
   return (
-    <div className="box" style={{ backgroundColor: "#f8f7fa" }}>
+    <div className="box" style={{ backgroundColor: "#f8f7fa", display:"inline-block", width: "800px", minWidth: "100%" }}>
       <table
         className="table is-hoverable is-fullwidth is-size-7"
         style={{ backgroundColor: "#f8f7fa" }}
@@ -68,15 +68,15 @@ function DriverItem({ props }) {
             <th />
             <th />
             <th />
-            <th style={{width: "10.25em"}}>
+            <th style={{width: "8.5em"}}>
               <button
-                className="button is-rounded is-small mx-1"
+                className="button is-rounded is-super-small mx-1"
                 // onClick={() => sendText(idx + 1)}
               >
                 <FontAwesomeIcon icon={Icons.faComment} />
               </button>
               <button
-                className="button is-rounded is-small mx-1"
+                className="button is-rounded is-super-small mx-1"
                 // onClick={() => sendEmail(idx + 1)}
               >
                 <FontAwesomeIcon icon={Icons.faEnvelope} />

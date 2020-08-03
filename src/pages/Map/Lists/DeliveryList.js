@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Icons from "Icons/Icons";
 
-function DeliveryList({ routes, props }) {
+function DeliveryList({ routes, drivers, businesses, customers, props }) {
   // const [selectedLocation, setSelectedLocation] = useState({});
   const selectedLocation = props.selectedLocation;
   const setSelectedLocation = props.setSelectedLocation;
@@ -13,10 +13,14 @@ function DeliveryList({ routes, props }) {
         <RouteItem
           key={index}
           props={{
-            route: routes[route_id].route_data,
             id: route_id,
-            driver_id: routes[route_id].driver_id,
+            route: routes[route_id].route_data,
             color: routes[route_id].route_color,
+            driver_id: routes[route_id].driver_id,
+            driver_first_name: drivers[routes[route_id].driver_id].first_name,
+            driver_last_name: drivers[routes[route_id].driver_id].last_name,
+            // business id, business name, etc
+            customers,
             index,
             selectedLocation,
             setSelectedLocation,
@@ -81,14 +85,14 @@ function RouteItem({ props }) {
   };
 
   return (
-    <div className="box" style={{ backgroundColor: "#f8f7fa" }}>
+    <div className="box" style={{ backgroundColor: "#f8f7fa", display:"inline-block", minWidth: "100%" }}>
       <table
         className="table is-hoverable is-fullwidth is-size-7"
         style={{ backgroundColor: "#f8f7fa" }}
       >
         <thead>
           <tr>
-            <th>
+            <th style={{minWidth: "210px"}}>
               {/* <button className="tooltip mx-1" onClick={() => setHidden(prevHidden => !prevHidden)}> */}
               <button
                 className="mx-1"
@@ -99,18 +103,10 @@ function RouteItem({ props }) {
                 />
                 {/* <span className="tooltiptext">{hidden ? "Expand" : "Collapse"}</span> */}
               </button>
-              Driver {props.driver_id}
-              {/* <button className="tooltip mx-1"> */}
-              <button
-                className="mx-1"
-                onClick={() => sendDriverText(props.driver_id)}
-              >
-                <FontAwesomeIcon icon={Icons.faComment} />
-                {/* <span className="tooltiptext">Message Driver</span> */}
-              </button>
+              Driver {props.index + 1}
             </th>
             <th
-              style={{ backgroundColor: "#ededed", borderRadius: "8px 0 0 0" }}
+              style={{ backgroundColor: "#ededed", borderRadius: "8px 0 0 0", minWidth: "250px" }}
             >
               <div
                 className="route"
@@ -119,16 +115,29 @@ function RouteItem({ props }) {
                 <span style={{ backgroundColor: "#ededed" }}>Route</span>
               </div>
             </th>
-            <th style={{ backgroundColor: "#ededed" }}>ETA</th>
-            <th style={{ backgroundColor: "#ededed" }}>Arrived</th>
-            <th
-              style={{ backgroundColor: "#ededed", borderRadius: "0 8px 0 0" }}
-            >
-              Confirm
-            </th>
+            <th style={{ backgroundColor: "#ededed", minWidth: "75px" }} />
+            <th style={{ backgroundColor: "#ededed", minWidth: "70px" }} />
+            <th style={{ backgroundColor: "#ededed", minWidth: "70px" }} />
+            <th style={{ backgroundColor: "#ededed", borderRadius: "0 8px 0 0", minWidth: "125px" }}/>
           </tr>
         </thead>
         <tbody hidden={hidden}>
+          <tr>
+            <th style={{borderBottomWidth: "2px"}}>
+              <span className="ml-1">{`${props.driver_first_name} ${props.driver_last_name[0]}.`}</span>
+              <button
+                className="button is-rounded is-super-small mx-3"
+                onClick={() => sendDriverText(props.driver_id)}
+              >
+                <FontAwesomeIcon icon={Icons.faComment} />
+              </button>
+            </th>
+            <th style={{borderBottomWidth: "2px"}}>Destination</th>
+            <th style={{borderBottomWidth: "2px"}}>Customer</th>
+            <th style={{borderBottomWidth: "2px"}}>ETA</th>
+            <th style={{borderBottomWidth: "2px"}}>Arrival</th>
+            <th style={{borderBottomWidth: "2px"}}><span className="ml-2">Confirm</span></th>
+          </tr>
           {route_values.map((location, idx) => (
             <tr
               key={idx}
@@ -160,7 +169,8 @@ function RouteItem({ props }) {
                   Change
                 </button>
               </td>
-              <td>{location["address"]}</td>
+              <td>{location.address}</td>
+              <td>{`${props.customers[location.customer_id].first_name} ${props.customers[location.customer_id].last_name[0]}.`}</td>
               <td>00:00 am</td>
               <td>00:00 pm</td>
               <td>
