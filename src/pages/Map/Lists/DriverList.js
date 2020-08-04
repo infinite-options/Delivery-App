@@ -6,12 +6,12 @@ import axios from "axios";
 function DriverList({ drivers, routes, props }) {
   return (
     <React.Fragment>
-      {Object.keys(drivers).map((driver_id, index) => (
+      {Object.entries(drivers).map((driver, index) => (
         <DriverItem
           key={index}
           props={{
-            driver: drivers[driver_id],
-            id: driver_id,
+            driver: driver[1],
+            id: driver[0],
             routes: routes,
             index,
           }}
@@ -92,9 +92,9 @@ function DriverItem({ props }) {
                 Last Name
             </td>
             <td className="pl-0 has-text-left">
-                {props.driver.first_name}
+                <p className="ml-2">{props.driver.first_name}</p>
                 <hr style={{margin: 0, backgroundColor: "#ededed"}}/>
-                {props.driver.last_name}
+                <p className="ml-2">{props.driver.last_name}</p>
             </td>
             <td>
                 Hours/week<br />{props.driver.weekly_workload}

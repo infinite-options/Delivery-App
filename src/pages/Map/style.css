@@ -119,7 +119,6 @@
 }
 
 /* List classes */
-/* WHY DOESN'T THIS WORK PROPERLY?? STYLE CHANGES WHEN IT'S NOT INLINE CSS */
 .box.map {
   max-height: 90vh; 
   overflow-y: scroll;
@@ -129,9 +128,9 @@
   min-height: 90vh; 
   -webkit-box-shadow: none;
 	-moz-box-shadow: none;
-	box-shadow: none;
+  box-shadow: none;
 }
-
+/* WHY DOESN'T THIS WORK PROPERLY?? STYLE CHANGES WHEN IT'S NOT INLINE CSS */
 .list-item {
   background-color: #f8f7fa; 
   display: inline-block; 

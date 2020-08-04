@@ -18,8 +18,6 @@ const DEFAULT_LONGITUDE = -121.886329;
 
 function LeafletMap({ routes, props }) {
   console.log("rendering map..");
-  const routes_values = Object.values(routes);
-  const routes_keys = Object.keys(routes);
   const [leafletMap, setLeafletMap] = useState();
   const [mapMarkers, setMapMarkers] = useState([]);
 
@@ -34,9 +32,11 @@ function LeafletMap({ routes, props }) {
   }
   // console.log(baseLocations);
   // console.log(routes);
+  const baseLocations_array = Object.entries(baseLocations);
+  const routes_array = Object.entries(routes);
 
-  const latitude = Object.values(baseLocations)[0][0];
-  const longitude = Object.values(baseLocations)[0][1];
+  const latitude = baseLocations_array[0][1][0];
+  const longitude = baseLocations_array[0][1][1];
 
   useEffect(() => {
     const selected = { ...selectedLocation };
@@ -47,7 +47,7 @@ function LeafletMap({ routes, props }) {
     if (leafletMap && driver && location) {
       // console.log("SUCCESS");
       const zoom = leafletMap.getZoom() >= 11 ? leafletMap.getZoom() : 11;
-      const route = routes_values[driver - 1].route_data;
+      const route = routes_array[driver - 1][1].route_data;
       // console.log("HERE2:", route);
       const latlng = route[location - 1]["to"];
       // console.log(zoom);
@@ -120,21 +120,21 @@ function LeafletMap({ routes, props }) {
         // updateWhenIdle={true}
         onLoad={handleMapUpdate}
       />
-      {Object.keys(baseLocations).map((business_id, index) => (
-        <Marker key={index} position={baseLocations[business_id]} icon={Icons.Headquarters} onClick={() => console.log(`Hi this is Business ${business_id}`)} />
+      {baseLocations_array.map((location, index) => (
+        <Marker key={index} position={location[1]} icon={Icons.Headquarters} onClick={() => console.log(`Hi this is Business ${location[0]}`)} />
       ))}
-      {routes_keys.map((route_id, index) => (
+      {routes_array.map((route, index) => (
         <RouteMarker
           key={index}
           props={{
-            id: route_id,
-            driver_id: routes[route_id].driver_id,
-            route: routes[route_id].route_data,
+            id: route[0],
+            driver_id: route[1].driver_id,
+            route: route[1].route_data,
             index,
-            color: routes[route_id].route_color,
+            color: route[1].route_color,
             selectedLocation,
             setSelectedLocation,
-            baseLocation: routes[route_id].route_data[0].from,
+            baseLocation: route[1].route_data[0].from,
           }}
         />
       ))}

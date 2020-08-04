@@ -348,7 +348,6 @@ function MapPage() {
         );
       case 1:
         return (
-          // <p>WIP</p>
           <DriverList
             drivers={data.drivers}
             routes={data.routes} // for creating route preferences, probably

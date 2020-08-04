@@ -9,16 +9,16 @@ function DeliveryList({ routes, drivers, businesses, customers, props }) {
 
   return (
     <React.Fragment>
-      {Object.keys(routes).map((route_id, index) => (
+      {Object.entries(routes).map((route, index) => (
         <RouteItem
           key={index}
           props={{
-            id: route_id,
-            route: routes[route_id].route_data,
-            color: routes[route_id].route_color,
-            driver_id: routes[route_id].driver_id,
-            driver_first_name: drivers[routes[route_id].driver_id].first_name,
-            driver_last_name: drivers[routes[route_id].driver_id].last_name,
+            id: route[0],
+            route: route[1].route_data,
+            color: route[1].route_color,
+            driver_id: route[1].driver_id,
+            driver_first_name: drivers[route[1].driver_id].first_name,
+            driver_last_name: drivers[route[1].driver_id].last_name,
             // business id, business name, etc
             customers,
             index,

@@ -6,12 +6,12 @@ import axios from "axios";
 function BusinessList({ businesses, props }) {
   return (
     <React.Fragment>
-      {Object.keys(businesses).map((business_id, index) => (
+      {Object.entries(businesses).map((business, index) => (
         <BusinessItem
           key={index}
           props={{
-            business: businesses[business_id],
-            id: business_id,
+            business: business[1],
+            id: business[0],
             // colors: colors,
             index,
           }}

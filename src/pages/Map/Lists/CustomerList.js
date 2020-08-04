@@ -6,12 +6,12 @@ import axios from "axios";
 function CustomerList({ customers, props }) {
   return (
     <React.Fragment>
-      {Object.keys(customers).map((customer_id, index) => (
+      {Object.entries(customers).map((customer, index) => (
         <CustomerItem
           key={index}
           props={{
-            customer: customers[customer_id],
-            id: customer_id,
+            customer: customer[1],
+            id: customer[0],
             // colors: colors,
             index,
           }}
