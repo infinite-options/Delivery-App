@@ -123,6 +123,17 @@ function DriverItem({ props }) {
                 Times Available<br />{props.driver.time_availability}
             </td>
           </tr>
+          <tr>
+            <td>
+              Insurance Number<br />{props.driver.insurance_number}
+            </td>
+            <td>
+              Driver Password<br />{props.driver.password}
+            </td>
+            <td>
+              Business ID<br />{props.driver.business_id}
+            </td>
+          </tr>
         </tbody>
       </table>
     </div>

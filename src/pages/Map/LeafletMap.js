@@ -272,7 +272,7 @@ const RouteMarker = ({ props }) => {
               ? handleSelect(e, props.index + 1, destination > idx ? idx + 1 : idx)
               : handleDriverSelect(e, props.driver_id)
           }
-          onDblClick={() => false} // disabling zoom on double click
+          onDblClick={() => false} // disabling zoom on marker double click
         >
           {/* TODO: Learn how to set conditional popups, i.e. if Marker is already selected, do not show popup on click */}
           {/* <Popup closeButton={false}>

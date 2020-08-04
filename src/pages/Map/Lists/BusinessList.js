@@ -23,6 +23,7 @@ function BusinessList({ businesses, props }) {
 
 function BusinessItem({ props }) {
   const [hidden, setHidden] = useState(true);
+  const address = `${props.business.street}${(props.business.unit ? ` ${props.business.unit}` : "")} ${props.business.city} ${props.business.state} ${props.business.zip}`;
 
   return (
     <div className="box list-item" style={{ backgroundColor: "#f8f7fa", display: "inline-block", width: "800px", minWidth: "100%" }}>
@@ -63,7 +64,7 @@ function BusinessItem({ props }) {
           </tr>
           <tr>
             <td>
-                Address<br />{props.business.street, props.business.unit, props.business.city, props.business.state, props.business.zip}
+                Address<br />{address}
             </td>
             <td>
                 {props.business.latitude}

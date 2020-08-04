@@ -145,7 +145,6 @@ function MapPage() {
       let i = 0;
       const routes_length = Object.keys(tempRoutes).length;
       for (let route_id in tempRoutes) tempRoutes[route_id].route_color = rainbow(routes_length, i++);
-      console.log(tempRoutes);
       return tempRoutes;
     })
     // .catch(err => {
@@ -170,6 +169,7 @@ function MapPage() {
           password: driver.driver_password,
           time_availability: driver.driver_hours,
 
+          business_id: driver.business_id,
           weekly_workload: -1,
           day_availability: "PLACEHOLDER",
           // time_availability: {

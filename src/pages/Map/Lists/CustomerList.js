@@ -23,6 +23,7 @@ function CustomerList({ customers, props }) {
 
 function CustomerItem({ props }) {
   const [hidden, setHidden] = useState(true);
+  const address = `${props.customer.street}${props.customer.unit ? ` ${props.customer.unit}` : ""} ${props.customer.city} ${props.customer.state} ${props.customer.zip}`;
 
   return (
     <div className="box list-item" style={{ backgroundColor: "#f8f7fa", display: "inline-block", width: "800px", minWidth: "100%" }}>
@@ -55,7 +56,7 @@ function CustomerItem({ props }) {
                 Name<br />{`${props.customer.first_name} ${props.customer.last_name}`}
             </td>
             <td>
-                Address<br />{props.customer.street, props.customer.unit, props.customer.city, props.customer.state, props.customer.zip}
+                Address<br />{address}
             </td>
             <td>
                 {props.customer.latitude}<br />{props.customer.longitude}
