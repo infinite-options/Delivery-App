@@ -9,7 +9,7 @@ const DefaultIcon = (color, {width=25, height=41, mult=1} = {}) => {
   let h = height * mult;
   return new Icon({
     // These google charts icons are a bit ugly, but are super customizable (color-wise), see if they have better looking ones?
-    iconUrl: `http://chart.apis.google.com/chart?chst=d_map_pin_icon&chld=home|${color.substring(1)}&chf=a,s,ee00FFFF`,
+    iconUrl: `https://chart.apis.google.com/chart?chst=d_map_pin_icon&chld=home|${color.substring(1)}&chf=a,s,ee00FFFF`,
     shadowUrl:
       "https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png",
     iconSize: [w, h],
