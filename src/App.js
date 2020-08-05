@@ -4,7 +4,7 @@ import MapPage from "pages/Map/MapPage";
 
 function App() {
   return (
-    <Router basename={"just-delivered"}>
+    <Router basename={"Delivery-App"}>
       <Switch>
         <Route exact path="/" component={MapPage} />
         {/* <Route component={ErrorPage} /> 
