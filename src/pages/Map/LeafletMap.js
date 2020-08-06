@@ -75,7 +75,9 @@ function LeafletMap({ routes, props }) {
         if (layer instanceof L.Marker) {
           markers.push(layer);
           // check if Marker should be visible initially
-          const isVisible = map.getBounds().contains(layer.getLatLng());
+          // console.log(routes[layer.options.route]);
+          const routeVisible = routes[layer.options.route] ? routes[layer.options.route].visible : true;
+          const isVisible = routeVisible && map.getBounds().contains(layer.getLatLng());
           if (!isVisible) map.removeLayer(layer);
         }
         // if Markers ever need to be added/removed in the future, remember to push marker into mapMarker Hook
@@ -92,8 +94,10 @@ function LeafletMap({ routes, props }) {
     for (let i = mapMarkers.length - 1; i >= 0; i--) {
       const marker = mapMarkers[i];
       // console.log("Marker:", marker);
+      // console.log(routes[marker.options.route]);
+      const routeVisible = routes[marker.options.route] ? routes[marker.options.route].visible : true;
       const mapBounds = map.getBounds();
-      const isVisible = mapBounds.contains(marker.getLatLng());
+      const isVisible = routeVisible && mapBounds.contains(marker.getLatLng());
       if (marker._icon && !isVisible) map.removeLayer(marker);
       else if (!marker._icon && isVisible) map.addLayer(marker);
     }
@@ -130,6 +134,7 @@ function LeafletMap({ routes, props }) {
             id: route[0],
             driver_id: route[1].driver_id,
             route: route[1].route_data,
+            visible: route[1].visible,
             index,
             color: route[1].route_color,
             selectedLocation,
@@ -251,9 +256,10 @@ const RouteMarker = ({ props }) => {
 
   return (
     <React.Fragment>
-      {coords.map((location, idx) => (
+      {props.visible && coords.map((location, idx) => (
         <Marker
           key={idx}
+          route={props.id}
           position={location[1]}
           icon={
             destination === idx + 1
@@ -291,7 +297,7 @@ const RouteMarker = ({ props }) => {
           </Popup> */}
         </Marker>
       ))}
-      {coords.map((location, index) => {
+      {props.visible && coords.map((location, index) => {
         // console.log(index, location);
         return (
           <Polyline

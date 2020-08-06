@@ -140,7 +140,7 @@
 
 /* Route classes */
 .route {
-  width: 10vw;
+  /* width: 10vw; */
   text-align: right;
   /* border-bottom: 1px solid #000;  */
   line-height: 0.1em;

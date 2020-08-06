@@ -7,9 +7,11 @@ import 'moment-timezone';
 // import DayPicker from 'react-day-picker';
 // import 'react-day-picker/lib/style.css';
 
+const weekdays = moment.weekdays();
+
 function DeliveryView(props) {
   console.log("rendering view..");
-  const weekdays = moment.weekdays();
+
   const [columns, setColumns] = useState([]);
 
   const today = moment();

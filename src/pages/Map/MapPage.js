@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useReducer, useEffect } from "react";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Icons from "Icons/Icons";
@@ -12,9 +12,52 @@ import DeliveryView from "./DeliveryView";
 import AppIcon from "Icons/app_icon.png";
 import axios from "axios";
 
-// NOTE: just remember to change this
-const BASE_API_URL =
-  "https://wrguk721j7.execute-api.us-west-1.amazonaws.com/dev/api/v1/";
+const rainbow = (numOfSteps, step) => {
+  // This function generates vibrant, "evenly spaced" colours (i.e. no clustering). This is ideal for creating easily distinguishable vibrant markers in Google Maps and other apps.
+  // Adam Cole, 2011-Sept-14
+  // HSV to RBG adapted from: http://mjijackson.com/2008/02/rgb-to-hsl-and-rgb-to-hsv-color-model-conversion-algorithms-in-javascript
+  var r, g, b;
+  var h = step / numOfSteps;
+  var i = ~~(h * 6);
+  var f = h * 6 - i;
+  var q = 1 - f;
+  switch (i % 6) {
+    case 0: r = 1; g = f; b = 0; break;
+    case 1: r = q; g = 1; b = 0; break;
+    case 2: r = 0; g = 1; b = f; break;
+    case 3: r = 0; g = q; b = 1; break;
+    case 4: r = f; g = 0; b = 1; break;
+    case 5: r = 1; g = 0; b = q; break;
+  }
+  var c = "#" +
+    ("00" + (~~(r * 255)).toString(16)).slice(-2) +
+    ("00" + (~~(g * 255)).toString(16)).slice(-2) +
+    ("00" + (~~(b * 255)).toString(16)).slice(-2);
+  return c;
+};
+
+function reducer(state, action) {
+  switch(action.type) {
+    case 'init':
+      return action.payload;
+    case 'route-toggle-visibility':
+      // console.log({...state});
+      return { 
+        ...state,
+        routes: {
+          ...state.routes,
+          [action.id]: {
+            ...state.routes[action.id],
+            visible: !state.routes[action.id].visible,
+          }
+        }
+      };
+    default:
+      return state;
+  }
+}
+
+// "https://wrguk721j7.execute-api.us-west-1.amazonaws.com/dev/api/v1/";
 const BASE_URL = 
   "https://lu636s0qy3.execute-api.us-west-1.amazonaws.com/dev/api/v2/";
 
@@ -22,10 +65,8 @@ function MapPage() {
   console.log("rendering..");
 
   const [isLoading, setIsLoading] = useState(true);
-  const [data, setData] = useState({});
-
-  const headerTabLocal = Number(window.localStorage.getItem("headerTab"));
-  const timeSlotLocal = Number(window.localStorage.getItem("timeSlot")); 
+  const [data, dispatch] = useReducer(reducer, {});
+ 
   const [times, setTimes] = useState([
     { value: "00 am - 00 pm" },
     { value: "01 am - 01 pm" },
@@ -33,8 +74,10 @@ function MapPage() {
     { value: "03 am - 03 pm" },
     { value: "04 am - 04 pm" },
   ]); // useState(GET_ROUTE_TIMES)
-  const [timeSlot, setTimeSlot] = useState(timeSlotLocal ? timeSlotLocal : 0); 
-  const [headerTab, setHeaderTab] = useState(headerTabLocal ? headerTabLocal : 0); 
+  const timeSlotInit = Number(window.localStorage.getItem("timeSlot")) || 0; 
+  const headerTabInit = Number(window.localStorage.getItem("headerTab")) || 0;
+  const [timeSlot, setTimeSlot] = useState(timeSlotInit); 
+  const [headerTab, setHeaderTab] = useState(headerTabInit); 
   const [selectedLocation, setSelectedLocation] = useState({});
   // const [routeColors, setRouteColors] = useState([]);
 
@@ -58,41 +101,25 @@ function MapPage() {
       createRoutes(result[1].value)
       .then(response => {
         console.log("route resp:", response);
-        setData(() => ({
+        // setData(() => ({
+        //   routes: response,
+        //   drivers: result[0].value,
+        //   businesses: result[1].value,
+        //   customers: result[2].value,
+        //   orders: result[3].value,
+        // }));
+        const data = {
           routes: response,
           drivers: result[0].value,
           businesses: result[1].value,
           customers: result[2].value,
           orders: result[3].value,
-        }));
+        };
+        dispatch({ type: "init", payload: data });
         setIsLoading(false);
       });
     });
   }, []);
-
-  const rainbow = (numOfSteps, step) => {
-    // This function generates vibrant, "evenly spaced" colours (i.e. no clustering). This is ideal for creating easily distinguishable vibrant markers in Google Maps and other apps.
-    // Adam Cole, 2011-Sept-14
-    // HSV to RBG adapted from: http://mjijackson.com/2008/02/rgb-to-hsl-and-rgb-to-hsv-color-model-conversion-algorithms-in-javascript
-    var r, g, b;
-    var h = step / numOfSteps;
-    var i = ~~(h * 6);
-    var f = h * 6 - i;
-    var q = 1 - f;
-    switch (i % 6) {
-      case 0: r = 1; g = f; b = 0; break;
-      case 1: r = q; g = 1; b = 0; break;
-      case 2: r = 0; g = 1; b = f; break;
-      case 3: r = 0; g = q; b = 1; break;
-      case 4: r = f; g = 0; b = 1; break;
-      case 5: r = 1; g = 0; b = q; break;
-    }
-    var c = "#" +
-      ("00" + (~~(r * 255)).toString(16)).slice(-2) +
-      ("00" + (~~(g * 255)).toString(16)).slice(-2) +
-      ("00" + (~~(b * 255)).toString(16)).slice(-2);
-    return c;
-  };
 
   /* New route structure:
    *
@@ -100,6 +127,7 @@ function MapPage() {
    *     route_id: {
    *         business_id,
    *         driver_id,
+   *         visible,
    *         route_color,
    *         route_data: [
    *             {
@@ -137,6 +165,7 @@ function MapPage() {
           tempRoutes[route_id] = {
             business_id: location.business_id,
             driver_id: location.driver_id,
+            visible: true,
             route_data: [location_data],
           };
         }
@@ -343,7 +372,7 @@ function MapPage() {
             drivers={data.drivers}
             businesses={data.businesses}
             customers={data.customers}
-            props={{ selectedLocation, setSelectedLocation }}
+            props={{ selectedLocation, setSelectedLocation, dispatch }}
           />
         );
       case 1:

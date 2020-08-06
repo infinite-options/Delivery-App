@@ -6,6 +6,7 @@ function DeliveryList({ routes, drivers, businesses, customers, props }) {
   // const [selectedLocation, setSelectedLocation] = useState({});
   const selectedLocation = props.selectedLocation;
   const setSelectedLocation = props.setSelectedLocation;
+  const dispatch = props.dispatch;
 
   return (
     <React.Fragment>
@@ -15,6 +16,7 @@ function DeliveryList({ routes, drivers, businesses, customers, props }) {
           props={{
             id: route[0],
             route: route[1].route_data,
+            visible: route[1].visible,
             color: route[1].route_color,
             driver_id: route[1].driver_id,
             driver_first_name: drivers[route[1].driver_id].first_name,
@@ -24,6 +26,7 @@ function DeliveryList({ routes, drivers, businesses, customers, props }) {
             index,
             selectedLocation,
             setSelectedLocation,
+            dispatch,
           }}
         />
       ))}
@@ -118,7 +121,11 @@ function RouteItem({ props }) {
             <th style={{ backgroundColor: "#ededed", minWidth: "75px" }} />
             <th style={{ backgroundColor: "#ededed", minWidth: "70px" }} />
             <th style={{ backgroundColor: "#ededed", minWidth: "70px" }} />
-            <th style={{ backgroundColor: "#ededed", minWidth: "125px" }}/>
+            <th style={{ backgroundColor: "#ededed", minWidth: "125px" }}>
+              <button className="button is-rounded is-super-small is-pulled-right" onClick={() => props.dispatch({ type: "route-toggle-visibility", id: props.id })}>
+                <FontAwesomeIcon icon={props.visible ? Icons.faEyeSlash : Icons.faEye} />
+              </button>
+            </th>
           </tr>
         </thead>
         <tbody hidden={hidden}>
