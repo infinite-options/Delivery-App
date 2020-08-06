@@ -106,7 +106,7 @@ function RouteItem({ props }) {
                 />
                 {/* <span className="tooltiptext">{hidden ? "Expand" : "Collapse"}</span> */}
               </button>
-              Driver {props.index + 1}
+              Route {props.id}
             </th>
             <th
               style={{ backgroundColor: "#ededed", minWidth: "250px" }}
@@ -131,7 +131,7 @@ function RouteItem({ props }) {
         <tbody hidden={hidden}>
           <tr>
             <th style={{borderBottomWidth: "2px"}}>
-              <span className="ml-1">{`${props.driver_first_name} ${props.driver_last_name[0]}.`}</span>
+              <span className="ml-1">{`Driver: ${props.driver_first_name} ${props.driver_last_name[0]}.`}</span>
               <button
                 className="button is-rounded is-super-small mx-3"
                 onClick={() => sendDriverText(props.driver_id)}

@@ -1,6 +1,6 @@
 .map-page {
-  /* margin-top: 5vh; */
   background-color: #f8f7fa;
+  height: 95vh;
 }
 
 /* Leaflet map classes */
@@ -120,15 +120,17 @@
 
 /* List classes */
 .box.map {
-  max-height: 90vh; 
+  max-height: 89vh; 
   overflow-y: scroll;
 }
 
 .box.no-map {
-  min-height: 90vh; 
+  max-height: 93vh; 
   -webkit-box-shadow: none;
 	-moz-box-shadow: none;
   box-shadow: none;
+  overflow-y: scroll;
+  overflow-x: auto;
 }
 /* WHY DOESN'T THIS WORK PROPERLY?? STYLE CHANGES WHEN IT'S NOT INLINE CSS */
 .list-item {

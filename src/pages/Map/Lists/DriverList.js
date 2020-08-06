@@ -63,7 +63,7 @@ function DriverItem({ props }) {
                 />
                 {/* <span className="tooltiptext">{hidden ? "Expand" : "Collapse"}</span> */}
               </button>
-              Driver {props.id}
+              Driver {props.id}: {`${props.driver.first_name} ${props.driver.last_name}`}
             </th>
             <th />
             <th />

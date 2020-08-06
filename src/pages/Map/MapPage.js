@@ -453,8 +453,8 @@ function MapPage() {
               </div>
             )}
             <div
-              className={"column" + (headerTab < 4 ? " is-half" : "")}
-              style={{ padding: "0 0.75rem", marginTop: "5vh" }}
+              className={"column" + (headerTab < 4 ? " is-half" : " is-full")}
+              style={{ padding: "0 0.75rem", marginTop: (headerTab < 4 ? "5vh" : "1vh") }}
             >
               <div className={"box" + (headerTab < 4 ? " map" : " no-map")}>
                 {handleHeaderTab()}

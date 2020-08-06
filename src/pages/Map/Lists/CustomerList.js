@@ -44,7 +44,7 @@ function CustomerItem({ props }) {
                 />
                 {/* <span className="tooltiptext">{hidden ? "Expand" : "Collapse"}</span> */}
               </button>
-              Customer {props.id}
+              Customer {props.id}: {`${props.customer.first_name} ${props.customer.last_name}`}
             </th>
             <th />
             <th />

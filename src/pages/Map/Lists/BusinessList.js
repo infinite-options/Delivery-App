@@ -44,7 +44,7 @@ function BusinessItem({ props }) {
                 />
                 {/* <span className="tooltiptext">{hidden ? "Expand" : "Collapse"}</span> */}
               </button>
-              Business {props.id}
+              Business {props.id}: {props.business.name}
             </th>
             <th />
             <th />
