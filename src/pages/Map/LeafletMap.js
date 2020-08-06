@@ -59,19 +59,17 @@ function LeafletMap({ routes, props }) {
   }, [selectedLocation]);
 
   const handleMapUpdate = (e) => {
+    // console.log(mapMarkers);
     // console.log(e.target);
-    // onLoad does not work on Map component, so must be called from its child component (TileLayer)
-    const map = e.target instanceof L.Map ? e.target : e.target._map;
-    if (!leafletMap) {
-      setLeafletMap(map);
-      console.log("loading map..");
-    }
+
     // const mapBounds = map.getBounds();
-    // store all Markers if onLoad event has been called (AKA first time loading site)
-    if (!mapMarkers.length && e.target instanceof L.TileLayer) {
+    // store all Markers if onLoad event has been called & there is no map data
+    if (!leafletMap && !mapMarkers.length && e.target instanceof L.TileLayer) {
+      // onLoad does not work on Map component, so must be called from its child component (TileLayer)
+      const map = e.target instanceof L.Map ? e.target : e.target._map;
       let markers = [];
       map.eachLayer((layer) => {
-        // console.log("Scanning");
+        // console.log("Scanning", layer);
         if (layer instanceof L.Marker) {
           markers.push(layer);
           // check if Marker should be visible initially
@@ -84,12 +82,14 @@ function LeafletMap({ routes, props }) {
       });
       // console.log(markers);
       setMapMarkers(markers);
+      setLeafletMap(map);
+      console.log("loading map..");
     }
-    else if (e.target instanceof L.Map) manageMarkers(map); // updating Markers' visibility as user drags map around
+    else if (e.target instanceof L.Map) manageMarkers(); // updating Markers' visibility as user drags map around
     // console.log(mapMarkers);
   };
 
-  const manageMarkers = (map) => {
+  const manageMarkers = (map=leafletMap) => {
     // console.log(mapMarkers);
     for (let i = mapMarkers.length - 1; i >= 0; i--) {
       const marker = mapMarkers[i];
@@ -139,6 +139,7 @@ function LeafletMap({ routes, props }) {
             color: route[1].route_color,
             selectedLocation,
             setSelectedLocation,
+            manageMarkers,
             baseLocation: route[1].route_data[0].from,
           }}
         />
@@ -157,6 +158,10 @@ const RouteMarker = ({ props }) => {
   useEffect(() => {
     createRouteCoords();
   }, []);
+
+  useEffect(() => {
+    props.manageMarkers();
+  }, [props.visible])
 
   const createRouteCoords = () => {
     let latlngs = [];
@@ -228,6 +233,7 @@ const RouteMarker = ({ props }) => {
 
   // duplcate code, create function in MapPage.js and send function to children component
   const handleSelect = (event, driverNumber, locationNumber) => {
+    // console.log(event);
     // console.log(`{${driverNumber}, ${locationNumber}}`);
     props.setSelectedLocation((prevSelectedLocation) => {
       let selectedLocation = { ...prevSelectedLocation };
@@ -256,7 +262,7 @@ const RouteMarker = ({ props }) => {
 
   return (
     <React.Fragment>
-      {props.visible && coords.map((location, idx) => (
+      {coords.map((location, idx) => (
         <Marker
           key={idx}
           route={props.id}
