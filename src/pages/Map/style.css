@@ -1,6 +1,6 @@
 .map-page {
   background-color: #f8f7fa;
-  height: 95vh;
+  height: max(95vh, 100%);
 }
 
 /* Leaflet map classes */
@@ -78,7 +78,7 @@
   align-items: center;
 }
 
-/* Tooltip classes */
+/* Tooltip classes (copy-pasted from a site, modify it so size isn't hardcoded) */
 .tooltip {
   position: relative;
   display: inline-block;
@@ -132,15 +132,27 @@
   overflow-y: scroll;
   overflow-x: auto;
 }
-/* WHY DOESN'T THIS WORK PROPERLY?? STYLE CHANGES WHEN IT'S NOT INLINE CSS */
+
 .list-item {
-  background-color: #f8f7fa; 
-  display: inline-block; 
-  /* width: 800px;  */
-  min-width: 100%;
+  background-color: #f8f7fa !important; 
+  display: inline-block !important; 
+  min-width: max(800px, 100%);
+  /* width: 120%; */
 }
 
-/* Route classes */
+.list-item table thead tr.list-item-head {
+  background-color: #ededed;
+}
+
+.list-item table thead tr.list-item-head th:first-child {
+  border-top-left-radius: 6px;
+}
+
+.list-item table thead tr.list-item-head th:last-child {
+  border-top-right-radius: 6px;
+}
+
+/* Route color display classes */
 .route {
   /* width: 10vw; */
   text-align: right;
@@ -198,8 +210,11 @@ table.is-view td.is-today-end {
   padding-right: 0.85em !important;
 }
 
-.button.is-square {
+.button.is-sharp {
   border-radius: 0;
+}
+
+.button.is-tilted-right {
   transform: skew(-10deg);
 }
 

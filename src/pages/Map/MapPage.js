@@ -492,7 +492,7 @@ function Header(props) {
         {tabs.map((value, idx) => (
           <button 
             key={idx} 
-            className="button is-lightgrey is-square is-fullheight"
+            className="button is-lightgrey is-sharp is-tilted-right is-fullheight"
             onClick={() => handleTabChange(idx)}
             style={{ backgroundColor: props.tab === idx && "yellow" }}
           >

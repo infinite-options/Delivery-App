@@ -16,6 +16,14 @@ import L, { LatLng } from "leaflet";
 const DEFAULT_LATITUDE = 37.338208;
 const DEFAULT_LONGITUDE = -121.886329;
 
+function validateLatlng(latlng) {
+  if (!Array.isArray(latlng)) return false;
+  if (latlng.length !== 2) return false;
+  if (isNaN(latlng[0]) || (latlng[0] <=  -90 || latlng[0] >=  90) || 
+      isNaN(latlng[1]) || (latlng[1] <= -180 || latlng[1] >= 180)) return false;
+  return true;
+}
+
 function LeafletMap({ routes, props }) {
   console.log("rendering map..");
   const [leafletMap, setLeafletMap] = useState();
@@ -35,8 +43,10 @@ function LeafletMap({ routes, props }) {
   const baseLocations_array = Object.entries(baseLocations);
   const routes_array = Object.entries(routes);
 
-  const latitude = baseLocations_array[0][1][0];
-  const longitude = baseLocations_array[0][1][1];
+  const latlngLocal = JSON.parse(window.localStorage.getItem("mapLatlng"));
+  const isLatlng = validateLatlng(latlngLocal);
+  const latitude = isLatlng ? latlngLocal[0] : baseLocations_array[0][1][0];
+  const longitude = isLatlng ? latlngLocal[1] : baseLocations_array[0][1][1];
 
   useEffect(() => {
     const selected = { ...selectedLocation };

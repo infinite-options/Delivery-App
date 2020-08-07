@@ -26,13 +26,13 @@ function CustomerItem({ props }) {
   const address = `${props.customer.street}${props.customer.unit ? ` ${props.customer.unit}` : ""} ${props.customer.city} ${props.customer.state} ${props.customer.zip}`;
 
   return (
-    <div className="box list-item" style={{ backgroundColor: "#f8f7fa", display: "inline-block", width: "800px", minWidth: "100%" }}>
+    <div className="box list-item">
       <table
         className="table is-hoverable is-fullwidth is-size-7"
         style={{ backgroundColor: "#f8f7fa" }}
       >
         <thead>
-          <tr style={{ backgroundColor: "#ededed" }}>
+          <tr className="list-item-head">
             <th>
               {/* <button className="tooltip mx-1" onClick={() => setHidden(prevHidden => !prevHidden)}> */}
               <button

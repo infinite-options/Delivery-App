@@ -88,14 +88,14 @@ function RouteItem({ props }) {
   };
 
   return (
-    <div className="box list-item" style={{ backgroundColor: "#f8f7fa", display: "inline-block", minWidth: "100%" }}>
+    <div className="box list-item">
       <table
         className="table is-hoverable is-fullwidth is-size-7"
         style={{ backgroundColor: "#f8f7fa" }}
       >
         <thead>
-          <tr>
-            <th style={{ backgroundColor: "#ededed", minWidth: "210px" }}>
+          <tr className="list-item-head">
+            <th style={{ minWidth: "210px" }}>
               {/* <button className="tooltip mx-1" onClick={() => setHidden(prevHidden => !prevHidden)}> */}
               <button
                 className="mx-1"
@@ -109,7 +109,7 @@ function RouteItem({ props }) {
               Route {props.id}
             </th>
             <th
-              style={{ backgroundColor: "#ededed", minWidth: "250px" }}
+              style={{ minWidth: "250px" }}
             >
               <div
                 className="route"
@@ -118,10 +118,10 @@ function RouteItem({ props }) {
                 <span style={{ backgroundColor: "#ededed" }}>Route</span>
               </div>
             </th>
-            <th style={{ backgroundColor: "#ededed", minWidth: "75px" }} />
-            <th style={{ backgroundColor: "#ededed", minWidth: "70px" }} />
-            <th style={{ backgroundColor: "#ededed", minWidth: "70px" }} />
-            <th style={{ backgroundColor: "#ededed", minWidth: "125px" }}>
+            <th style={{ minWidth: "75px" }} />
+            <th style={{ minWidth: "70px" }} />
+            <th style={{ minWidth: "70px" }} />
+            <th style={{ minWidth: "125px" }}>
               <button className="button is-rounded is-super-small is-pulled-right" onClick={() => props.dispatch({ type: "route-toggle-visibility", id: props.id })}>
                 <FontAwesomeIcon icon={props.visible ? Icons.faEyeSlash : Icons.faEye} />
               </button>
