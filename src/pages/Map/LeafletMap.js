@@ -43,7 +43,10 @@ function LeafletMap({ routes, props }) {
   const baseLocations_array = Object.entries(baseLocations);
   const routes_array = Object.entries(routes);
 
-  const latlngLocal = JSON.parse(window.localStorage.getItem("mapLatlng"));
+  // let latlngLocal;
+  try { var latlngLocal = JSON.parse(window.localStorage.getItem("mapLatlng")); }
+  catch(e) { /* console.log("Who tampered with my localStorage?!?!"); */ }
+  // console.log(latlngLocal);
   const isLatlng = validateLatlng(latlngLocal);
   const latitude = isLatlng ? latlngLocal[0] : baseLocations_array[0][1][0];
   const longitude = isLatlng ? latlngLocal[1] : baseLocations_array[0][1][1];
@@ -95,8 +98,12 @@ function LeafletMap({ routes, props }) {
       setLeafletMap(map);
       console.log("loading map..");
     }
-    else if (e.target instanceof L.Map) manageMarkers(); // updating Markers' visibility as user drags map around
-    // console.log(mapMarkers);
+    else if (e.target instanceof L.Map) {
+      manageMarkers(); // updating Markers' visibility as user drags map around
+      
+      window.localStorage.setItem("mapLatlng", JSON.stringify([leafletMap.getCenter().lat, leafletMap.getCenter().lng]));
+    }
+      // console.log(mapMarkers);
   };
 
   const manageMarkers = (map=leafletMap) => {
@@ -116,7 +123,7 @@ function LeafletMap({ routes, props }) {
   return (
     <Map
       center={[latitude, longitude]}
-      zoom={11}
+      zoom={leafletMap ? leafletMap.getZoom() : 11}
       minZoom={2}
       maxBounds={[
         [-83.75, -180], // preventing users from seeing map edge
