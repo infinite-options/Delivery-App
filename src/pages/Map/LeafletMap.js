@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 // import { Link, useRouteMatch, Redirect } from "react-router-dom";
 import "./style.css";
 import {
@@ -26,30 +26,24 @@ function validateLatlng(latlng) {
 
 function LeafletMap({ routes, props }) {
   console.log("rendering map..");
+
+  const mapRef = useRef();
   const [leafletMap, setLeafletMap] = useState();
   const [mapMarkers, setMapMarkers] = useState([]);
-
   const selectedLocation = props.selectedLocation;
   const setSelectedLocation = props.setSelectedLocation;
   
-  let baseLocations = {};
-  for (let route_id in routes) {
-    // console.log(route);
-    const latlng = routes[route_id].route_data[0].from;
-    if (!baseLocations[routes[route_id].business_id]) baseLocations[routes[route_id].business_id] = latlng;
-  }
-  // console.log(baseLocations);
-  // console.log(routes);
-  const baseLocations_array = Object.entries(baseLocations);
-  const routes_array = Object.entries(routes);
+  useEffect(() => {
+    const { current={} } = mapRef;
+    const {leafletElement: map } = current;
+    // console.log(map);
+    setLeafletMap(map);
+  }, [])
 
-  // let latlngLocal;
-  try { var latlngLocal = JSON.parse(window.localStorage.getItem("mapLatlng")); }
-  catch(e) { /* console.log("Who tampered with my localStorage?!?!"); */ }
-  // console.log(latlngLocal);
-  const isLatlng = validateLatlng(latlngLocal);
-  const latitude = isLatlng ? latlngLocal[0] : baseLocations_array[0][1][0];
-  const longitude = isLatlng ? latlngLocal[1] : baseLocations_array[0][1][1];
+  useEffect(() => {
+    if (leafletMap) setTimeout(() => handleMapLoad(), 0);
+    // if (leafletMap) handleMapLoad();
+  }, [leafletMap])
 
   useEffect(() => {
     const selected = { ...selectedLocation };
@@ -70,40 +64,52 @@ function LeafletMap({ routes, props }) {
       leafletMap.setView(latlng, zoom);
     }
   }, [selectedLocation]);
+  
+  let baseLocations = {};
+  for (let route_id in routes) {
+    // console.log(route);
+    const latlng = routes[route_id].route_data[0].from;
+    if (!baseLocations[routes[route_id].business_id]) baseLocations[routes[route_id].business_id] = latlng;
+  }
+  // console.log(baseLocations);
+  // console.log(routes);
+  const baseLocations_array = Object.entries(baseLocations);
+  const routes_array = Object.entries(routes);
 
-  const handleMapUpdate = (e) => {
+  // let latlngLocal;
+  try { var latlngLocal = JSON.parse(window.localStorage.getItem("mapLatlng")); }
+  catch(e) { /* console.log("Who tampered with my localStorage?!?!"); */ }
+  // console.log(latlngLocal);
+  const isLatlng = validateLatlng(latlngLocal);
+  const latitude = isLatlng ? latlngLocal[0] : baseLocations_array[0][1][0];
+  const longitude = isLatlng ? latlngLocal[1] : baseLocations_array[0][1][1];
+  
+  const handleMapLoad = () => {
+    // onLoad does not work on Map component, so must be called from its child component (TileLayer)
+    const map = leafletMap;
+    // console.log(map);
+    let markers = [];
+    map.eachLayer((layer) => {
+      // console.log("Scanning", layer);
+      if (layer instanceof L.Marker) {
+        markers.push(layer);
+        // check if Marker should be visible initially
+        // console.log(routes[layer.options.route]);
+        const routeVisible = routes[layer.options.route] ? routes[layer.options.route].visible : true;
+        const isVisible = routeVisible && map.getBounds().contains(layer.getLatLng());
+        if (!isVisible) map.removeLayer(layer);
+      }
+    });
+    // console.log(markers);
+    setMapMarkers(markers);
+    console.log("loading map..");
+  }
+
+  const handleMapUpdate = () => {
+    manageMarkers(); // updating Markers' visibility as user drags map around
+    window.localStorage.setItem("mapLatlng", JSON.stringify([leafletMap.getCenter().lat, leafletMap.getCenter().lng]));
     // console.log(mapMarkers);
-    // console.log(e.target);
-
-    // const mapBounds = map.getBounds();
-    // store all Markers if onLoad event has been called & there is no map data
-    if (!leafletMap && !mapMarkers.length && e.target instanceof L.TileLayer) {
-      // onLoad does not work on Map component, so must be called from its child component (TileLayer)
-      const map = e.target instanceof L.Map ? e.target : e.target._map;
-      let markers = [];
-      map.eachLayer((layer) => {
-        // console.log("Scanning", layer);
-        if (layer instanceof L.Marker) {
-          markers.push(layer);
-          // check if Marker should be visible initially
-          // console.log(routes[layer.options.route]);
-          const routeVisible = routes[layer.options.route] ? routes[layer.options.route].visible : true;
-          const isVisible = routeVisible && map.getBounds().contains(layer.getLatLng());
-          if (!isVisible) map.removeLayer(layer);
-        }
-        // if Markers ever need to be added/removed in the future, remember to push marker into mapMarker Hook
-      });
-      // console.log(markers);
-      setMapMarkers(markers);
-      setLeafletMap(map);
-      console.log("loading map..");
-    }
-    else if (e.target instanceof L.Map) {
-      manageMarkers(); // updating Markers' visibility as user drags map around
-      
-      window.localStorage.setItem("mapLatlng", JSON.stringify([leafletMap.getCenter().lat, leafletMap.getCenter().lng]));
-    }
-      // console.log(mapMarkers);
+    console.log("updating map..");
   };
 
   const manageMarkers = (map=leafletMap) => {
@@ -122,6 +128,7 @@ function LeafletMap({ routes, props }) {
 
   return (
     <Map
+      ref={mapRef}
       center={[latitude, longitude]}
       zoom={leafletMap ? leafletMap.getZoom() : 11}
       minZoom={2}
@@ -139,7 +146,7 @@ function LeafletMap({ routes, props }) {
         attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
         updateWhenZooming={false}
         // updateWhenIdle={true}
-        onLoad={handleMapUpdate}
+        // onload={}
       />
       {baseLocations_array.map((location, index) => (
         <Marker key={index} position={location[1]} icon={Icons.Headquarters} onClick={() => console.log(`Hi this is Business ${location[0]}`)} />
@@ -336,11 +343,13 @@ const RouteMarker = ({ props }) => {
   );
 };
 
-export default geolocated({
-  positionOptions: {
-    enableHighAccuracy: true,
-  },
-  watchPosition: true,
-  userDecisionTimeout: 10000, // determines how much time (in miliseconds) we
-  // give the user to make the decision whether to allow to share their location or not
-})(LeafletMap);
+// export default geolocated({
+//   positionOptions: {
+//     enableHighAccuracy: true,
+//   },
+//   watchPosition: true,
+//   userDecisionTimeout: 10000, // determines how much time (in miliseconds) we
+//   // give the user to make the decision whether to allow to share their location or not
+// })(LeafletMap);
+
+export default LeafletMap;

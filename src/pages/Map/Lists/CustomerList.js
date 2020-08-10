@@ -4,6 +4,8 @@ import Icons from "Icons/Icons";
 import axios from "axios";
 
 function CustomerList({ customers, props }) {
+  console.log("rendering customers..");
+  
   return (
     <React.Fragment>
       {Object.entries(customers).map((customer, index) => (

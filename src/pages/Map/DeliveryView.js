@@ -146,6 +146,7 @@ function DeliveryView(props) {
 }
 
 function RowItems(props) {
+  // console.log("rendering items..");
   return (
     <React.Fragment>
       {props.items.map((value, idx) => (
@@ -162,6 +163,7 @@ function RowItems(props) {
 }
 
 function ValueRange(props) {
+  // console.log("rendering ranges..");
   return (
     <div className={"level has-text-light-weight" + (props.isHeader ? " has-text-weight-light" : "")}>
       <div

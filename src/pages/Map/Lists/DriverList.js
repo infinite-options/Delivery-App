@@ -4,6 +4,8 @@ import Icons from "Icons/Icons";
 import axios from "axios";
 
 function DriverList({ drivers, routes, props }) {
+  console.log("rendering drivers..");
+  
   return (
     <React.Fragment>
       {Object.entries(drivers).map((driver, index) => (

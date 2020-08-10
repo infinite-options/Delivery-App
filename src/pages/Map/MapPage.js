@@ -46,9 +46,9 @@ function reducer(state, action) {
         ...state,
         routes: {
           ...state.routes,
-          [action.id]: {
-            ...state.routes[action.id],
-            visible: !state.routes[action.id].visible,
+          [action.payload]: {
+            ...state.routes[action.payload],
+            visible: !state.routes[action.payload].visible,
           }
         }
       };
@@ -62,9 +62,10 @@ const BASE_URL =
   "https://lu636s0qy3.execute-api.us-west-1.amazonaws.com/dev/api/v2/";
 
 function MapPage() {
-  console.log("rendering..");
+  console.log("rendering page..");
 
   const [isLoading, setIsLoading] = useState(true);
+  // possibly use this with useContext, figure out how to reduce rerenders upon data change
   const [data, dispatch] = useReducer(reducer, {});
  
   const [times, setTimes] = useState([
@@ -342,22 +343,13 @@ function MapPage() {
     }
   };
 
-  const [onDayView, setOnDayView] = useState(false);
-  const handleDayView = () => {
+  const [onView, setOnView] = useState("none");
+  const handleView = (type) => {
     console.log("Open day view..");
 
     handleBurger(true);
-    setOnDayView(onDayView ? false : true);
+    setOnView(onView === type ? "none" : type);
     // open day view modal
-  };
-
-  const [onWeekView, setOnWeekView] = useState(false);
-  const handleWeekView = () => {
-    console.log("Open week view");
-
-    handleBurger(true);
-    setOnWeekView(onWeekView ? false : true);
-    // open week view modal
   };
 
   const handleHeaderTab = () => {
@@ -415,22 +407,22 @@ function MapPage() {
         tab={headerTab}
         changeTab={setHeaderTab}
         handleBurger={handleBurger} 
-        handleDayView={handleDayView}
-        handleWeekView={handleWeekView}
+        handleDayView={() => handleView("day")}
+        handleWeekView={() => handleView("week")}
       />
       {/* Views */}
       <DeliveryView
         type="day"
         times={times}
         timeSlot={timeSlot}
-        visible={onDayView}
-        onClick={handleDayView}
+        visible={onView === "day"}
+        onClick={() => handleView("day")}
       />
       <DeliveryView
         type="week"
         // times={times}
-        visible={onWeekView}
-        onClick={handleWeekView}
+        visible={onView === "week"}
+        onClick={() => handleView("week")}
       />
       {isLoading ? (
         <div className="loading-screen" />
@@ -468,6 +460,7 @@ function MapPage() {
 }
 
 function Header(props) {
+  console.log("rendering header..");
   const tabs = ["Delivery", "Drivers", "Businesses", "Customers", "Orders & Shipments", "Constraints"];
 
   const handleTabChange = (index) => {
@@ -530,6 +523,7 @@ function Header(props) {
 }
 
 function RouteTimes(props) {
+  console.log("rendering times..");
   const handleTimeChange = (index) => {
     // console.log(index);
     if (props.timeSlot !== index) props.setTimeSlot(index);

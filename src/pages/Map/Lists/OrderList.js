@@ -4,6 +4,8 @@ import Icons from "Icons/Icons";
 import axios from "axios";
 
 function OrderList({ orders, props }) {
+  console.log("rendering orders..");
+  
   return (
     <table className="table is-fullwidth is-size-7 is-bordered">
       <thead>

@@ -3,6 +3,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Icons from "Icons/Icons";
 
 function DeliveryList({ routes, drivers, businesses, customers, props }) {
+  console.log("rendering deliveries..");
+  
   // const [selectedLocation, setSelectedLocation] = useState({});
   const selectedLocation = props.selectedLocation;
   const setSelectedLocation = props.setSelectedLocation;
@@ -122,7 +124,7 @@ function RouteItem({ props }) {
             <th style={{ minWidth: "70px" }} />
             <th style={{ minWidth: "70px" }} />
             <th style={{ minWidth: "125px" }}>
-              <button className="button is-rounded is-super-small is-pulled-right" onClick={() => props.dispatch({ type: "route-toggle-visibility", id: props.id })}>
+              <button className="button is-rounded is-super-small is-pulled-right" onClick={() => props.dispatch({ type: "route-toggle-visibility", payload: props.id })}>
                 <FontAwesomeIcon icon={props.visible ? Icons.faEyeSlash : Icons.faEye} />
               </button>
             </th>
