@@ -36,19 +36,28 @@ const rainbow = (numOfSteps, step) => {
   return c;
 };
 
+const initState = {
+  isLoading: true,
+  routes: {},
+  drivers: {},
+  businesses: {},
+  customers: {},
+  orders: {},
+};
+
 function reducer(state, action) {
   switch(action.type) {
     case 'init':
-      return action.payload;
+      return action.payload.data;
     case 'route-toggle-visibility':
       // console.log({...state});
       return { 
         ...state,
         routes: {
           ...state.routes,
-          [action.payload]: {
-            ...state.routes[action.payload],
-            visible: !state.routes[action.payload].visible,
+          [action.payload.id]: {
+            ...state.routes[action.payload.id],
+            visible: !state.routes[action.payload.id].visible,
           }
         }
       };
@@ -64,10 +73,9 @@ const BASE_URL =
 function MapPage() {
   console.log("rendering page..");
 
-  const [isLoading, setIsLoading] = useState(true);
   // possibly use this with useContext, figure out how to reduce rerenders upon data change
-  const [data, dispatch] = useReducer(reducer, {});
- 
+  const [data, dispatch] = useReducer(reducer, initState);
+  console.log(data);
   const [times, setTimes] = useState([
     { value: "00 am - 00 pm" },
     { value: "01 am - 01 pm" },
@@ -110,14 +118,15 @@ function MapPage() {
         //   orders: result[3].value,
         // }));
         const data = {
+          isLoading: false,
           routes: response,
           drivers: result[0].value,
           businesses: result[1].value,
           customers: result[2].value,
           orders: result[3].value,
         };
-        dispatch({ type: "init", payload: data });
-        setIsLoading(false);
+        dispatch({ type: "init", payload: { data } });
+        // setIsLoading(false);
       });
     });
   }, []);
@@ -424,7 +433,7 @@ function MapPage() {
         visible={onView === "week"}
         onClick={() => handleView("week")}
       />
-      {isLoading ? (
+      {data.isLoading ? (
         <div className="loading-screen" />
       ) : (
         <div className="map-page">

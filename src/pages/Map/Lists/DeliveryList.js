@@ -124,7 +124,7 @@ function RouteItem({ props }) {
             <th style={{ minWidth: "70px" }} />
             <th style={{ minWidth: "70px" }} />
             <th style={{ minWidth: "125px" }}>
-              <button className="button is-rounded is-super-small is-pulled-right" onClick={() => props.dispatch({ type: "route-toggle-visibility", payload: props.id })}>
+              <button className="button is-rounded is-super-small is-pulled-right" onClick={() => props.dispatch({ type: "route-toggle-visibility", payload: { id: props.id } })}>
                 <FontAwesomeIcon icon={props.visible ? Icons.faEyeSlash : Icons.faEye} />
               </button>
             </th>

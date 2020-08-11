@@ -41,7 +41,7 @@ function LeafletMap({ routes, props }) {
   }, [])
 
   useEffect(() => {
-    if (leafletMap) setTimeout(() => handleMapLoad(), 0);
+    if (leafletMap) setTimeout(() => handleMapLoad(), 0); // waiting for RouteMarkers to finish rendering
     // if (leafletMap) handleMapLoad();
   }, [leafletMap])
 
@@ -152,7 +152,7 @@ function LeafletMap({ routes, props }) {
         <Marker key={index} position={location[1]} icon={Icons.Headquarters} onClick={() => console.log(`Hi this is Business ${location[0]}`)} />
       ))}
       {routes_array.map((route, index) => (
-        <RouteMarker
+        <RouteMarkers
           key={index}
           props={{
             id: route[0],
@@ -172,7 +172,7 @@ function LeafletMap({ routes, props }) {
   );
 }
 
-const RouteMarker = ({ props }) => {
+const RouteMarkers = ({ props }) => {
   const [coords, setCoords] = useState([]);
   const [driverLocation, setDriverLocation] = useState(props.baseLocation); // useState(CURRENT_DRIVER_LOCATION ? CURRENT_DRIVER_LOCATION : props.baseLocation)
   const [destination, setDestination] = useState(1); // useState(CURRENT_DRIVER_DESTINATION ? CURRENT_DRIVER_DESTINATION : props.baseLocation)
