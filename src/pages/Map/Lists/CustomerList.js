@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Icons from "Icons/Icons";
-import axios from "axios";
+// import axios from "axios";
 
 function CustomerList({ customers, props }) {
   console.log("rendering customers..");
@@ -37,8 +37,12 @@ function CustomerItem({ props }) {
           <tr className="list-item-head">
             <th>
               {/* <button className="tooltip mx-1" onClick={() => setHidden(prevHidden => !prevHidden)}> */}
+              <span>Customer {props.id}: {`${props.customer.first_name} ${props.customer.last_name}`}</span>
+            </th>
+            <th />
+            <th>
               <button
-                className="mx-1"
+                className="button is-super-small is-pulled-right mx-1"
                 onClick={() => setHidden((prevHidden) => !prevHidden)}
               >
                 <FontAwesomeIcon
@@ -46,10 +50,7 @@ function CustomerItem({ props }) {
                 />
                 {/* <span className="tooltiptext">{hidden ? "Expand" : "Collapse"}</span> */}
               </button>
-              Customer {props.id}: {`${props.customer.first_name} ${props.customer.last_name}`}
             </th>
-            <th />
-            <th />
           </tr>
         </thead>
         <tbody className="has-text-centered" hidden={hidden}>

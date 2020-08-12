@@ -16,6 +16,7 @@ function DeliveryView(props) {
 
   const today = moment();
   const toweek = today.week() // TOday.. TOweek... haha funny
+  const weekday = today.weekday();
   const [day, setDay] = useState(today);
   const [week, setWeek] = useState(toweek);
   const [index, setIndex] = useState();
@@ -29,8 +30,11 @@ function DeliveryView(props) {
 
   useEffect(() => {
     if (props.type === "day" && day.isSame(today, "d")) setIndex(props.timeSlot);
-    else if (props.type === "week" && week === toweek) setIndex(today.weekday());
-  }, [props.timeSlot, today.weekday()]);
+  }, [props.timeSlot]);
+
+  useEffect(() => {
+    if (props.type === "week" && week === toweek) setIndex(today.weekday());
+  }, [weekday]);
   // console.log(day, week);
 
   // Temp table values
@@ -41,13 +45,13 @@ function DeliveryView(props) {
   let timeDelivery = [];
   let timeDestination = [];
   let totalTimeDeliveries =[];
-  for (let idx in columns) drivers.push(Math.floor(Math.random() * (10 - 1) + 1));
-  for (let idx in columns) distance.push(Math.floor(Math.random() * (50 - 5) + 5));
+  for (let i = 0; i < columns.length; i++) drivers.push('N/A');
+  for (let i = 0; i < columns.length; i++) distance.push('N/A');
   // max min
-  for (let idx in columns) amtDeliveries.push(Math.floor(Math.random() * (15 - 2) + 15));
-  for (let idx in columns) timeDelivery.push(Math.floor(Math.random() * (90 - 15) + 15));
-  for (let idx in columns) timeDestination.push(Math.floor(Math.random() * (15 - 2) + 2));
-  for (let idx in columns) totalTimeDeliveries.push(Math.floor(Math.random() * (300 - 50) + 50));
+  for (let i = 0; i < columns.length; i++) amtDeliveries.push('N/A');
+  for (let i = 0; i < columns.length; i++) timeDelivery.push('N/A');
+  for (let i = 0; i < columns.length; i++) timeDestination.push('N/A');
+  for (let i = 0; i < columns.length; i++) totalTimeDeliveries.push('N/A');
 
   const handleTodayClick = (type) => {
     if (day !== today) setDay(today);

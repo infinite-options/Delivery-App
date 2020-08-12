@@ -99,16 +99,10 @@ function RouteItem({ props }) {
           <tr className="list-item-head">
             <th style={{ minWidth: "210px" }}>
               {/* <button className="tooltip mx-1" onClick={() => setHidden(prevHidden => !prevHidden)}> */}
-              <button
-                className="mx-1"
-                onClick={() => setHidden((prevHidden) => !prevHidden)}
-              >
-                <FontAwesomeIcon
-                  icon={hidden ? Icons.faCaretDown : Icons.faCaretUp}
-                />
-                {/* <span className="tooltiptext">{hidden ? "Expand" : "Collapse"}</span> */}
+              <button className="button is-super-small is-rounded mx-1" onClick={() => props.dispatch({ type: "route-toggle-visibility", payload: { id: props.id } })}>
+                <FontAwesomeIcon icon={props.visible ? Icons.faEyeSlash : Icons.faEye} />
               </button>
-              Route {props.id}
+              <span>Route {props.id}</span>
             </th>
             <th
               style={{ minWidth: "250px" }}
@@ -124,8 +118,14 @@ function RouteItem({ props }) {
             <th style={{ minWidth: "70px" }} />
             <th style={{ minWidth: "70px" }} />
             <th style={{ minWidth: "125px" }}>
-              <button className="button is-rounded is-super-small is-pulled-right" onClick={() => props.dispatch({ type: "route-toggle-visibility", payload: { id: props.id } })}>
-                <FontAwesomeIcon icon={props.visible ? Icons.faEyeSlash : Icons.faEye} />
+              <button
+                className="button is-super-small is-pulled-right"
+                onClick={() => setHidden((prevHidden) => !prevHidden)}
+              >
+                <FontAwesomeIcon
+                  icon={hidden ? Icons.faCaretDown : Icons.faCaretUp}
+                />
+                {/* <span className="tooltiptext">{hidden ? "Expand" : "Collapse"}</span> */}
               </button>
             </th>
           </tr>

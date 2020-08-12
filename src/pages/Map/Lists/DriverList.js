@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Icons from "Icons/Icons";
-import axios from "axios";
+// import axios from "axios";
 
 function DriverList({ drivers, routes, props }) {
   console.log("rendering drivers..");
@@ -57,7 +57,25 @@ function DriverItem({ props }) {
             <th>
               {/* <button className="tooltip mx-1" onClick={() => setHidden(prevHidden => !prevHidden)}> */}
               <button
-                className="mx-1"
+                className="button is-rounded is-super-small mx-1"
+                // onClick={() => sendText(idx + 1)}
+              >
+                <FontAwesomeIcon icon={Icons.faComment} />
+              </button>
+              <button
+                className="button is-rounded is-super-small mr-1"
+                // onClick={() => sendEmail(idx + 1)}
+              >
+                <FontAwesomeIcon icon={Icons.faEnvelope} />
+              </button>
+              <span>Driver {props.id}: {`${props.driver.first_name} ${props.driver.last_name}`}</span>
+            </th>
+            <th />
+            <th />
+            <th />
+            <th>
+              <button
+                className="button is-super-small is-pulled-right mx-1"
                 onClick={() => setHidden((prevHidden) => !prevHidden)}
               >
                 <FontAwesomeIcon
@@ -65,13 +83,7 @@ function DriverItem({ props }) {
                 />
                 {/* <span className="tooltiptext">{hidden ? "Expand" : "Collapse"}</span> */}
               </button>
-              Driver {props.id}: {`${props.driver.first_name} ${props.driver.last_name}`}
-            </th>
-            <th />
-            <th />
-            <th />
-            <th style={{width: "8.5em"}}>
-              <button
+              {/* <button
                 className="button is-rounded is-super-small mx-1"
                 // onClick={() => sendText(idx + 1)}
               >
@@ -82,7 +94,7 @@ function DriverItem({ props }) {
                 // onClick={() => sendEmail(idx + 1)}
               >
                 <FontAwesomeIcon icon={Icons.faEnvelope} />
-              </button>
+              </button> */}
             </th>
           </tr>
         </thead>
