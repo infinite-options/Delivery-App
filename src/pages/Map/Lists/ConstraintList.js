@@ -7,7 +7,7 @@ function ConstraintList({ constraints, props }) {
   console.log("rendering constraints..");
   
   return (
-    <table className="table is-fullwidth is-size-7 is-bordered">
+    <table className="table is-fullwidth is-size-7 is-bordered has-text-centered">
       <thead>
         <tr>
           <th>Business ID</th>
@@ -15,9 +15,18 @@ function ConstraintList({ constraints, props }) {
           <th>Business Address</th>
           <th>Business Phone Number</th>
           <th>Number of Drivers</th>
-          <th>Distance per Driver</th>
-          <th>Time per Driver</th>
-          <th>Number of Deliveries</th>
+          <th>
+            <p style={{borderBottom: "1px solid lightgrey"}}>Distance per Driver</p>
+            <MinMax />
+          </th>
+          <th>
+            <p style={{borderBottom: "1px solid lightgrey"}}>Time per Driver</p>
+            <MinMax />
+          </th>
+          <th>
+            <p style={{borderBottom: "1px solid lightgrey"}}>Number of Deliveries</p>
+            <MinMax />
+          </th>
         </tr>
       </thead>
       <tbody>
@@ -32,6 +41,20 @@ function ConstraintList({ constraints, props }) {
         ))}
       </tbody>
     </table>
+  );
+}
+
+function MinMax() {
+  return (
+    <div className={"level has-text-light-weight has-text-weight-light"}>
+      <div
+        className="level-left is-split">
+        <div className="level-item">Min</div>
+      </div>
+      <div className="level-right is-split">
+        <div className="level-item">Max</div>
+      </div>
+    </div>
   );
 }
 
@@ -55,7 +78,6 @@ function VehicleItem({ props }) {
 }
 
 function InputValue(props) {
-  
   return (
     <React.Fragment>
       {props.hasRange ? (
@@ -83,7 +105,7 @@ function InputRange(props) {
         </div>
       </div>
     </div>
-);
+  );
 }
 
 export default ConstraintList;

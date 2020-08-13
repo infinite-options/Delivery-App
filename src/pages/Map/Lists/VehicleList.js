@@ -7,7 +7,7 @@ function VehicleList({ vehicles, props }) {
   console.log("rendering vehicles..");
   
   return (
-    <table className="table is-fullwidth is-size-7 is-bordered">
+    <table className="table is-fullwidth is-size-7 is-bordered has-text-centered">
       <thead>
         <tr>
           <th>Business ID</th>

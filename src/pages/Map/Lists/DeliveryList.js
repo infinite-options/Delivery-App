@@ -102,7 +102,8 @@ function RouteItem({ props }) {
               <button className="button is-super-small is-rounded mr-1" onClick={() => props.dispatch({ type: "route-toggle-visibility", payload: { id: props.id } })}>
                 <FontAwesomeIcon icon={props.visible ? Icons.faEyeSlash : Icons.faEye} />
               </button>
-              <span>Route {props.id}</span>
+              {/* Adding conditional margin since icons are different sizes, have to account for text shift */}
+              <span {...(!props.visible ? { style: { marginLeft: "1.32px" } } : {})}>Route {props.id}</span>
             </th>
             <th style={{ minWidth: "250px" }}>
               <RouteColor color={props.color} />

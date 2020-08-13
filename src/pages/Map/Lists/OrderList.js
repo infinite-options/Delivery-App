@@ -7,7 +7,7 @@ function OrderList({ orders, props }) {
   console.log("rendering orders..");
   
   return (
-    <table className="table is-fullwidth is-size-7 is-bordered">
+    <table className="table is-fullwidth is-size-7 is-bordered has-text-centered list-item">
       <thead>
         <tr>
           <th>Order #</th>
@@ -16,18 +16,18 @@ function OrderList({ orders, props }) {
           <th>Customer Info</th>
           <th>Amount</th>
           <th>Items</th>
-          <th>Paid</th>
+          <th>Paid?</th>
           <th>Order Type</th>
           <th>Business ID</th>
           <th>Order Status</th>
-          <th>Delivery Date</th>
-          <th>Schedule</th>
           <th>Delivery #</th>
           <th>Route</th>
-          <th>Driver ID</th>
+          <th>Driver</th>
+          <th>Delivery Date</th>
+          <th>Delivery ETA</th>
           <th>Delivered</th>
           <th>Additional Instructions</th>
-          <th />
+          <th>Contact Customer</th>
         </tr>
       </thead>
       <tbody>
@@ -75,7 +75,9 @@ function OrderItem({ props }) {
       <td>
         {handleItems()}
       </td>
-      <td>PLACEHOLDER</td>
+      <td>
+        <FontAwesomeIcon {...(props.order.hasPaid ? { icon: Icons.faCheck, color: "green" } : { icon: Icons.faTimes, color: "red" })} />
+      </td>
       <td>{props.order.type}</td>
       <td>PLACEHOLDER</td>
       <td>{props.order.status}</td>
@@ -90,11 +92,15 @@ function OrderItem({ props }) {
         <p>Delivery: {props.order.delivery_instructions}</p>
       </td>
       <td className="has-text-centered">
-        <button className="button is-rounded is-small my-2">
+        <button className="button is-rounded is-super-small my-1">
+          <FontAwesomeIcon icon={Icons.faPhone} />
+        </button>
+        <br />
+        <button className="button is-rounded is-super-small my-1">
           <FontAwesomeIcon icon={Icons.faComment} />
         </button>
         <br />
-        <button className="button is-rounded is-small my-2">
+        <button className="button is-rounded is-super-small my-1">
           <FontAwesomeIcon icon={Icons.faEnvelope} />
         </button>
       </td>

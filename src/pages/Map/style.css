@@ -140,6 +140,11 @@
   /* width: 120%; */
 }
 
+
+table.list-item td,
+table.list-item th,
+table.list-item button,
+table.list-item span,
 .list-item table td, 
 .list-item table th, 
 .list-item table button, 
