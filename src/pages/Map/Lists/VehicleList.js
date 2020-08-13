@@ -4,7 +4,7 @@ import Icons from "Icons/Icons";
 // import axios from "axios";
 
 function VehicleList({ vehicles, props }) {
-  console.log("rendering orders..");
+  console.log("rendering vehicles..");
   
   return (
     <table className="table is-fullwidth is-size-7 is-bordered">
@@ -42,7 +42,6 @@ function VehicleItem({ props }) {
   return (
     <tr>
       <td>{props.vehicle.business_id}</td>
-      <td>PLACEHOLDER</td>
       <td>{props.vehicle.business_name}</td>
       <td>{props.vehicle.name}<br />{`${props.vehicle.model}, ${props.vehicle.year}`}</td>
       <td>{props.vehicle.registration}</td>

@@ -9,6 +9,7 @@ import BusinessList from "./Lists/BusinessList";
 import CustomerList from "./Lists/CustomerList";
 import VehicleList from "./Lists/VehicleList";
 import OrderList from "./Lists/OrderList";
+import ConstraintList from "./Lists/ConstraintList";
 import DeliveryView from "./DeliveryView";
 import AppIcon from "Icons/app_icon.png";
 // import axios from "axios";
@@ -24,6 +25,7 @@ const initState = {
   customers: {},
   vehicles: {},
   orders: {},
+  constraints: {},
 };
 
 function reducer(state, action) {
@@ -52,7 +54,7 @@ function MapPage() {
 
   // possibly use this with useContext, figure out how to reduce rerenders upon data change
   const [data, dispatch] = useReducer(reducer, initState);
-  // console.log(data);
+  console.log(data);
   const [times, setTimes] = useState([
     { value: "00 am - 00 pm" },
     { value: "01 am - 01 pm" },
@@ -94,6 +96,7 @@ function MapPage() {
           customers: result[2].value,
           vehicles: {}, // FIXME: CALL API
           orders: result[3].value,
+          constraints: {}, // FIXME: CALL API
         };
         dispatch({ type: "init", payload: { data } });
       });
@@ -169,7 +172,9 @@ function MapPage() {
         );
       case 6:
         return (
-          <p>WIP</p>
+          <ConstraintList
+            constraints={data.constraints}
+          />
         );
       default:
         setHeaderTab(0);
