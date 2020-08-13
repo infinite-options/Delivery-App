@@ -32,7 +32,7 @@ function OrderList({ orders, props }) {
       </thead>
       <tbody>
         {Object.entries(orders).map((order, index) => (
-          <ObjectItem
+          <OrderItem
             key={index}
             props={{
               order: order[1],
@@ -46,7 +46,7 @@ function OrderList({ orders, props }) {
   );
 }
 
-function ObjectItem({ props }) {
+function OrderItem({ props }) {
   // const [hidden, setHidden] = useState(true);
   const address = (`${props.order.customer_street} ${props.order.customer_city} ${props.order.customer_state} ${props.order.customer_zip}`);
   const items = JSON.parse(props.order.items);

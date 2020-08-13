@@ -99,24 +99,36 @@ function RouteItem({ props }) {
           <tr className="list-item-head">
             <th style={{ minWidth: "210px" }}>
               {/* <button className="tooltip mx-1" onClick={() => setHidden(prevHidden => !prevHidden)}> */}
-              <button className="button is-super-small is-rounded mx-1" onClick={() => props.dispatch({ type: "route-toggle-visibility", payload: { id: props.id } })}>
+              <button className="button is-super-small is-rounded mr-1" onClick={() => props.dispatch({ type: "route-toggle-visibility", payload: { id: props.id } })}>
                 <FontAwesomeIcon icon={props.visible ? Icons.faEyeSlash : Icons.faEye} />
               </button>
               <span>Route {props.id}</span>
             </th>
-            <th
-              style={{ minWidth: "250px" }}
-            >
-              <div
-                className="route"
-                style={{ borderBottom: `3px solid ${props.color}` }}
-              >
-                <span style={{ backgroundColor: "#ededed" }}>Route</span>
+            <th style={{ minWidth: "250px" }}>
+              <RouteColor color={props.color} />
+            </th>
+            <th style={{ minWidth: "75px" }}>
+              <div style={{ width: "250%" }}>
+                <span className="ml-1">{`Driver ${props.driver_id}: ${props.driver_first_name} ${props.driver_last_name[0]}.`}</span>
               </div>
             </th>
-            <th style={{ minWidth: "75px" }} />
             <th style={{ minWidth: "70px" }} />
-            <th style={{ minWidth: "70px" }} />
+            <th style={{ minWidth: "70px" }}>
+              <div style={{ width: "110%" }}>
+                <button
+                  className="button is-rounded is-super-small mr-1"
+                  onClick={() => sendDriverText(props.driver_id)}
+                >
+                  <FontAwesomeIcon icon={Icons.faComment} />
+                </button>
+                <button
+                  className="button is-rounded is-super-small"
+                  onClick={() => console.log("Not sure what this does atm")}
+                >
+                  <FontAwesomeIcon icon={Icons.faPhone} />
+                </button>
+              </div>
+            </th>
             <th style={{ minWidth: "125px" }}>
               <button
                 className="button is-super-small is-pulled-right"
@@ -133,13 +145,13 @@ function RouteItem({ props }) {
         <tbody hidden={hidden}>
           <tr>
             <th style={{borderBottomWidth: "2px"}}>
-              <span className="ml-1">{`Driver: ${props.driver_first_name} ${props.driver_last_name[0]}.`}</span>
+              {/* <span className="ml-1">{`Driver: ${props.driver_first_name} ${props.driver_last_name[0]}.`}</span>
               <button
                 className="button is-rounded is-super-small mx-3"
                 onClick={() => sendDriverText(props.driver_id)}
               >
                 <FontAwesomeIcon icon={Icons.faComment} />
-              </button>
+              </button> */}
             </th>
             <th style={{borderBottomWidth: "2px"}}>Destination</th>
             <th style={{borderBottomWidth: "2px"}}>Customer</th>
@@ -180,8 +192,8 @@ function RouteItem({ props }) {
               </td>
               <td>{location.address}</td>
               <td>{`${props.customers[location.customer_id].first_name} ${props.customers[location.customer_id].last_name[0]}.`}</td>
-              <td>00:00 am</td>
-              <td>00:00 pm</td>
+              <td>N/A</td>
+              <td>N/A</td>
               <td>
                 {/* <button className="tooltip button is-rounded is-small mx-1"> */}
                 <button
@@ -212,6 +224,22 @@ function RouteItem({ props }) {
           </div>
         ))}
       </div> */}
+    </div>
+  );
+}
+
+function RouteColor({ color }) {
+  return (
+    <div className="level" style={{ justifyContent: "flex-start" }}>
+      <div className="level-left">
+        <div
+          className="level-item route"
+          style={{ width: "150px", borderBottom: `3px solid ${color}` }}
+        ></div>
+      </div>
+      <div className="level-right" style={{ alignItems: "left" }}>
+        <span className="level-item ml-2" style={{ backgroundColor: "#ededed" }}>Route</span>
+      </div>
     </div>
   );
 }

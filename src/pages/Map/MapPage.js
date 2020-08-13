@@ -7,6 +7,7 @@ import DeliveryList from "./Lists/DeliveryList";
 import DriverList from "./Lists/DriverList";
 import BusinessList from "./Lists/BusinessList";
 import CustomerList from "./Lists/CustomerList";
+import VehicleList from "./Lists/VehicleList";
 import OrderList from "./Lists/OrderList";
 import DeliveryView from "./DeliveryView";
 import AppIcon from "Icons/app_icon.png";
@@ -21,6 +22,7 @@ const initState = {
   drivers: {},
   businesses: {},
   customers: {},
+  vehicles: {},
   orders: {},
 };
 
@@ -90,6 +92,7 @@ function MapPage() {
           drivers: result[0].value,
           businesses: result[1].value,
           customers: result[2].value,
+          vehicles: {}, // FIXME: CALL API
           orders: result[3].value,
         };
         dispatch({ type: "init", payload: { data } });
@@ -154,7 +157,9 @@ function MapPage() {
         );
       case 4:
         return (
-          <p>WIP</p>
+          <VehicleList 
+            vehicles={data.vehicles}
+          />
         );
       case 5:
         return (

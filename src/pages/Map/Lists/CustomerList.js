@@ -42,7 +42,7 @@ function CustomerItem({ props }) {
             <th />
             <th>
               <button
-                className="button is-super-small is-pulled-right mx-1"
+                className="button is-super-small is-pulled-right"
                 onClick={() => setHidden((prevHidden) => !prevHidden)}
               >
                 <FontAwesomeIcon
@@ -53,7 +53,7 @@ function CustomerItem({ props }) {
             </th>
           </tr>
         </thead>
-        <tbody className="has-text-centered" hidden={hidden}>
+        <tbody className="is-bordered has-text-centered" hidden={hidden}>
           <tr>
             <td className="pr-0">
                 Name<br />{`${props.customer.first_name} ${props.customer.last_name}`}

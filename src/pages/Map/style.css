@@ -1,6 +1,6 @@
 .map-page {
   background-color: #f8f7fa;
-  height: max(95vh, 100%);
+  min-height: 95vh;
 }
 
 /* Leaflet map classes */
@@ -140,6 +140,13 @@
   /* width: 120%; */
 }
 
+.list-item table td, 
+.list-item table th, 
+.list-item table button, 
+.list-item table span {
+  vertical-align: middle;
+}
+
 .list-item table thead tr.list-item-head {
   background-color: #ededed;
 }
@@ -152,8 +159,18 @@
   border-top-right-radius: 6px;
 }
 
-.list-item-head button, .list-item-head span {
-  vertical-align: middle;
+/* Bordered list body classes */
+.list-item table tbody.is-bordered tr td, 
+.list-item table tbody.is-bordered tr:last-child td {
+  border-width: 1px;
+}
+
+.list-item table tbody.is-bordered tr td:first-child {
+  border-left-width: 0;
+}
+
+.list-item table tbody.is-bordered tr td:last-child {
+  border-right-width: 0;
 }
 
 /* Route color display classes */
@@ -166,6 +183,7 @@
 }
 
 .route span {
+  position: relative;
   background: #fff;
   padding: 0 10px;
 }

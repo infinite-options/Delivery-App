@@ -55,19 +55,6 @@ function DriverItem({ props }) {
         <thead>
           <tr className="list-item-head">
             <th>
-              {/* <button className="tooltip mx-1" onClick={() => setHidden(prevHidden => !prevHidden)}> */}
-              <button
-                className="button is-rounded is-super-small mx-1"
-                // onClick={() => sendText(idx + 1)}
-              >
-                <FontAwesomeIcon icon={Icons.faComment} />
-              </button>
-              <button
-                className="button is-rounded is-super-small mr-1"
-                // onClick={() => sendEmail(idx + 1)}
-              >
-                <FontAwesomeIcon icon={Icons.faEnvelope} />
-              </button>
               <span>Driver {props.id}: {`${props.driver.first_name} ${props.driver.last_name}`}</span>
             </th>
             <th />
@@ -75,13 +62,26 @@ function DriverItem({ props }) {
             <th />
             <th>
               <button
-                className="button is-super-small is-pulled-right mx-1"
+                className="button is-super-small is-pulled-right ml-4"
                 onClick={() => setHidden((prevHidden) => !prevHidden)}
               >
                 <FontAwesomeIcon
                   icon={hidden ? Icons.faCaretDown : Icons.faCaretUp}
                 />
                 {/* <span className="tooltiptext">{hidden ? "Expand" : "Collapse"}</span> */}
+              </button>
+              <button
+                className="button is-rounded is-pulled-right is-super-small ml-1"
+                // onClick={() => sendEmail(idx + 1)}
+              >
+                <FontAwesomeIcon icon={Icons.faEnvelope} />
+              </button>
+              {/* <button className="tooltip mx-1" onClick={() => setHidden(prevHidden => !prevHidden)}> */}
+              <button
+                className="button is-rounded is-pulled-right is-super-small"
+                // onClick={() => sendText(idx + 1)}
+              >
+                <FontAwesomeIcon icon={Icons.faComment} />
               </button>
               {/* <button
                 className="button is-rounded is-super-small mx-1"
@@ -98,18 +98,20 @@ function DriverItem({ props }) {
             </th>
           </tr>
         </thead>
-        <tbody className="has-text-centered" hidden={hidden}>
+        <tbody className="is-bordered has-text-centered" hidden={hidden}>
           <tr>
-            <td className="pr-0">
-                First Name
-                <hr style={{margin: 0, backgroundColor: "#ededed"}}/>
-                Last Name
-            </td>
-            <td className="pl-0 has-text-left">
-                <p className="ml-2">{props.driver.first_name}</p>
-                <hr style={{margin: 0, backgroundColor: "#ededed"}}/>
-                <p className="ml-2">{props.driver.last_name}</p>
-            </td>
+            {/* <Combining2CellsInto1> */}
+              <td className="pr-0" style={{ borderRightWidth: 0 }}>
+                  First Name
+                  <hr style={{margin: 0, backgroundColor: "#ededed"}}/>
+                  Last Name
+              </td>
+              <td className="pl-0 has-text-left" style={{ borderLeftWidth: 0 }}>
+                  <p className="ml-2">{props.driver.first_name}</p>
+                  <hr style={{margin: 0, backgroundColor: "#ededed"}}/>
+                  <p className="ml-2">{props.driver.last_name}</p>
+              </td>
+            {/* </Combining2CellsInto1> */}
             <td>
                 Hours/week<br />{props.driver.weekly_workload}
             </td>
