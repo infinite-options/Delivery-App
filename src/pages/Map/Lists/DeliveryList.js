@@ -97,25 +97,49 @@ function RouteItem({ props }) {
       >
         <thead>
           <tr className="list-item-head">
-            <th style={{ minWidth: "210px" }}>
+            <th style={{ minWidth: "120px" }}>
               {/* <button className="tooltip mx-1" onClick={() => setHidden(prevHidden => !prevHidden)}> */}
-              <button className="button is-super-small is-rounded mr-1" onClick={() => props.dispatch({ type: "route-toggle-visibility", payload: { id: props.id } })}>
-                <FontAwesomeIcon icon={props.visible ? Icons.faEyeSlash : Icons.faEye} />
-              </button>
-              {/* Adding conditional margin since icons are different sizes, have to account for text shift */}
-              <span {...(!props.visible ? { style: { marginLeft: "1.32px" } } : {})}>Route {props.id}</span>
+              <div style={{ width: "250%", maxWidth: "225px", minWidth: "100px" }}>
+                <button 
+                  className="button is-super-small is-rounded mr-3" 
+                  onClick={() => props.dispatch({ type: "route-toggle-visibility", payload: { id: props.id } })}
+                >
+                  <FontAwesomeIcon icon={props.visible ? Icons.faEyeSlash : Icons.faEye} />
+                </button>
+                {/* Adding conditional margin since icons are different sizes, have to account for text shift */}
+                <div
+                  className="route"
+                  style={{ 
+                    // this div refuses to be vertically centered so this is my workaround
+                    backgroundColor: `${props.visible ? props.color : "lightgrey"}`,
+                    borderBottom: `3px solid ${props.visible ? props.color : "lightgrey"}`, 
+                    ...(!props.visible ? {marginLeft: "1.32px"} : {}) 
+                  }}
+                ><span>Route {props.id}</span></div>
+              </div>
+              {/* <span {...(!props.visible ? { style: { marginLeft: "1.32px" } } : {})}>Route {props.id}</span> */}
             </th>
-            <th style={{ minWidth: "250px" }}>
-              <RouteColor color={props.color} />
-            </th>
+            <th style={{ minWidth: "250px" }} />
             <th style={{ minWidth: "75px" }}>
-              <div style={{ width: "250%" }}>
+              <div style={{ width: "250%", maxWidth: "225px", minWidth: "100px" }}>
                 <span className="ml-1">{`Driver ${props.driver_id}: ${props.driver_first_name} ${props.driver_last_name[0]}.`}</span>
+                <button
+                  className="button is-rounded is-super-small is-pulled-right ml-1"
+                  onClick={() => console.log("Not sure what this does atm")}
+                >
+                  <FontAwesomeIcon icon={Icons.faPhone} />
+                </button>
+                <button
+                  className="button is-rounded is-super-small is-pulled-right"
+                  onClick={() => sendDriverText(props.driver_id)}
+                >
+                  <FontAwesomeIcon icon={Icons.faComment} />
+                </button>
               </div>
             </th>
             <th style={{ minWidth: "70px" }} />
             <th style={{ minWidth: "70px" }}>
-              <div style={{ width: "110%" }}>
+              {/* <div style={{ width: "110%" }}>
                 <button
                   className="button is-rounded is-super-small mr-1"
                   onClick={() => sendDriverText(props.driver_id)}
@@ -128,7 +152,7 @@ function RouteItem({ props }) {
                 >
                   <FontAwesomeIcon icon={Icons.faPhone} />
                 </button>
-              </div>
+              </div> */}
             </th>
             <th style={{ minWidth: "125px" }}>
               <button
@@ -184,12 +208,12 @@ function RouteItem({ props }) {
                 >
                   Skip
                 </button>
-                <button
+                {/* <button
                   className="button is-rounded is-small mx-1"
                   onClick={() => changeLocation(idx + 1)}
                 >
                   Change
-                </button>
+                </button> */}
               </td>
               <td>{location.address}</td>
               <td>{`${props.customers[location.customer_id].first_name} ${props.customers[location.customer_id].last_name[0]}.`}</td>

@@ -7,7 +7,7 @@ function OrderList({ orders, props }) {
   console.log("rendering orders..");
   
   return (
-    <table className="table is-fullwidth is-size-7 is-bordered has-text-centered list-item">
+    <table className="table is-fullwidth is-size-7 is-bordered has-text-centered vcenter-items">
       <thead>
         <tr>
           <th>Order #</th>

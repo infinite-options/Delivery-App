@@ -140,16 +140,22 @@
   /* width: 120%; */
 }
 
-
-table.list-item td,
-table.list-item th,
-table.list-item button,
-table.list-item span,
+/* Call a single table something else instead of list-item, vcenter? */
+table.vcenter-items td,
+table.vcenter-items th,
+table.vcenter-items button,
+table.vcenter-items span,
 .list-item table td, 
 .list-item table th, 
 .list-item table button, 
 .list-item table span {
   vertical-align: middle;
+}
+
+/* float: left/right unaligns the middle vertical alignment value for whatever reason */
+table.list-item .is-pulled-right,
+.list-item .is-pulled-right {
+  margin-top: 0.375%;
 }
 
 .list-item table thead tr.list-item-head {
@@ -180,16 +186,17 @@ table.list-item span,
 
 /* Route color display classes */
 .route {
+  display: inline-block; 
+  width: 70%;
   /* width: 10vw; */
   text-align: right;
   /* border-bottom: 1px solid #000;  */
   line-height: 0.1em;
-  margin: 3% 0;
 }
 
 .route span {
   position: relative;
-  background: #fff;
+  background: #ededed;
   padding: 0 10px;
 }
 

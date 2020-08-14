@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Icons from "Icons/Icons";
+import Rating from '@material-ui/lab/Rating';
 // import axios from "axios";
 
 function DriverList({ drivers, routes, props }) {
@@ -57,7 +58,10 @@ function DriverItem({ props }) {
             <th>
               <span>Driver {props.id}: {`${props.driver.first_name} ${props.driver.last_name}`}</span>
             </th>
-            <th />
+            <th>
+              <Rating defaultValue={props.driver.rating} size="small" precision={0.25} readOnly />
+              <span className="ml-4">Rating</span>
+            </th>
             <th />
             <th />
             <th>
