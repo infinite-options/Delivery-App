@@ -122,7 +122,7 @@ function RouteItem({ props }) {
             <th style={{ minWidth: "250px" }} />
             <th style={{ minWidth: "75px" }}>
               <div style={{ width: "250%", maxWidth: "225px", minWidth: "100px" }}>
-                <span className="ml-1">{`Driver ${props.driver_id}: ${props.driver_first_name} ${props.driver_last_name[0]}.`}</span>
+                <span>{`Driver ${props.driver_id}: ${props.driver_first_name} ${props.driver_last_name[0]}.`}</span>
                 <button
                   className="button is-rounded is-super-small is-pulled-right ml-1"
                   onClick={() => console.log("Not sure what this does atm")}

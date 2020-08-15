@@ -85,7 +85,7 @@ function BusinessItem({ props }) {
                 Phone #2: {props.business.phone2}
             </td>
             <td>
-                Contact Person<br />PLACEHOLDER
+                Contact Person<br />N/A
             </td>
             <td>
                 Email<br />

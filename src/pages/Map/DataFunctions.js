@@ -110,8 +110,8 @@ const createDrivers = () => {
         time_availability: driver.driver_hours,
 
         business_id: driver.business_id,
-        weekly_workload: -1,
-        day_availability: "PLACEHOLDER",
+        weekly_workload: "N/A",
+        day_availability: "N/A",
         // time_availability: {
         //   Sunday: undefined,
         //   Monday: 1,
@@ -121,10 +121,10 @@ const createDrivers = () => {
         //   Friday: undefined,
         //   Saturday: undefined,
         // },
-        expiration: "PLACEHOLDER",
+        expiration: "N/A",
 
-        preferred_routes: "PLACEHOLDER", // only one choice with this endpoint!
-        rating: -1,
+        preferred_routes: "N/A", // only one choice with this endpoint!
+        rating: "N/A",
       };
       tempDrivers[driver_id] = driver_data;
     }

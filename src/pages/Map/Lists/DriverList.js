@@ -26,6 +26,7 @@ function DriverList({ drivers, routes, props }) {
 
 function DriverItem({ props }) {
   const [hidden, setHidden] = useState(true);
+  const [showMore, setShowMore] = useState(false);
 
 //   const sendDriverText = (driverNumber) => {
 //     console.log(`Sending Driver ${driverNumber} a text..`);
@@ -55,105 +56,170 @@ function DriverItem({ props }) {
       >
         <thead>
           <tr className="list-item-head">
-            <th>
-              <span>Driver {props.id}: {`${props.driver.first_name} ${props.driver.last_name}`}</span>
+            <th style={{ minWidth: "300px" }}>
+              <div style={{ maxWidth: "275px" }}>
+                <span>Driver {props.id}: {`${props.driver.first_name} ${props.driver.last_name[0]}.`}</span>
+                <button
+                  className="button is-rounded is-pulled-right is-super-small ml-1"
+                  // onClick={() => sendEmail(idx + 1)}
+                >
+                  <FontAwesomeIcon icon={Icons.faEnvelope} />
+                </button>
+                {/* <button className="tooltip mx-1" onClick={() => setHidden(prevHidden => !prevHidden)}> */}
+                <button
+                  className="button is-rounded is-pulled-right is-super-small"
+                  // onClick={() => sendText(idx + 1)}
+                >
+                  <FontAwesomeIcon icon={Icons.faComment} />
+                </button>
+              </div>
             </th>
-            <th>
-              <Rating defaultValue={props.driver.rating} size="small" precision={0.25} readOnly />
-              <span className="ml-4">Rating</span>
+            <th style={{ minWidth: "150px" }} />
+            <th style={{ minWidth: "150px" }}>
+              <div style={{ width: "150%", maxWidth: "225px" }}>
+                <Rating defaultValue={props.driver.rating} size="small" precision={0.5} readOnly />
+                <span className="ml-4">Rating</span>
+              </div>
             </th>
-            <th />
-            <th />
-            <th>
+            <th style={{ minWidth: "150px" }}>
               <button
-                className="button is-super-small is-pulled-right ml-4"
+                className="button is-super-small is-pulled-right"
                 onClick={() => setHidden((prevHidden) => !prevHidden)}
               >
                 <FontAwesomeIcon
                   icon={hidden ? Icons.faCaretDown : Icons.faCaretUp}
                 />
-                {/* <span className="tooltiptext">{hidden ? "Expand" : "Collapse"}</span> */}
               </button>
-              <button
-                className="button is-rounded is-pulled-right is-super-small ml-1"
-                // onClick={() => sendEmail(idx + 1)}
-              >
-                <FontAwesomeIcon icon={Icons.faEnvelope} />
-              </button>
-              {/* <button className="tooltip mx-1" onClick={() => setHidden(prevHidden => !prevHidden)}> */}
-              <button
-                className="button is-rounded is-pulled-right is-super-small"
-                // onClick={() => sendText(idx + 1)}
-              >
-                <FontAwesomeIcon icon={Icons.faComment} />
-              </button>
-              {/* <button
-                className="button is-rounded is-super-small mx-1"
-                // onClick={() => sendText(idx + 1)}
-              >
-                <FontAwesomeIcon icon={Icons.faComment} />
-              </button>
-              <button
-                className="button is-rounded is-super-small mx-1"
-                // onClick={() => sendEmail(idx + 1)}
-              >
-                <FontAwesomeIcon icon={Icons.faEnvelope} />
-              </button> */}
             </th>
           </tr>
         </thead>
         <tbody className="is-bordered has-text-centered" hidden={hidden}>
           <tr>
-            {/* <Combining2CellsInto1> */}
-              <td className="pr-0" style={{ borderRightWidth: 0 }}>
-                  First Name
-                  <hr style={{margin: 0, backgroundColor: "#ededed"}}/>
-                  Last Name
-              </td>
-              <td className="pl-0 has-text-left" style={{ borderLeftWidth: 0 }}>
-                  <p className="ml-2">{props.driver.first_name}</p>
-                  <hr style={{margin: 0, backgroundColor: "#ededed"}}/>
-                  <p className="ml-2">{props.driver.last_name}</p>
-              </td>
-            {/* </Combining2CellsInto1> */}
             <td>
-                Hours/week<br />{props.driver.weekly_workload}
+              <div className="level">
+                <div className="level-item">
+                  <span style={{ width: "100%", textAlign: "left" }}>
+                    First &amp; Middle Name:
+                    <hr style={{ margin: 0, backgroundColor: "#ededed" }} />
+                    Last Name:
+                  </span>
+                </div>
+                <div className="level-item">
+                  <span style={{ width: "100%", textAlign: "left" }}>
+                    {props.driver.first_name}
+                    <hr style={{ margin: 0, backgroundColor: "#ededed" }} />
+                    {props.driver.last_name}
+                  </span>
+                </div>
+              </div>
+            </td>
+            {/* <td className="pl-0 has-text-left" style={{ borderLeftWidth: 0 }}>
+              <p className="ml-3">{props.driver.first_name}</p>
+              <hr style={{margin: 0, backgroundColor: "#ededed"}}/>
+              <p className="ml-3">{props.driver.last_name}</p>
+            </td> */}
+            <td>
+              # of hours/week<br />{props.driver.weekly_workload}
             </td>
             <td>
-                Driver's License<br />{props.driver.drivers_license}
-            </td>
-            <td>
-                Expiration<br />{props.driver.expiration}
-            </td>
-          </tr>
-          <tr>
-            <td>
-                Rating<br />{props.driver.rating}
-            </td>
-            <td>
-                SSN<br />{props.driver.ssn}
-            </td>
-            <td>
-                Preferred Routes<br />{props.driver.preferred_routes}
-            </td>
-            <td>
-                Days Available<br />{props.driver.day_availability}
-            </td>
-            <td>
-                Times Available<br />{props.driver.time_availability}
-            </td>
-          </tr>
-          <tr>
-            <td>
-              Insurance Number<br />{props.driver.insurance_number}
-            </td>
-            <td>
-              Driver Password<br />{props.driver.password}
+              Driver's License #<br />{props.driver.drivers_license}
             </td>
             <td>
               Business ID<br />{props.driver.business_id}
             </td>
           </tr>
+          <tr>
+            <td>
+              <div className="level">
+                <div className="level-item">
+                  <span style={{ width: "100%" }}>
+                    Emergency Contact:
+                    <br />
+                    xxx-xxx-xxxx
+                  </span>
+                </div>
+                <div className="level-item">
+                  <span style={{ width: "100%", textAlign: "left" }}>
+                    (Name) N/A
+                    <br />
+                    (Relationship) N/A
+                  </span>
+                </div>
+              </div>
+            </td>
+            <td>
+              Preferred Routes<br /> N/A
+              {/* {props.driver.preferred_routes.map((route, idx) => (
+                <p>Route {route.id}: <span>ROUTE COLOR</span></p>
+              ))} */}
+            </td>
+            <td>
+              Days Available<br />{props.driver.day_availability}
+            </td>
+            <td>
+              Times Available<br />{props.driver.time_availability}
+            </td>
+          </tr>
+          <tr className="filler-row">
+            <td /><td /><td />
+            <td style={{ textAlign: "right" }}>
+              <span className="has-text-grey">Show {showMore ? "Less" : "More"}</span>
+              <button 
+                className="button is-super-small is-light mx-1"
+                onClick={() => setShowMore((prevShowMore) => !prevShowMore)}
+              >
+                <FontAwesomeIcon icon={(showMore ? Icons.faCaretUp : Icons.faCaretDown)} color="grey" />
+              </button>
+            </td>
+          </tr>
+          {showMore && ( 
+            <React.Fragment>
+              <tr>
+                <td style={{ textAlign: "left" }}>
+                  Address:<br />
+                  {props.driver.address} N/A
+                </td>
+                <td>
+                  SSN<br />{props.driver.ssn}
+                </td>
+                <td>
+                  Vehicle<br />{props.driver.vehicle} N/A
+                </td>
+                <td>
+                  Driver Password<br />{props.driver.password}
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <div className="level">
+                    <div className="level-item">
+                      <span style={{ width: "100%" }}>
+                        Bank Account #
+                        <br />
+                        xxx-xxx-xxxx
+                      </span>
+                    </div>
+                    <div className="level-item">
+                      <span style={{ width: "100%" }}>
+                        Bank Routing #
+                        <br />
+                        xxx-xxx-xxxx
+                      </span>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  Insurance Carrier<br /> N/A
+                </td>
+                <td>
+                  Policy #<br />{props.driver.insurance_number}
+                </td>
+                <td>
+                  Expiration<br />{props.driver.expiration}
+                </td>
+              </tr>
+            </React.Fragment>
+          )}
         </tbody>
       </table>
     </div>
