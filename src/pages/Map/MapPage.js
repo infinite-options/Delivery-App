@@ -49,6 +49,9 @@ function reducer(state, action) {
   }
 }
 
+// object of empty items for testing display
+const testObj = { 0: {}, 1: {}, 2: {} };
+
 function MapPage() {
   console.log("rendering page..");
 
@@ -94,9 +97,9 @@ function MapPage() {
           drivers: result[0].value,
           businesses: result[1].value,
           customers: result[2].value,
-          vehicles: {}, // FIXME: CALL API
+          vehicles: testObj, // FIXME: CALL API
           orders: result[3].value,
-          constraints: {}, // FIXME: CALL API
+          constraints: testObj, // FIXME: CALL API
         };
         dispatch({ type: "init", payload: { data } });
       });

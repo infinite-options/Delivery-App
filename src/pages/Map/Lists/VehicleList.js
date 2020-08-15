@@ -21,12 +21,28 @@ function VehicleList({ vehicles, props }) {
         </tr>
       </thead>
       <tbody>
-        {Object.entries(vehicles).map((vehicle, index) => (
-          <VehicleItem
+        {/*
+          vehicles is an object containing lists of each businesses' vehicles 
+        
+          Object > {
+              business_id : {
+                  business_name,
+                  vehicles_data: [
+                      {
+                          // vehicle data
+                          drivers: []
+                      }, ...
+                  ]
+              }, ...
+          }
+        */}
+        {Object.entries(vehicles).map((business_vehicles, index) => (
+          <VehiclesItem
             key={index}
             props={{
-              vehicle: vehicle[1],
-              id: vehicle[0],
+              business_id: business_vehicles[0],
+              // business_name: business_vehicles[1].business_name,
+              vehicles: business_vehicles[1], // business_vehicles[1].vehicles_data
               index,
             }}
           />
@@ -36,19 +52,59 @@ function VehicleList({ vehicles, props }) {
   );
 }
 
-function VehicleItem({ props }) {
+function VehiclesItem({ props }) {
   // const [hidden, setHidden] = useState(true);
-  
+  // console.log(props.vehicles);
+
   return (
     <tr>
-      <td>{props.vehicle.business_id}</td>
-      <td>{props.vehicle.business_name}</td>
-      <td>{props.vehicle.name}<br />{`${props.vehicle.model}, ${props.vehicle.year}`}</td>
-      <td>{props.vehicle.registration}</td>
-      <td>{props.vehicle.insurance_carrier}</td>
-      <td>{props.vehicle.insurance_policy}</td>
-      <td>{props.vehicle.insurance_policy_expiration}</td>
-      <td>{props.vehicle.drivers}</td>
+      <td>{props.business_id}</td>
+      <td>{props.business_name} N/A</td>
+      <td>N/A
+        {/* {props.vehicles.map((vehicle, idx) => (
+          <p key={idx}>
+            {vehicle.name}<br />
+            {`${vehicle.model}, ${vehicle.year}`}
+          </p>
+        ))} */}
+      </td>
+      <td>N/A
+        {/* {props.vehicles.map((vehicle, idx) => (
+          <p key={idx}>
+            {vehicle.registration}
+          </p>
+        ))} */}
+      </td>
+      <td>N/A
+        {/* {props.vehicles.map((vehicle, idx) => (
+          <p key={idx}>
+            {vehicle.insurance_carrier}
+          </p>
+        ))} */}
+      </td>
+      <td>N/A
+        {/* {props.vehicles.map((vehicle, idx) => (
+          <p key={idx}>
+            {vehicle.insurance_policy}
+          </p>
+        ))} */}
+      </td>
+      <td>N/A
+        {/* {props.vehicles.map((vehicle, idx) => (
+          <p key={idx}>
+            {vehicle.insurance_policy_expiration}
+          </p>
+        ))} */}
+      </td>
+      <td>N/A
+        {/* {props.vehicles.map((vehicle, idx) => (
+          <React.Fragment>
+            {vehicle.drivers.map((driver, idx) => (
+              <p>{driver.first_name} {driver.last_name}</p>
+            ))}
+          </React.Fragment>
+        ))} */}
+      </td>
     </tr>
   );
 }

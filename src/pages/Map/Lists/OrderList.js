@@ -68,7 +68,7 @@ function OrderItem({ props }) {
   return (
     <tr>
       <td>{props.id}</td>
-      <td>PLACEHOLDER</td>
+      <td>N/A</td>
       <td>{`${props.order.customer_first_name} ${props.order.customer_last_name}`}</td>
       <td>{address}<br /><br />{props.order.customer_phone}<br />{props.order.customer_email}</td>
       <td>${props.order.cost}</td>
@@ -79,14 +79,14 @@ function OrderItem({ props }) {
         <FontAwesomeIcon {...(props.order.hasPaid ? { icon: Icons.faCheck, color: "green" } : { icon: Icons.faTimes, color: "red" })} />
       </td>
       <td>{props.order.type}</td>
-      <td>PLACEHOLDER</td>
+      <td>N/A</td>
       <td>{props.order.status}</td>
-      <td>PLACEHOLDER</td>
-      <td>PLACEHOLDER</td>
-      <td>PLACEHOLDER</td>
-      <td>PLACEHOLDER</td>
-      <td>PLACEHOLDER</td>
-      <td>PLACEHOLDER</td>
+      <td>N/A</td>
+      <td>N/A</td>
+      <td>N/A</td>
+      <td>N/A</td>
+      <td>N/A</td>
+      <td>N/A</td>
       <td>
         <p>Order: {props.order.order_instructions}</p><br />
         <p>Delivery: {props.order.delivery_instructions}</p>

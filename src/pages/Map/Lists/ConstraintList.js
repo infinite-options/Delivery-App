@@ -65,14 +65,14 @@ function VehicleItem({ props }) {
   
   return (
     <tr>
-      <td>{props.constraint.business_id}</td>
-      <td>{props.constraint.business_name}</td>
+      <td>{props.constraint.business_id} N/A</td>
+      <td>{props.constraint.business_name} N/A</td>
       <td>{address}</td>
-      <td>{props.constraint.business_phone}</td>
+      <td>{props.constraint.business_phone} N/A</td>
       <td><InputValue /></td>
       <td><InputValue value={props.constraint.driver_count} hasRange={true} /></td>
-      <td><InputValue hasRange={true} /></td>
-      <td><InputValue hasRange={true} /></td>
+      <td><InputValue value={props.constraint.time_per_driver} hasRange={true} /></td>
+      <td><InputValue value={props.constraint.delivery_count} hasRange={true} /></td>
     </tr>
   );
 }
