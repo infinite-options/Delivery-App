@@ -25,7 +25,8 @@ function BusinessList({ businesses, props }) {
 
 function BusinessItem({ props }) {
   const [hidden, setHidden] = useState(true);
-  const address = `${props.business.street}${(props.business.unit ? ` ${props.business.unit}` : "")} ${props.business.city} ${props.business.state} ${props.business.zip}`;
+  const address = `${props.business.street}${(props.business.unit ? ` ${props.business.unit}` : "")} 
+                   ${props.business.city} ${props.business.state} ${props.business.zip}`;
 
   return (
     <div className="box list-item">
@@ -56,40 +57,37 @@ function BusinessItem({ props }) {
         <tbody className="is-bordered has-text-centered" hidden={hidden}>
           <tr>
             <td className="pr-0">
-                Name<br />{props.business.name}
+              Name<br />{props.business.name}
             </td>
             <td>
-                Type<br />{props.business.type}
+              Type<br />{props.business.type}
             </td>
             <td>
-                Hours of Operation<br />{props.business.hours}
-            </td>
-          </tr>
-          <tr>
-            <td>
-                Address<br />{address}
-            </td>
-            <td>
-                {props.business.latitude}
-                <br />
-                {props.business.longitude}
-            </td>
-            <td>
-                Business Description <br />{props.business.description}
+              Description<br />{props.business.description}
             </td>
           </tr>
           <tr>
             <td>
-                Phone #1: {props.business.phone1}
-                <br />
-                Phone #2: {props.business.phone2}
+              Address<br />{address}
             </td>
             <td>
-                Contact Person<br />N/A
+              Established<br />{props.business.est}
             </td>
             <td>
-                Email<br />
-                {props.business.email}
+            Hours<br />{props.business.hours}
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Phone #1: {props.business.phone1}
+              <br />
+              Phone #2: {props.business.phone2}
+            </td>
+            <td>
+              Contact Person<br />{`${props.business.contact_first_name} ${props.business.contact_last_name}`}
+            </td>
+            <td>
+              Email<br />{props.business.email}
             </td>
           </tr>
         </tbody>

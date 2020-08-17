@@ -77,7 +77,7 @@ function DriverItem({ props }) {
             <th style={{ minWidth: "150px" }} />
             <th style={{ minWidth: "150px" }}>
               <div style={{ width: "150%", maxWidth: "225px" }}>
-                <Rating defaultValue={props.driver.rating} size="small" precision={0.5} readOnly />
+                <Rating value={props.driver.rating} size="small" precision={0.2} readOnly />
                 <span className="ml-4">Rating</span>
               </div>
             </th>

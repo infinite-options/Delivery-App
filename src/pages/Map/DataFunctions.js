@@ -1,8 +1,8 @@
 import axios from "axios";
 
 // "https://wrguk721j7.execute-api.us-west-1.amazonaws.com/dev/api/v1/";
-const BASE_URL = 
-  "https://lu636s0qy3.execute-api.us-west-1.amazonaws.com/dev/api/v2/";
+const NEW_BASE_URL = "https://tsx3rnuidi.execute-api.us-west-1.amazonaws.com/dev/api/v2/";
+const BASE_URL = "https://lu636s0qy3.execute-api.us-west-1.amazonaws.com/dev/api/v2/";
 
 const rainbow = (numOfSteps, step) => {
   // This function generates vibrant, "evenly spaced" colours (i.e. no clustering). This is ideal for creating easily distinguishable vibrant markers in Google Maps and other apps.
@@ -48,7 +48,7 @@ const rainbow = (numOfSteps, step) => {
  *     }, ...
  * }
  */
-const createRoutes = (businesses) => {
+const createRoutes = () => {
   return axios.get(BASE_URL + "getCustomerRoutes")
   .then((response) => {
     // console.log("temprouteS:", response);
@@ -62,19 +62,18 @@ const createRoutes = (businesses) => {
         // from: tempRoutes[route_id].route_data[route_data.length - 1].to,
         to: [location.customer_latitude, location.customer_longitude],
       };
+      // console.log(route_id);
       if (route_id in tempRoutes) {
         location_data.from =
           tempRoutes[route_id].route_data[
             tempRoutes[route_id].route_data.length - 1
           ].to;
+        // console.log(location_data);
         // console.log("route data:", tempRoutes[route_id].route_data);
         tempRoutes[route_id].route_data.push(location_data);
       } else {
         // console.log("route's business", businesses[location.business_id]);
-        location_data.from = [
-          businesses[location.business_id].latitude,
-          businesses[location.business_id].longitude,
-        ];
+        // location_data.from = [0, 0];
         tempRoutes[route_id] = {
           business_id: location.business_id,
           driver_id: location.driver_id,
@@ -88,8 +87,53 @@ const createRoutes = (businesses) => {
     const routes_length = Object.keys(tempRoutes).length;
     for (let route_id in tempRoutes)
       tempRoutes[route_id].route_color = rainbow(routes_length, i++);
+    // console.log(tempRoutes);
     return tempRoutes;
   });
+
+
+  // return axios.get(BASE_URL + "getCustomerRoutes")
+  // .then((response) => {
+  //   // console.log("temprouteS:", response);
+  //   const result = response.data.result.result;
+  //   let tempRoutes = {};
+  //   for (let location of result) {
+  //     const route_id = location.route_id;
+  //     const location_data = {
+  //       customer_id: location.customer_id,
+  //       address: `${location.customer_street} ${location.customer_city} ${location.customer_state} ${location.customer_zip}`,
+  //       // from: tempRoutes[route_id].route_data[route_data.length - 1].to,
+  //       to: [location.customer_latitude, location.customer_longitude],
+  //     };
+  //     if (route_id in tempRoutes) {
+  //       location_data.from =
+  //         tempRoutes[route_id].route_data[
+  //           tempRoutes[route_id].route_data.length - 1
+  //         ].to;
+  //       console.log(location_data);
+  //       // console.log("route data:", tempRoutes[route_id].route_data);
+  //       tempRoutes[route_id].route_data.push(location_data);
+  //     } else {
+  //       // console.log("route's business", businesses[location.business_id]);
+  //       location_data.from = [
+  //         businesses[location.business_id].latitude,
+  //         businesses[location.business_id].longitude,
+  //       ];
+  //       tempRoutes[route_id] = {
+  //         business_id: location.business_id,
+  //         driver_id: location.driver_id,
+  //         visible: true,
+  //         route_data: [location_data],
+  //       };
+  //     }
+  //   }
+  //   // let colors = [];
+  //   let i = 0;
+  //   const routes_length = Object.keys(tempRoutes).length;
+  //   for (let route_id in tempRoutes)
+  //     tempRoutes[route_id].route_color = rainbow(routes_length, i++);
+  //   return tempRoutes;
+  // });
 };
 
 const createDrivers = () => {
@@ -124,7 +168,7 @@ const createDrivers = () => {
         expiration: "N/A",
 
         preferred_routes: "N/A", // only one choice with this endpoint!
-        rating: "N/A",
+        rating: undefined,
       };
       tempDrivers[driver_id] = driver_data;
     }
@@ -134,7 +178,7 @@ const createDrivers = () => {
 };
 
 const createBusinesses = () => {
-  return axios.get(BASE_URL + "getBusinesses")
+  return axios.get(NEW_BASE_URL + "businesses")
   .then((response) => {
     // console.log("tempbusines", response);
     const result = response.data.result.result;
@@ -143,25 +187,78 @@ const createBusinesses = () => {
       const business_id = business.business_id;
       const business_data = {
         name: business.business_name,
-        description: business.business_desc,
         type: business.business_type,
+        description: business.business_desc,
+        est: business.business_created_at,
+        image: business.business_image,
+
+        license: business.business_license,
+        password: business.business_password,
+        EIN: business.business_EIN,
+        USDOT: business.business_USDOT,
+        WAUBI: business.business_WAUBI,
+
         hours: business.business_hours,
+        delivery_hours: business.business_delivery_hours,
+        accepting_hours: business.business_accepting_hours,
+        available_zones: business.available_zones,
+
         street: business.business_street,
         unit: business.business_unit,
         city: business.business_city,
         state: business.business_state,
         zip: business.business_zip,
-        phone: business.business_phone_num,
-        email: business.business_email,
-        phone2: business.business_phone_num2,
         latitude: business.business_latitude,
         longitude: business.business_longitude,
+
+        contact_first_name: business.business_contact_first_name,
+        contact_last_name: business.business_contact_last_name,
+        phone: business.business_phone_num,
+        phone2: business.business_phone_num2,
+        email: business.business_email,
+
+        delivery: business.delivery,
+        can_cancel: business.can_cancel,
+        reusable: business.reusable,
+
+        notification_approval: business.notification_approval,
+        notification_device_id: business.notification_device_id,
       };
       tempBusinesses[business_id] = business_data;
     }
     // setBusinesses(tempBusinesses);
     return tempBusinesses;
   });
+
+
+  // return axios.get(BASE_URL + "getBusinesses")
+  // .then((response) => {
+  //   // console.log("tempbusines", response);
+  //   const result = response.data.result.result;
+  //   let tempBusinesses = {};
+  //   for (let business of result) {
+  //     const business_id = business.business_id;
+  //     const business_data = {
+  //       name: business.business_name,
+  //       description: business.business_desc,
+  //       type: business.business_type,
+  //       hours: business.business_hours,
+  //       street: business.business_street,
+  //       unit: business.business_unit,
+  //       city: business.business_city,
+  //       state: business.business_state,
+  //       zip: business.business_zip,
+  //       phone: business.business_phone_num,
+  //       email: business.business_email,
+  //       phone2: business.business_phone_num2,
+  //       latitude: business.business_latitude,
+  //       longitude: business.business_longitude,
+  //     };
+  //     tempBusinesses[business_id] = business_data;
+  //   }
+  //   // setBusinesses(tempBusinesses);
+  //   return tempBusinesses;
+  // });
 };
 
 const createCustomers = () => {

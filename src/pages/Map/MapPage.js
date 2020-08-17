@@ -30,8 +30,11 @@ const initState = {
 
 function reducer(state, action) {
   switch(action.type) {
-    case 'init':
-      return action.payload.data;
+    case 'load':
+      return {
+        ...state, 
+        ...action.payload.data 
+      };
     case 'route-toggle-visibility':
       // console.log({...state});
       return { 
@@ -81,6 +84,7 @@ function MapPage() {
 
   useEffect(() => {
     Promise.allSettled([
+      createRoutes(),
       createDrivers(),
       createBusinesses(),
       createCustomers(),
@@ -88,21 +92,21 @@ function MapPage() {
     ])
     .then((result) => {
       // console.log("API responses:", result);
-      createRoutes(result[1].value)
-      .then(response => {
+      // createRoutes(result[1].value)
+      // .then(response => {
         // console.log("route resp:", response);
-        const data = {
-          isLoading: false,
-          routes: response,
-          drivers: result[0].value,
-          businesses: result[1].value,
-          customers: result[2].value,
-          vehicles: testObj, // FIXME: CALL API
-          orders: result[3].value,
-          constraints: testObj, // FIXME: CALL API
-        };
-        dispatch({ type: "init", payload: { data } });
-      });
+      const data = {
+        isLoading: false,
+        ...result[0].value && { routes: result[0].value },
+        ...result[1].value && { drivers: result[1].value },
+        ...result[2].value && { businesses: result[2].value },
+        ...result[3].value && { customers: result[3].value },
+        vehicles: testObj, // FIXME: CALL API
+        ...result[4].value && { orders: result[4].value },
+        constraints: testObj, // FIXME: CALL API
+      };
+      dispatch({ type: "load", payload: { data } });
+      // });
     });
   }, []);
 

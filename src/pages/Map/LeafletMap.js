@@ -65,15 +65,15 @@ function LeafletMap({ routes, props }) {
     }
   }, [selectedLocation]);
   
-  let baseLocations = {};
-  for (let route_id in routes) {
-    // console.log(route);
-    const latlng = routes[route_id].route_data[0].from;
-    if (!baseLocations[routes[route_id].business_id]) baseLocations[routes[route_id].business_id] = latlng;
-  }
+  // let baseLocations = {};
+  // for (let route_id in routes) {
+  //   // console.log(route);
+  //   const latlng = routes[route_id].route_data[0].from;
+  //   if (!baseLocations[routes[route_id].business_id]) baseLocations[routes[route_id].business_id] = latlng;
+  // }
   // console.log(baseLocations);
   // console.log(routes);
-  const baseLocations_array = Object.entries(baseLocations);
+  // const baseLocations_array = Object.entries(baseLocations);
   const routes_array = Object.entries(routes);
 
   // let latlngLocal;
@@ -81,9 +81,10 @@ function LeafletMap({ routes, props }) {
   catch(e) { /* console.log("Who tampered with my localStorage?!?!"); */ }
   // console.log(latlngLocal);
   const isLatlng = validateLatlng(latlngLocal);
-  const latitude = isLatlng ? latlngLocal[0] : baseLocations_array[0][1][0];
-  const longitude = isLatlng ? latlngLocal[1] : baseLocations_array[0][1][1];
-  
+  const latitude = isLatlng ? latlngLocal[0] : routes_array[1][0].route_data[0].to[0]; //baseLocations_array[0][1][0];
+  const longitude = isLatlng ? latlngLocal[1] : routes_array[1][0].route_data[0].to[1]; //baseLocations_array[0][1][1];
+  // console.log(`[${latitude}, ${longitude}]`);
+
   const handleMapLoad = () => {
     // onLoad does not work on Map component, so must be called from its child component (TileLayer)
     const map = leafletMap;
@@ -148,9 +149,9 @@ function LeafletMap({ routes, props }) {
         // updateWhenIdle={true}
         // onload={}
       />
-      {baseLocations_array.map((location, index) => (
+      {/* {baseLocations_array.map((location, index) => (
         <Marker key={index} position={location[1]} icon={Icons.Headquarters} onClick={() => console.log(`Hi this is Business ${location[0]}`)} />
-      ))}
+      ))} */}
       {routes_array.map((route, index) => (
         <RouteMarkers
           key={index}
@@ -164,7 +165,7 @@ function LeafletMap({ routes, props }) {
             selectedLocation,
             setSelectedLocation,
             manageMarkers,
-            baseLocation: route[1].route_data[0].from,
+            // baseLocation: route[1].route_data[0].from,
           }}
         />
       ))}
@@ -174,7 +175,7 @@ function LeafletMap({ routes, props }) {
 
 const RouteMarkers = ({ props }) => {
   const [coords, setCoords] = useState([]);
-  const [driverLocation, setDriverLocation] = useState(props.baseLocation); // useState(CURRENT_DRIVER_LOCATION ? CURRENT_DRIVER_LOCATION : props.baseLocation)
+  const [driverLocation, setDriverLocation] = useState(props.route[0].to); // useState(CURRENT_DRIVER_LOCATION ? CURRENT_DRIVER_LOCATION : props.baseLocation)
   const [destination, setDestination] = useState(1); // useState(CURRENT_DRIVER_DESTINATION ? CURRENT_DRIVER_DESTINATION : props.baseLocation)
 
   const selectedLocation = props.selectedLocation;
@@ -190,7 +191,7 @@ const RouteMarkers = ({ props }) => {
   const createRouteCoords = () => {
     let latlngs = [];
     for (let location of props.route) {
-      latlngs.push([location["from"], location["to"], location["address"]]); // calling it coords/latlngs is a bit misleading now that it also contains the address string
+      latlngs.push([location.from ? location.from : location.to, location.to, location.address]); // calling it coords/latlngs is a bit misleading now that it also contains the address string
     }
     createManyCoordinates(latlngs, 0); // test
     createDriverCoords(latlngs);
@@ -216,7 +217,7 @@ const RouteMarkers = ({ props }) => {
   const handleDriverLocation = () => {
     setCoords((prevCoords) => {
       let coords = [...prevCoords];
-      const randomCoords = getRandomCoordinates(props.baseLocation, 0.375); // testing
+      const randomCoords = getRandomCoordinates(props.route[0].to, 0.1); // testing
       coords[destination - 1][1] = randomCoords; // = driverLocation
       coords[destination][0] = randomCoords; // = driverLocation
       return coords;
@@ -286,8 +287,9 @@ const RouteMarkers = ({ props }) => {
 
   return (
     <React.Fragment>
-      {coords.map((location, idx) => (
-        <Marker
+      {coords.map((location, idx) => {
+        // console.log(idx, location[1]);
+        return <Marker
           key={idx}
           route={props.id}
           position={location[1]}
@@ -326,7 +328,7 @@ const RouteMarkers = ({ props }) => {
             )}
           </Popup> */}
         </Marker>
-      ))}
+      })}
       {props.visible && coords.map((location, index) => {
         // console.log(index, location);
         return (
