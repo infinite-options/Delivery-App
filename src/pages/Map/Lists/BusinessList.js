@@ -44,17 +44,17 @@ function BusinessItem({ props }) {
       >
         <thead>
           <tr className="list-item-head">
-            <th style={{ minWidth: "150px" }}>
+            <th style={{ width: "20%" }}>
               {/* <button className="tooltip mx-1" onClick={() => setHidden(prevHidden => !prevHidden)}> */}
-              <div style={{ width: "250%" }}>
+              <div style={{ width: "150%" }}>
                 {/* Displaying only the second section of a business id. Ex: 200-000011 => 11 */}
                 <span>Business {Number(props.id.substring(props.id.indexOf("-") + 1, props.id.length))}: {props.business.name}</span>
               </div>
             </th>
-            <th style={{ minWidth: "125px" }} />
-            <th style={{ minWidth: "150px" }} />
-            <th style={{ minWidth: "150px" }} />
-            <th style={{ minWidth: "100px" }}>
+            <th style={{ width: "20%" }} />
+            <th style={{ width: "20%" }} />
+            <th style={{ width: "20%" }} />
+            <th style={{ width: "20%" }}>
               <button
                 className="button is-super-small is-pulled-right"
                 onClick={() => setHidden((prevHidden) => !prevHidden)}

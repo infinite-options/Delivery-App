@@ -56,8 +56,8 @@ function DriverItem({ props }) {
       >
         <thead>
           <tr className="list-item-head">
-            <th style={{ minWidth: "300px" }}>
-              <div style={{ maxWidth: "275px" }}>
+            <th style={{ width: "40%" }}>
+              <div style={{ width: "240px" }}>
                 <span>Driver {props.id}: {`${props.driver.first_name} ${props.driver.last_name[0]}.`}</span>
                 <button
                   className="button is-rounded is-pulled-right is-super-small ml-1"
@@ -74,14 +74,14 @@ function DriverItem({ props }) {
                 </button>
               </div>
             </th>
-            <th style={{ minWidth: "150px" }} />
-            <th style={{ minWidth: "150px" }}>
+            <th style={{ width: "20%" }} />
+            <th style={{ width: "20%" }}>
               <div style={{ width: "150%", maxWidth: "225px" }}>
                 <Rating value={props.driver.rating} size="small" precision={0.2} readOnly />
                 <span className="ml-4">Rating</span>
               </div>
             </th>
-            <th style={{ minWidth: "150px" }}>
+            <th style={{ width: "20%" }}>
               <button
                 className="button is-super-small is-pulled-right"
                 onClick={() => setHidden((prevHidden) => !prevHidden)}
