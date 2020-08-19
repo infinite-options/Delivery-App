@@ -97,9 +97,9 @@ function RouteItem({ props }) {
       >
         <thead>
           <tr className="list-item-head">
-            <th style={{ minWidth: "120px" }}>
+            <th style={{ width: "20%" }}>
               {/* <button className="tooltip mx-1" onClick={() => setHidden(prevHidden => !prevHidden)}> */}
-              <div style={{ width: "250%", maxWidth: "225px", minWidth: "100px" }}>
+              <div style={{ width: "150%", maxWidth: "225px" }}>
                 <button 
                   className="button is-super-small is-rounded mr-3" 
                   onClick={() => props.dispatch({ type: "route-toggle-visibility", payload: { id: props.id } })}
@@ -119,9 +119,9 @@ function RouteItem({ props }) {
               </div>
               {/* <span {...(!props.visible ? { style: { marginLeft: "1.32px" } } : {})}>Route {props.id}</span> */}
             </th>
-            <th style={{ minWidth: "250px" }} />
-            <th style={{ minWidth: "75px" }}>
-              <div style={{ width: "250%", maxWidth: "225px", minWidth: "100px" }}>
+            <th style={{ width: "30%" }} />
+            <th style={{ width: "10%" }}>
+              <div style={{ width: "300%", maxWidth: "225px" }}>
                 <span>{`Driver ${props.driver_id}: ${props.driver_first_name} ${props.driver_last_name[0]}.`}</span>
                 <button
                   className="button is-rounded is-super-small is-pulled-right ml-1"
@@ -137,8 +137,8 @@ function RouteItem({ props }) {
                 </button>
               </div>
             </th>
-            <th style={{ minWidth: "70px" }} />
-            <th style={{ minWidth: "70px" }}>
+            <th style={{ width: "10%" }} />
+            <th style={{ width: "10%" }}>
               {/* <div style={{ width: "110%" }}>
                 <button
                   className="button is-rounded is-super-small mr-1"
@@ -154,7 +154,7 @@ function RouteItem({ props }) {
                 </button>
               </div> */}
             </th>
-            <th style={{ minWidth: "125px" }}>
+            <th style={{ width: "20%" }}>
               <button
                 className="button is-super-small is-pulled-right"
                 onClick={() => setHidden((prevHidden) => !prevHidden)}

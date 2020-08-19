@@ -1,16 +1,62 @@
-import React from "react";
+import React, { useReducer } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Icons from "Icons/Icons";
 // import axios from "axios";
 
+function reducer(state, action) {
+  switch(action.type) {
+    case 'id':
+      const newValue = state.sortBy === 'id' ? -state.value: -1;
+      return {
+        sortBy: 'id',
+        value: newValue,
+        list: [...state.list].sort((a, b) => (newValue === 1 ? a[0] - b[0] : b[0] - a[0])),
+      };
+    default:
+      return state;
+  }
+}
+
 function OrderList({ orders, props }) {
   console.log("rendering orders..");
+  const [orderData, dispatch] = useReducer(reducer, {
+    sortBy: "", // sortBy 'id', 'name', etc
+    value: 0, // value 1=ascending, -1=descending
+    list: Object.entries(orders),
+  });
+  console.log(orderData);
+  // const [orderList, setOrderList] = useState(Object.entries(orders));
   
+  // const toggleSort = (type) => {
+  //   switch (type) {
+  //     case 'id': 
+  //       setOrderList(prevList => {
+  //         return [...prevList].sort((a, b) => (b[0] - a[0]));
+  //       });
+  //       console.log(orderList);
+  //       break;
+  //     default: console.log("Sorting... invalid type");
+  //   }
+  // }
+
   return (
     <table className="table is-fullwidth is-size-7 is-bordered has-text-centered vcenter-items">
       <thead>
         <tr>
-          <th>Order #</th>
+          <th>
+            Order #
+            <FontAwesomeIcon 
+              icon={
+                orderData.sortBy !== 'id' 
+                  ? Icons.faSort 
+                  : Icons[orderData.value === 1 ? 'faSortUp' : 'faSortDown']
+              }
+              color="lightgrey"
+              className="ml-1" 
+              style={{ cursor: "pointer" }}
+              onClick={() => dispatch({ type: "id" })}
+            />  
+          </th>
           <th>Date &amp; Time</th>
           <th>Customer Name</th>
           <th>Customer Info</th>
@@ -31,7 +77,7 @@ function OrderList({ orders, props }) {
         </tr>
       </thead>
       <tbody>
-        {Object.entries(orders).map((order, index) => (
+        {orderData.list.map((order, index) => (
           <OrderItem
             key={index}
             props={{

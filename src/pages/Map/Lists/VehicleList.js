@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Icons from "Icons/Icons";
 // import axios from "axios";
 
 function VehicleList({ vehicles, props }) {
   console.log("rendering vehicles..");
+  const [vehicleList, setVehicleList] = useState(Object.entries(vehicles));
   
   return (
     <table className="table is-fullwidth is-size-7 is-bordered has-text-centered vcenter-items">
@@ -36,7 +37,7 @@ function VehicleList({ vehicles, props }) {
               }, ...
           }
         */}
-        {Object.entries(vehicles).map((business_vehicles, index) => (
+        {vehicleList.map((business_vehicles, index) => (
           <VehiclesItem
             key={index}
             props={{

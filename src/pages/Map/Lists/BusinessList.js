@@ -30,10 +30,12 @@ function BusinessItem({ props }) {
                    ${props.business.city} ${props.business.state} ${props.business.zip}`;
 
   const handleDateTime = (input) => {
-    const split = input.split(/-|T/);
-    const date_time = `${split[0]} ${moment.monthsShort(Number(split[1]))} ${split[2]}, ${split[3]}`;
-    // for (let section of split) date_time += `${section} `;
-    return date_time;
+    if (input) {
+      const split = input.split(/-|T/);
+      const date_time = `${split[0]} ${moment.monthsShort(Number(split[1]))} ${split[2]}, ${split[3]}`;
+      // for (let section of split) date_time += `${section} `;
+      return date_time;
+    }
   }
 
   return (
@@ -82,7 +84,7 @@ function BusinessItem({ props }) {
               Established<br />{handleDateTime(props.business.est)}
             </td>
             <td>
-              Image<br /><img src={props.business.image} width="24" height="24" />
+              Image<br /><img src={props.business.image} width="48" height="48" />
             </td>
           </tr>
           <tr>
@@ -93,10 +95,10 @@ function BusinessItem({ props }) {
               Business Hours<br />{props.business.hours}
             </td>
             <td>
-              Delivery Hours<br />{/*props.business.delivery_hours*/} WIP
+              Delivery Hours<br />{props.business.delivery_hours}
             </td>
             <td>
-              Accepting Hours<br />{/*props.business.accepting_hours*/} WIP
+              Accepting Hours<br />{props.business.accepting_hours}
             </td>
             <td>
               Available Zones<br />{props.business.available_zones}

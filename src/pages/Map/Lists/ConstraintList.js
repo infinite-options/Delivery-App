@@ -1,16 +1,27 @@
-import React from "react";
+import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Icons from "Icons/Icons";
 // import axios from "axios";
 
 function ConstraintList({ constraints, props }) {
   console.log("rendering constraints..");
+  const [constraintList, setConstraintList] = useState(Object.entries(constraints));
   
+  const toggleSort = (type) => {
+    switch (type) {
+      case 'id': console.log(constraintList); break;
+      default: console.log("Sorting... invalid type");
+    }
+  }
+
   return (
     <table className="table is-fullwidth is-size-7 is-bordered has-text-centered vcenter-items">
       <thead>
         <tr>
-          <th>Business ID</th>
+          <th>
+            Business ID
+            <FontAwesomeIcon icon={Icons.faSort} className="ml-1" onClick={() => toggleSort("id")} />
+          </th>
           <th>Business Name</th>
           <th>Business Address</th>
           <th>Business Phone Number</th>
@@ -30,7 +41,7 @@ function ConstraintList({ constraints, props }) {
         </tr>
       </thead>
       <tbody>
-        {Object.entries(constraints).map((constraint, index) => (
+        {constraintList.map((constraint, index) => (
           <VehicleItem
             key={index}
             props={{
