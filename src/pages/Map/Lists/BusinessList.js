@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Icons from "Icons/Icons";
+import moment from "moment";
 // import axios from "axios";
 
 function BusinessList({ businesses, props }) {
@@ -28,6 +29,13 @@ function BusinessItem({ props }) {
   const address = `${props.business.street}${(props.business.unit ? ` ${props.business.unit}` : "")} 
                    ${props.business.city} ${props.business.state} ${props.business.zip}`;
 
+  const handleDateTime = (input) => {
+    const split = input.split(/-|T/);
+    const date_time = `${split[0]} ${moment.monthsShort(Number(split[1]))} ${split[2]}, ${split[3]}`;
+    // for (let section of split) date_time += `${section} `;
+    return date_time;
+  }
+
   return (
     <div className="box list-item">
       <table
@@ -36,12 +44,17 @@ function BusinessItem({ props }) {
       >
         <thead>
           <tr className="list-item-head">
-            <th>
+            <th style={{ minWidth: "150px" }}>
               {/* <button className="tooltip mx-1" onClick={() => setHidden(prevHidden => !prevHidden)}> */}
-              <span>Business {props.id}: {props.business.name}</span>
+              <div style={{ width: "250%" }}>
+                {/* Displaying only the second section of a business id. Ex: 200-000011 => 11 */}
+                <span>Business {Number(props.id.substring(props.id.indexOf("-") + 1, props.id.length))}: {props.business.name}</span>
+              </div>
             </th>
-            <th />
-            <th>
+            <th style={{ minWidth: "125px" }} />
+            <th style={{ minWidth: "150px" }} />
+            <th style={{ minWidth: "150px" }} />
+            <th style={{ minWidth: "100px" }}>
               <button
                 className="button is-super-small is-pulled-right"
                 onClick={() => setHidden((prevHidden) => !prevHidden)}
@@ -56,7 +69,7 @@ function BusinessItem({ props }) {
         </thead>
         <tbody className="is-bordered has-text-centered" hidden={hidden}>
           <tr>
-            <td className="pr-0">
+            <td>
               Name<br />{props.business.name}
             </td>
             <td>
@@ -65,29 +78,83 @@ function BusinessItem({ props }) {
             <td>
               Description<br />{props.business.description}
             </td>
+            <td>
+              Established<br />{handleDateTime(props.business.est)}
+            </td>
+            <td>
+              Image<br /><img src={props.business.image} width="24" height="24" />
+            </td>
           </tr>
           <tr>
             <td>
               Address<br />{address}
             </td>
             <td>
-              Established<br />{props.business.est}
+              Business Hours<br />{props.business.hours}
             </td>
             <td>
-            Hours<br />{props.business.hours}
+              Delivery Hours<br />{/*props.business.delivery_hours*/} WIP
+            </td>
+            <td>
+              Accepting Hours<br />{/*props.business.accepting_hours*/} WIP
+            </td>
+            <td>
+              Available Zones<br />{props.business.available_zones}
             </td>
           </tr>
           <tr>
             <td>
-              Phone #1: {props.business.phone1}
+              Phone #1: {props.business.phone}
               <br />
               Phone #2: {props.business.phone2}
+            </td>
+            <td>
+              Email<br />{props.business.email}
             </td>
             <td>
               Contact Person<br />{`${props.business.contact_first_name} ${props.business.contact_last_name}`}
             </td>
             <td>
-              Email<br />{props.business.email}
+              Notification Approval: {props.business.notification_approval}
+              <br />
+              Notification ID: {props.business.notification_device_id}
+            </td>
+            <td>
+              {"Can Deliver: "}
+              <FontAwesomeIcon 
+                icon={props.business.delivery ? Icons.faCheck : Icons.faTimes}
+                color={props.business.delivery ? "green" : "red"} 
+              />
+              <br />
+              {"Can Cancel: "}
+              <FontAwesomeIcon 
+                icon={props.business.can_cancel ? Icons.faCheck : Icons.faTimes}
+                color={props.business.can_cancel ? "green" : "red"} 
+              />
+              <br />
+              {"Is Reusable: "}
+              <FontAwesomeIcon 
+                icon={props.business.reusable ? Icons.faCheck : Icons.faTimes}
+                color={props.business.reusable ? "green" : "red"} 
+              />
+            </td>
+          </tr>
+          <tr>
+            <td>
+              License<br />{props.business.license}
+            </td>
+            <td>
+              Password<br />
+              <div className="wrap-text">{props.business.password}</div>
+            </td>
+            <td>
+              EIN<br />{props.business.EIN}
+            </td>
+            <td>
+              USDOT<br />{props.business.USDOT}
+            </td>
+            <td>
+              WAUBI<br />{props.business.WAUBI}
             </td>
           </tr>
         </tbody>

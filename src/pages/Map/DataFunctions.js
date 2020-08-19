@@ -227,6 +227,7 @@ const createBusinesses = () => {
       tempBusinesses[business_id] = business_data;
     }
     // setBusinesses(tempBusinesses);
+    console.log(tempBusinesses);
     return tempBusinesses;
   });
 

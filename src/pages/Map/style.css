@@ -151,6 +151,12 @@ table.vcenter-items span,
   vertical-align: middle;
 }
 
+.list-item div.wrap-text {
+  width: 50px; 
+  min-width: 100%; 
+  overflow-wrap: break-word;
+}
+
 /* float: left/right unaligns the middle vertical alignment value for whatever reason */
 table.list-item .is-pulled-right,
 .list-item .is-pulled-right {
