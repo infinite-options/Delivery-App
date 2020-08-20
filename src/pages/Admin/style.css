@@ -140,6 +140,8 @@
   /* width: 120%; */
 }
 
+/* For some reason when button has text around it, the vertical
+   alignment of the text is shifted upwards */
 table.vcenter-items td,
 table.vcenter-items th,
 table.vcenter-items button,

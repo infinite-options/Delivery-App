@@ -203,7 +203,7 @@ const createBusinesses = () => {
         accepting_hours: business.business_accepting_hours,
         available_zones: business.available_zones,
 
-        street: business.business_street,
+        street: business.business_address,
         unit: business.business_unit,
         city: business.business_city,
         state: business.business_state,

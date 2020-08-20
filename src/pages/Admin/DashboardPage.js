@@ -271,12 +271,12 @@ function Header(props) {
           alt="Just Delivered"
           style={{ alignSelf: "center", maxHeight: "5vh" }}
         />
-        <p
+        <h1
           className="has-text-centered"
           style={{ width: "100%", fontSize: "3vh" }}
         >
           ADMIN DASHBOARD
-        </p>
+        </h1>
         {tabs.map((value, idx) => (
           <button 
             key={idx} 

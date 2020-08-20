@@ -101,19 +101,19 @@ function BusinessItem({ props }) {
               Type<br />{props.business.type}
             </td>
             <td>
-              Notification Approval<br />{props.business.notification_approval}
+              <div style={{ width: "215%" }}>
+                Description<br />{props.business.description}
+              </div>
             </td>
-            <td>
-              Notification Device<br />{props.business.notification_device_id}
-            </td>
+            <td style={{ borderLeft: "hidden" }} />
           </tr>
           <tr>
             <td>
-              Address<br />{address}
+              <div style={{ width: "215%" }}>
+                Address<br />{address}
+              </div>
             </td>
-            <td>
-              Description<br />{props.business.description}
-            </td>
+            <td style={{ borderLeft: "hidden" }} />
             <td>
               Business Hours<br />{displayDayHours(props.business.hours)}
             </td>
@@ -137,48 +137,69 @@ function BusinessItem({ props }) {
               Email<br />{props.business.email}
             </td>
             <td>
-              {"Can Deliver: "}
-              <FontAwesomeIcon 
-                icon={props.business.delivery ? Icons.faCheck : Icons.faTimes}
-                color={props.business.delivery ? "green" : "red"} 
-              />
-              <br />
-              {"Can Cancel: "}
-              <FontAwesomeIcon 
-                icon={props.business.can_cancel ? Icons.faCheck : Icons.faTimes}
-                color={props.business.can_cancel ? "green" : "red"} 
-              />
-              <br />
-              {"Is Reusable: "}
-              <FontAwesomeIcon 
-                icon={props.business.reusable ? Icons.faCheck : Icons.faTimes}
-                color={props.business.reusable ? "green" : "red"} 
-              />
+              Notification Approval<br />{props.business.notification_approval}
             </td>
             <td>
-              Available Zones<br />{props.business.available_zones}
+              Notification Device<br />{props.business.notification_device_id}
             </td>
           </tr>
           <FillerRow numColumns={5} showMore={showMore} setShowMore={setShowMore} />
           {showMore && (
-            <tr>
-              <td>
-                License<br />{props.business.license}
-              </td>
-              <td>
-                Password<br />
-                <div className="wrap-text">{props.business.password}</div>
-              </td>
-              <td>
-                EIN<br />{props.business.EIN}
-              </td>
-              <td>
-                USDOT<br />{props.business.USDOT}
-              </td>
-              <td>
-                WAUBI<br />{props.business.WAUBI}
-              </td>
-            </tr>
+            <React.Fragment>
+              <tr>
+                <td>
+                  Business License #<br />{props.business.license}
+                </td>
+                <td>
+                  Business License Expiration<br />
+                </td>
+                <td>
+                  Business Password<br />
+                  <div className="wrap-text">{props.business.password}</div>
+                </td>
+                <td></td>
+                <td>
+                  Available Zones<br />{props.business.available_zones}
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  EIN #<br />{props.business.EIN}
+                </td>
+                <td>
+                  US DOT #<br />{props.business.USDOT}
+                </td>
+                <td>
+                  WA UBI #<br />{props.business.WAUBI}
+                </td>
+                <td></td>
+                <td>
+                  Can Deliver:
+                  <FontAwesomeIcon 
+                    icon={props.business.delivery ? Icons.faCheck : Icons.faTimes}
+                    color={props.business.delivery ? "green" : "red"} 
+                    className="ml-2" 
+                    style={{ position: "relative", top: "0.05rem" }} 
+                  />
+                  <br />
+                  Can Cancel:
+                  <FontAwesomeIcon 
+                    icon={props.business.can_cancel ? Icons.faCheck : Icons.faTimes}
+                    color={props.business.can_cancel ? "green" : "red"}
+                    className="ml-2" 
+                    style={{ position: "relative", top: "0.05rem" }} 
+                  />
+                  <br />
+                  Is Reusable:
+                  <FontAwesomeIcon 
+                    icon={props.business.reusable ? Icons.faCheck : Icons.faTimes}
+                    color={props.business.reusable ? "green" : "red"}
+                    className="ml-2" 
+                    style={{ position: "relative", top: "0.05rem" }} 
+                  />
+                </td>
+              </tr>
+            </React.Fragment>
           )}
         </tbody>
       </table>
