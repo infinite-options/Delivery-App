@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Icons from "utils/Icons/Icons";
+import FillerRow from "utils/Components/FillerRow";
 import Rating from '@material-ui/lab/Rating';
 // import axios from "axios";
 
@@ -160,18 +161,7 @@ function DriverItem({ props }) {
               Times Available<br />{props.driver.time_availability}
             </td>
           </tr>
-          <tr className="filler-row">
-            <td /><td /><td />
-            <td style={{ textAlign: "right" }}>
-              <span className="has-text-grey">Show {showMore ? "Less" : "More"}</span>
-              <button 
-                className="button is-super-small is-light mx-1"
-                onClick={() => setShowMore((prevShowMore) => !prevShowMore)}
-              >
-                <FontAwesomeIcon icon={(showMore ? Icons.faCaretUp : Icons.faCaretDown)} color="grey" />
-              </button>
-            </td>
-          </tr>
+          <FillerRow numColumns={4} showMore={showMore} setShowMore={setShowMore} />
           {showMore && ( 
             <React.Fragment>
               <tr>

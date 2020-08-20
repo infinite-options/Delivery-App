@@ -1,8 +1,11 @@
 import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Icons from "utils/Icons/Icons";
+import FillerRow from "utils/Components/FillerRow";
 import moment from "moment";
 // import axios from "axios";
+
+const weekdays = moment.weekdays();
 
 function BusinessList({ businesses, props }) {
   console.log("rendering businesses..");
@@ -26,8 +29,25 @@ function BusinessList({ businesses, props }) {
 
 function BusinessItem({ props }) {
   const [hidden, setHidden] = useState(true);
+  const [showMore, setShowMore] = useState(false);
+  const [businessDay, setBusinessDay] = useState(0);
+  const [deliveryDay, setDeliveryDay] = useState(0);
+  const [acceptingDay, setAcceptingDay] = useState(0);
   const address = `${props.business.street}${(props.business.unit ? ` ${props.business.unit}` : "")} 
                    ${props.business.city} ${props.business.state} ${props.business.zip}`;
+  
+  const displayDayHours = (type) => {
+    const days = JSON.parse(type);
+    // console.log(days);
+    return (
+      <React.Fragment>
+        {weekdays.map((day, idx) => (
+          <p key={idx}>{day}: {days[day]}</p>
+        ))}
+      </React.Fragment>
+    );
+  };
+  // console.log(weekdays);
 
   const handleDateTime = (input) => {
     if (input) {
@@ -36,7 +56,7 @@ function BusinessItem({ props }) {
       // for (let section of split) date_time += `${section} `;
       return date_time;
     }
-  }
+  };
 
   return (
     <div className="box list-item">
@@ -72,19 +92,19 @@ function BusinessItem({ props }) {
         <tbody className="is-bordered has-text-centered" hidden={hidden}>
           <tr>
             <td>
-              Name<br />{props.business.name}
-            </td>
-            <td>
-              Type<br />{props.business.type}
-            </td>
-            <td>
-              Description<br />{props.business.description}
+              Business Image<br /><img src={props.business.image} width="48" height="48" />
             </td>
             <td>
               Established<br />{handleDateTime(props.business.est)}
             </td>
             <td>
-              Image<br /><img src={props.business.image} width="48" height="48" />
+              Type<br />{props.business.type}
+            </td>
+            <td>
+              Notification Approval<br />{props.business.notification_approval}
+            </td>
+            <td>
+              Notification Device<br />{props.business.notification_device_id}
             </td>
           </tr>
           <tr>
@@ -92,19 +112,22 @@ function BusinessItem({ props }) {
               Address<br />{address}
             </td>
             <td>
-              Business Hours<br />{props.business.hours}
+              Description<br />{props.business.description}
             </td>
             <td>
-              Delivery Hours<br />{props.business.delivery_hours}
+              Business Hours<br />{displayDayHours(props.business.hours)}
             </td>
             <td>
-              Accepting Hours<br />{props.business.accepting_hours}
+              Delivery Hours<br />{displayDayHours(props.business.delivery_hours)}
             </td>
             <td>
-              Available Zones<br />{props.business.available_zones}
+              Accepting Hours<br />{displayDayHours(props.business.accepting_hours)}
             </td>
           </tr>
           <tr>
+            <td>
+              Contact Person<br />{`${props.business.contact_first_name} ${props.business.contact_last_name}`}
+            </td>
             <td>
               Phone #1: {props.business.phone}
               <br />
@@ -112,14 +135,6 @@ function BusinessItem({ props }) {
             </td>
             <td>
               Email<br />{props.business.email}
-            </td>
-            <td>
-              Contact Person<br />{`${props.business.contact_first_name} ${props.business.contact_last_name}`}
-            </td>
-            <td>
-              Notification Approval: {props.business.notification_approval}
-              <br />
-              Notification ID: {props.business.notification_device_id}
             </td>
             <td>
               {"Can Deliver: "}
@@ -140,25 +155,31 @@ function BusinessItem({ props }) {
                 color={props.business.reusable ? "green" : "red"} 
               />
             </td>
-          </tr>
-          <tr>
             <td>
-              License<br />{props.business.license}
-            </td>
-            <td>
-              Password<br />
-              <div className="wrap-text">{props.business.password}</div>
-            </td>
-            <td>
-              EIN<br />{props.business.EIN}
-            </td>
-            <td>
-              USDOT<br />{props.business.USDOT}
-            </td>
-            <td>
-              WAUBI<br />{props.business.WAUBI}
+              Available Zones<br />{props.business.available_zones}
             </td>
           </tr>
+          <FillerRow numColumns={5} showMore={showMore} setShowMore={setShowMore} />
+          {showMore && (
+            <tr>
+              <td>
+                License<br />{props.business.license}
+              </td>
+              <td>
+                Password<br />
+                <div className="wrap-text">{props.business.password}</div>
+              </td>
+              <td>
+                EIN<br />{props.business.EIN}
+              </td>
+              <td>
+                USDOT<br />{props.business.USDOT}
+              </td>
+              <td>
+                WAUBI<br />{props.business.WAUBI}
+              </td>
+            </tr>
+          )}
         </tbody>
       </table>
     </div>

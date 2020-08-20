@@ -97,9 +97,9 @@ function RouteItem({ props }) {
       >
         <thead>
           <tr className="list-item-head">
-            <th style={{ width: "20%" }}>
+            <th style={{ width: "17.5%" }}>
               {/* <button className="tooltip mx-1" onClick={() => setHidden(prevHidden => !prevHidden)}> */}
-              <div style={{ width: "150%", maxWidth: "225px" }}>
+              <div style={{ width: "200%", maxWidth: "225px" }}>
                 <button 
                   className="button is-super-small is-rounded mr-3" 
                   onClick={() => props.dispatch({ type: "route-toggle-visibility", payload: { id: props.id } })}
@@ -137,8 +137,8 @@ function RouteItem({ props }) {
                 </button>
               </div>
             </th>
-            <th style={{ width: "10%" }} />
-            <th style={{ width: "10%" }}>
+            <th style={{ width: "12.5%" }} />
+            <th style={{ width: "12.5%" }}>
               {/* <div style={{ width: "110%" }}>
                 <button
                   className="button is-rounded is-super-small mr-1"
@@ -154,7 +154,7 @@ function RouteItem({ props }) {
                 </button>
               </div> */}
             </th>
-            <th style={{ width: "20%" }}>
+            <th style={{ width: "17.5%" }}>
               <button
                 className="button is-super-small is-pulled-right"
                 onClick={() => setHidden((prevHidden) => !prevHidden)}

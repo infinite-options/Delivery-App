@@ -280,7 +280,7 @@ function Header(props) {
         {tabs.map((value, idx) => (
           <button 
             key={idx} 
-            className="button is-lightgrey is-sharp is-tilted-right is-fullheight"
+            className="button is-lightgrey is-sharp is-tilted-right header-button"
             onClick={() => handleTabChange(idx)}
             style={{ backgroundColor: props.tab === idx && "yellow" }}
           >
@@ -288,13 +288,13 @@ function Header(props) {
           </button>
         ))}
         <button
-          className="button is-white is-fullheight ml-1"
+          className="button is-white is-fullheight ml-2"
           onClick={() => props.handleBurger()}
         >
           <FontAwesomeIcon icon={Icons.faBars} />
         </button>
       </div>
-      <ul id= "selections" className="header-burger">
+      <ul id="selections" className="header-burger">
         <li>
           <button
             className="button is-white is-fullwidth"

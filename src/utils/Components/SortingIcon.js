@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 function SortingIcon({ type, data, dispatch }) {
   return (
-    <span className="fa-layers no-select" style={{ cursor: "pointer" }} onClick={() => dispatch({ type: type })}>
+    <span className="fa-layers no-select ml-1" style={{ cursor: "pointer" }} onClick={() => dispatch({ type: type })}>
       {data.sortBy === type ? (
         <React.Fragment>
           <FontAwesomeIcon 

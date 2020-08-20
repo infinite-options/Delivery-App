@@ -38,7 +38,7 @@
   position: sticky;
   top: 0px;
   height: 5vh;
-  min-width: 1000px;
+  min-width: 1400px;
   display: flex;
   box-shadow: 0 2px 2px -2px rgba(0, 0, 0, 0.2);
   border-bottom: 1px solid #d8dbdd;
@@ -266,6 +266,12 @@ table.is-view td.is-today-end {
 
 .button.is-fullheight {
   height: 100%;
+}
+
+.button.header-button {
+  height: 70%;
+  margin-top: 1.5vh;
+  margin-left: 0.35em;
 }
 
 .button.is-lightgrey {
