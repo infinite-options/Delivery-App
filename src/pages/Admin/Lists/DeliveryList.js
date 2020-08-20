@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Icons from "Icons/Icons";
+import Icons from "utils/Icons/Icons";
 
 function DeliveryList({ routes, drivers, businesses, customers, props }) {
   console.log("rendering deliveries..");

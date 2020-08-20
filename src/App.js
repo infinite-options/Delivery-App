@@ -1,6 +1,6 @@
 import React from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import MapPage from "pages/Map/MapPage";
+import DashboardPage from "pages/Admin/DashboardPage";
 
 function App() {
   console.log("rendering app..");
@@ -8,7 +8,7 @@ function App() {
   return (
     <Router basename={"Delivery-App"}>
       <Switch>
-        <Route exact path="/" component={MapPage} />
+        <Route exact path="/" component={DashboardPage} />
         {/* <Route component={ErrorPage} /> 
           <Redirect to="/404" /> */}
       </Switch>

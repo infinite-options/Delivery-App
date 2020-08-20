@@ -1,16 +1,40 @@
 import React, { useReducer } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Icons from "Icons/Icons";
+import Icons from "utils/Icons/Icons";
+import SortingIcon from "utils/Components/SortingIcon";
 // import axios from "axios";
 
 function reducer(state, action) {
+  const newValue = state.sortBy === action.type ? -state.value: -1;
+
+  // console.log(state);
   switch(action.type) {
     case 'id':
-      const newValue = state.sortBy === 'id' ? -state.value: -1;
       return {
         sortBy: 'id',
         value: newValue,
-        list: [...state.list].sort((a, b) => (newValue === 1 ? a[0] - b[0] : b[0] - a[0])),
+        list: [...state.list].sort((a, b) => (
+          newValue === 1 ? a[0] - b[0] : b[0] - a[0]
+        )),
+      };
+    case 'customer-name':
+      return {
+        sortBy: 'customer-name',
+        value: newValue,
+        list: [...state.list].sort((a, b) => {
+          const name_a = `${a[1].customer_first_name} ${a[1].customer_last_name}`.toLowerCase();
+          const name_b = `${b[1].customer_first_name} ${b[1].customer_last_name}`.toLowerCase();
+          // console.log(value_a, value_b);
+          return (newValue === 1 ? name_a.localeCompare(name_b) : name_b.localeCompare(name_a));
+        }),
+      };
+    case 'amount':
+      return {
+        sortBy: 'amount',
+        value: newValue,
+        list: [...state.list].sort((a, b) => (
+          newValue === 1 ? a[1].cost - b[1].cost : b[1].cost - a[1].cost
+        )),
       };
     default:
       return state;
@@ -24,20 +48,6 @@ function OrderList({ orders, props }) {
     value: 0, // value 1=ascending, -1=descending
     list: Object.entries(orders),
   });
-  console.log(orderData);
-  // const [orderList, setOrderList] = useState(Object.entries(orders));
-  
-  // const toggleSort = (type) => {
-  //   switch (type) {
-  //     case 'id': 
-  //       setOrderList(prevList => {
-  //         return [...prevList].sort((a, b) => (b[0] - a[0]));
-  //       });
-  //       console.log(orderList);
-  //       break;
-  //     default: console.log("Sorting... invalid type");
-  //   }
-  // }
 
   return (
     <table className="table is-fullwidth is-size-7 is-bordered has-text-centered vcenter-items">
@@ -45,22 +55,18 @@ function OrderList({ orders, props }) {
         <tr>
           <th>
             Order #
-            <FontAwesomeIcon 
-              icon={
-                orderData.sortBy !== 'id' 
-                  ? Icons.faSort 
-                  : Icons[orderData.value === 1 ? 'faSortUp' : 'faSortDown']
-              }
-              color="lightgrey"
-              className="ml-1" 
-              style={{ cursor: "pointer" }}
-              onClick={() => dispatch({ type: "id" })}
-            />  
+            <SortingIcon type='id' data={orderData} dispatch={dispatch} />
           </th>
           <th>Date &amp; Time</th>
-          <th>Customer Name</th>
+          <th>
+            Customer Name
+            <SortingIcon type='customer-name' data={orderData} dispatch={dispatch} />  
+          </th>
           <th>Customer Info</th>
-          <th>Amount</th>
+          <th>
+            Amount
+            <SortingIcon type='amount' data={orderData} dispatch={dispatch} />  
+          </th>
           <th>Items</th>
           <th>Paid?</th>
           <th>Order Type</th>

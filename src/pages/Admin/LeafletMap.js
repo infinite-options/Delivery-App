@@ -10,7 +10,7 @@ import {
   Polyline,
 } from "react-leaflet";
 // import { geolocated } from "react-geolocated";
-import Icons from "Icons/Icons";
+import Icons from "utils/Icons/Icons";
 import L from "leaflet";
 // use San Jose, CA as the default center
 const DEFAULT_LATITUDE = 37.338208;
@@ -256,7 +256,7 @@ const RouteMarkers = ({ props }) => {
   // console.log(props.route);
   // console.log(coords);
 
-  // duplcate code, create function in MapPage.js and send function to children component
+  // duplcate code, create function in DashboardPage.js and send function to children component
   const handleSelect = (event, driverNumber, locationNumber) => {
     // console.log(event);
     // console.log(`{${driverNumber}, ${locationNumber}}`);

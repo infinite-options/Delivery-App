@@ -1,7 +1,7 @@
 import React, { useState, useReducer, useEffect } from "react";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Icons from "Icons/Icons";
+import Icons from "utils/Icons/Icons";
 import LeafletMap from "./LeafletMap";
 import DeliveryList from "./Lists/DeliveryList";
 import DriverList from "./Lists/DriverList";
@@ -11,11 +11,11 @@ import VehicleList from "./Lists/VehicleList";
 import OrderList from "./Lists/OrderList";
 import ConstraintList from "./Lists/ConstraintList";
 import DeliveryView from "./DeliveryView";
-import AppIcon from "Icons/app_icon.png";
+import AppIcon from "utils/Icons/app_icon.png";
 // import axios from "axios";
 // created another file for functions that load data from server, since this file was getting too large for my liking,
 // should I stick to this or revert this change?
-import { createRoutes, createDrivers, createBusinesses, createCustomers, createOrders } from "./DataFunctions";
+import { createRoutes, createDrivers, createBusinesses, createCustomers, createOrders } from "utils/Functions/DataFunctions";
 
 const initState = {
   isLoading: true,
@@ -55,7 +55,7 @@ function reducer(state, action) {
 // object of empty items for testing display
 const testObj = { 0: {}, 1: {}, 2: {} };
 
-function MapPage() {
+function DashboardPage() {
   console.log("rendering page..");
 
   // possibly use this with useContext, figure out how to reduce rerenders upon data change
@@ -179,6 +179,14 @@ function MapPage() {
         );
       case 6:
         return (
+          <p>Payments</p>
+        );
+      case 7:
+        return (
+          <p>Coupons</p>
+        )
+      case 8:
+        return (
           <ConstraintList
             constraints={data.constraints}
           />
@@ -248,7 +256,7 @@ function MapPage() {
 
 function Header(props) {
   console.log("rendering header..");
-  const tabs = ["Delivery", "Drivers", "Businesses", "Customers", "Vehicles", "Orders & Shipments", "Constraints"];
+  const tabs = ["Delivery", "Drivers", "Businesses", "Customers", "Vehicles", "Purchases", "Payments", "Coupons", "Constraints"];
 
   const handleTabChange = (index) => {
     if (props.tab !== index) props.changeTab(index);
@@ -336,4 +344,4 @@ function RouteTimes(props) {
   );
 }
 
-export default MapPage;
+export default DashboardPage;
