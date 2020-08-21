@@ -10,7 +10,7 @@ function FillerRow({ numColumns, showMore, setShowMore }) {
         <td key={idx} />
       ))}
       <td style={{ textAlign: "right" }}>
-        <span className="has-text-grey">Show {showMore ? "Less" : "More"}</span>
+        <span className="has-text-grey mb-1">Show {showMore ? "Less" : "More"}</span>
         <button 
           className="button is-super-small is-light mx-1"
           onClick={() => setShowMore((prevShowMore) => !prevShowMore)}
