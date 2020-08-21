@@ -35,7 +35,7 @@ function BusinessItem({ props }) {
   const [acceptingDay, setAcceptingDay] = useState(0);
   const address = `${props.business.street}${(props.business.unit ? ` ${props.business.unit}` : "")} 
                    ${props.business.city} ${props.business.state} ${props.business.zip}`;
-  
+  const business_id = Number(props.id.substring(props.id.indexOf("-") + 1, props.id.length));
   const displayDayHours = (type) => {
     const days = JSON.parse(type);
     // console.log(days);
@@ -58,6 +58,10 @@ function BusinessItem({ props }) {
     }
   };
 
+  const sendBusinessText = (businessNumber) => {
+    console.log(`Sending Business ${businessNumber} a text..`);
+  };
+
   return (
     <div className="box list-item">
       <table
@@ -68,9 +72,21 @@ function BusinessItem({ props }) {
           <tr className="list-item-head">
             <th style={{ width: "20%" }}>
               {/* <button className="tooltip mx-1" onClick={() => setHidden(prevHidden => !prevHidden)}> */}
-              <div style={{ width: "150%" }}>
+              <div style={{ width: "300%", maxWidth: "325px" }}>
                 {/* Displaying only the second section of a business id. Ex: 200-000011 => 11 */}
-                <span>Business {Number(props.id.substring(props.id.indexOf("-") + 1, props.id.length))}: {props.business.name}</span>
+                <span>Business {business_id}: {props.business.name}</span>
+                <button
+                  className="button is-rounded is-super-small is-pulled-right ml-1"
+                  onClick={() => console.log("Not sure what this does atm")}
+                >
+                  <FontAwesomeIcon icon={Icons.faPhone} />
+                </button>
+                <button
+                  className="button is-rounded is-super-small is-pulled-right"
+                  onClick={() => sendBusinessText(business_id)}
+                >
+                  <FontAwesomeIcon icon={Icons.faComment} />
+                </button>
               </div>
             </th>
             <th style={{ width: "20%" }} />
