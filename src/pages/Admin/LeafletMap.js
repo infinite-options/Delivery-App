@@ -78,11 +78,12 @@ function LeafletMap({ routes, props }) {
 
   // let latlngLocal;
   try { var latlngLocal = JSON.parse(window.localStorage.getItem("mapLatlng")); }
-  catch(e) { /* console.log("Who tampered with my localStorage?!?!"); */ }
+  catch(e) { console.log(e); }
   // console.log(latlngLocal);
   const isLatlng = validateLatlng(latlngLocal);
-  const latitude = isLatlng ? latlngLocal[0] : routes_array[1][0].route_data[0].to[0]; //baseLocations_array[0][1][0];
-  const longitude = isLatlng ? latlngLocal[1] : routes_array[1][0].route_data[0].to[1]; //baseLocations_array[0][1][1];
+  console.log(routes_array);
+  const latitude = isLatlng ? latlngLocal[0] : routes_array[0][1].route_data[0].to[0]; //baseLocations_array[0][1][0];
+  const longitude = isLatlng ? latlngLocal[1] : routes_array[0][1].route_data[0].to[1]; //baseLocations_array[0][1][1];
   // console.log(`[${latitude}, ${longitude}]`);
 
   const handleMapLoad = () => {
