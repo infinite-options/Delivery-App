@@ -15,7 +15,13 @@ import AppIcon from "utils/Icons/app_icon.png";
 // import axios from "axios";
 // created another file for functions that load data from server, since this file was getting too large for my liking,
 // should I stick to this or revert this change?
-import { createRoutes, createDrivers, createBusinesses, createCustomers, createOrders } from "utils/Functions/DataFunctions";
+import { 
+  createRoutes, 
+  createDrivers, 
+  createBusinesses, 
+  createCustomers, 
+  createOrders 
+} from "utils/Functions/DataFunctions";
 
 const initState = {
   isLoading: true,
@@ -25,6 +31,8 @@ const initState = {
   customers: {},
   vehicles: {},
   orders: {},
+  payments: {},
+  coupons: {},
   constraints: {},
 };
 
@@ -103,6 +111,8 @@ function DashboardPage() {
         ...result[3].value && { customers: result[3].value },
         vehicles: testObj, // FIXME: CALL API
         ...result[4].value && { orders: result[4].value },
+        payments: testObj,
+        coupons: testObj,
         constraints: testObj, // FIXME: CALL API
       };
       dispatch({ type: "load", payload: { data } });

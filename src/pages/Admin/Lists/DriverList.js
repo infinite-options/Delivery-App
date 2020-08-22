@@ -29,6 +29,9 @@ function DriverItem({ props }) {
   const [hidden, setHidden] = useState(true);
   const [showMore, setShowMore] = useState(false);
 
+  const address = `${props.driver.street}${(props.driver.unit ? ` ${props.driver.unit}` : "")} 
+                   ${props.driver.city} ${props.driver.state} ${props.driver.zip}`;
+
 //   const sendDriverText = (driverNumber) => {
 //     console.log(`Sending Driver ${driverNumber} a text..`);
 //   };
@@ -123,11 +126,21 @@ function DriverItem({ props }) {
               # of hours/week<br />{props.driver.weekly_workload}
             </td>
             <td>
-              Driver's License #<br />{props.driver.drivers_license}
+              <div style={{ width: "215%" }}>
+                <div className="level">
+                  <div className="level-item">
+                    Driver's License #<br />{props.driver.drivers_license}
+                  </div>
+                  <div className="level-item">
+                    License Expiration<br />{props.driver.drivers_license_exp}
+                  </div>
+                  <div className="level-item">
+                    Vehicle Types<br />{props.driver.vehicle_types}
+                  </div>
+                </div>
+              </div>
             </td>
-            <td>
-              Business ID<br />{props.driver.business_id}
-            </td>
+            <td style={{ borderLeft: "hidden" }} />
           </tr>
           <tr>
             <td>
@@ -136,29 +149,29 @@ function DriverItem({ props }) {
                   <span style={{ width: "100%" }}>
                     Emergency Contact:
                     <br />
-                    xxx-xxx-xxxx
+                    {props.driver.emergency_contact_phone}
                   </span>
                 </div>
                 <div className="level-item">
                   <span style={{ width: "100%", textAlign: "left" }}>
-                    (Name) N/A
+                    {props.driver.emergency_contact_name}
                     <br />
-                    (Relationship) N/A
+                    {props.driver.emergency_contact_relationship}
                   </span>
                 </div>
               </div>
             </td>
             <td>
-              Preferred Routes<br /> N/A
+              Preferred Routes<br />{props.driver.preferred_routes}
               {/* {props.driver.preferred_routes.map((route, idx) => (
                 <p>Route {route.id}: <span>ROUTE COLOR</span></p>
               ))} */}
             </td>
             <td>
-              Days Available<br />{props.driver.day_availability}
+              Days Available<br />{props.driver.days}
             </td>
             <td>
-              Times Available<br />{props.driver.time_availability}
+              Times Available<br />{props.driver.hours}
             </td>
           </tr>
           <FillerRow numColumns={4} showMore={showMore} setShowMore={setShowMore} />
@@ -167,16 +180,37 @@ function DriverItem({ props }) {
               <tr>
                 <td style={{ textAlign: "left" }}>
                   Address:<br />
-                  {props.driver.address} N/A
+                  {address}
                 </td>
                 <td>
-                  SSN<br />{props.driver.ssn}
+                  Insurance Carrier<br />{props.driver.insurance_carrier}
                 </td>
                 <td>
-                  Vehicle<br />{props.driver.vehicle} N/A
+                  Insurance Number<br />{props.driver.insurance_number}
                 </td>
                 <td>
-                  Driver Password<br />{props.driver.password}
+                  Insurance Expiration<br />{props.driver.insurance_expiration}
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <div className="level">
+                    <div className="level-item">
+                      Phone #1<br />{props.driver.phone}
+                    </div>
+                    <div className="level-item">
+                      Phone #2<br />{props.driver.phone2}
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  Email<br />{props.driver.email}
+                </td>
+                <td>
+                  Account Password<br />{props.driver.password}
+                </td>
+                <td>
+                  Business ID<br /> {props.driver.business_id}
                 </td>
               </tr>
               <tr>
@@ -186,26 +220,26 @@ function DriverItem({ props }) {
                       <span style={{ width: "100%" }}>
                         Bank Account #
                         <br />
-                        xxx-xxx-xxxx
+                        {props.driver.bank_account_info}
                       </span>
                     </div>
                     <div className="level-item">
                       <span style={{ width: "100%" }}>
                         Bank Routing #
                         <br />
-                        xxx-xxx-xxxx
+                        {props.driver.bank_routing_info}
                       </span>
                     </div>
                   </div>
                 </td>
                 <td>
-                  Insurance Carrier<br /> N/A
+                SSN<br />{props.driver.ssn}
                 </td>
                 <td>
-                  Policy #<br />{props.driver.insurance_number}
+                  Hourly Rate<br />{props.driver.hourly_rate}
                 </td>
                 <td>
-                  Expiration<br />{props.driver.expiration}
+                  Delivery Fee<br />{props.driver.delivery_fee}
                 </td>
               </tr>
             </React.Fragment>

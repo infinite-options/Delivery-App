@@ -111,7 +111,7 @@ function BusinessItem({ props }) {
               Business Image<br /><img src={props.business.image} width="48" height="48" />
             </td>
             <td>
-              Established<br />{handleDateTime(props.business.est)}
+              Registered At<br />{handleDateTime(props.business.registered)}
             </td>
             <td>
               Type<br />{props.business.type}

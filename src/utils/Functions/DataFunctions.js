@@ -145,17 +145,51 @@ const createDrivers = () => {
     for (let driver of result) {
       const driver_id = driver.driver_id;
       const driver_data = {
+        rating: driver.driver_rating,
+
         first_name: driver.driver_first_name,
         last_name: driver.driver_last_name,
-        ssn: driver.driver_ssn,
+
+        weekly_workload: "N/A",
+
         drivers_license: driver.driver_license,
+        drivers_license_exp: driver.driver_license_exp,
+        vehicle_types: driver.driver_vehicle_types,
+
+        emergency_contact_name: driver.emergency_contact_name,
+        emergency_contact_phone: driver.emergency_contact_phone,
+        emergency_contact_relationship: driver.emergency_contact_relationship,
+
+        preferred_routes: "N/A",
+
+        days: driver.driver_days,
+        hours: driver.driver_hours,
+
+        street: driver.driver_street,
+        unit: driver.driver_unit,
+        city: driver.driver_city,
+        state: driver.driver_state,
+        zip: driver.driver_zip,
+        latitude: driver.driver_latitude,
+        longitude: driver.driver_longitude,
+
+        insurance_carrier: driver.driver_insurance_carrier,
         insurance_number: driver.driver_insurance_num,
+        insurance_expiration: driver.driver_insurance_exp,
+        
+        bank_routing_info: driver.bank_routing_info,
+        bank_account_info: driver.bank_account_info,
+
+        ssn: driver.driver_ssn,
         password: driver.driver_password,
-        time_availability: driver.driver_hours,
+
+        phone: driver.driver_phone_num,
+        phone2: driver.driver_phone_num2,
+        email: driver.driver_email,
 
         business_id: driver.business_id,
-        weekly_workload: "N/A",
-        day_availability: "N/A",
+        hourly_rate: driver.driver_hourly_rate,
+        delivery_fee: driver.driver_delivery_fee,
         // time_availability: {
         //   Sunday: undefined,
         //   Monday: 1,
@@ -165,10 +199,6 @@ const createDrivers = () => {
         //   Friday: undefined,
         //   Saturday: undefined,
         // },
-        expiration: "N/A",
-
-        preferred_routes: "N/A", // only one choice with this endpoint!
-        rating: undefined,
       };
       tempDrivers[driver_id] = driver_data;
     }
@@ -189,7 +219,7 @@ const createBusinesses = () => {
         name: business.business_name,
         type: business.business_type,
         description: business.business_desc,
-        est: business.business_created_at,
+        registered: business.business_created_at,
         image: business.business_image,
 
         license: business.business_license,
@@ -273,17 +303,36 @@ const createCustomers = () => {
       const customer_data = {
         first_name: customer.customer_first_name,
         last_name: customer.customer_last_name,
+        
+        phone: customer.customer_phone_num,
+        
+        SMS_frequency: customer.customer_SMS_frequency,
+        SMS_last_notification: customer.customer_SMS_last_notification,
+
         street: customer.customer_street,
         unit: customer.customer_unit,
         city: customer.customer_city,
         state: customer.customer_state,
         zip: customer.customer_zip,
-        phone: customer.customer_phone_num,
-        email: customer.customer_email,
         latitude: customer.customer_latitude,
         longitude: customer.customer_longitude,
+
+        email: customer.customer_email,
+        
         notification_approval: customer.notification_approval,
         notification_id: customer.notification_device_id,
+
+        verified: customer.customer_email.verified,
+
+        password_salt: customer.customer_password_salt,
+        password_hash: customer.customer_password_hash,
+        password_algorithm: customer.customer_password_algorithm,
+
+        referrral_source: customer.referral_source,
+        role: customer.customer_role,
+        last_update: customer.customer_updated_at,
+        customer_rep: customer.customer_representative,
+        route_id: customer.route_id, // multiple??
       };
       tempCustomers[customer_id] = customer_data;
     }

@@ -162,7 +162,7 @@ table.vcenter-items span,
 /* float: left/right unaligns the middle vertical alignment value for whatever reason */
 table.list-item .is-pulled-right,
 .list-item .is-pulled-right {
-  margin-top: 1%;
+  margin-top: 0.5%;
 }
 
 .list-item table thead tr.list-item-head {
