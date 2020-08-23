@@ -20,7 +20,6 @@
     "moment": "^2.27.0",
     "moment-timezone": "^0.5.31",
     "react": "^16.13.1",
-    "react-day-picker": "^7.4.8",
     "react-dom": "^16.13.1",
     "react-geolocated": "^3.0.1",
     "react-leaflet": "^2.7.0",

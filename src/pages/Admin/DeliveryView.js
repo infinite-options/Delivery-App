@@ -4,8 +4,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Icons from "utils/Icons/Icons";
 import moment from 'moment';
 import 'moment-timezone';
-// import DayPicker from 'react-day-picker';
-// import 'react-day-picker/lib/style.css';
 
 const weekdays = moment.weekdays();
 
@@ -19,14 +17,9 @@ function reducer(state, action) {
         ...(state.index === -1) && { index: action.payload.slot }
       };
     case 'day-shift':
-      // let dayDate = {};
       const dayDate = state.day.clone().add(action.payload.direction, "d");
       const currentWeek = state.day.week();
       const nextWeek = dayDate.week();
-      // if (state.weeknextWeek !== currentWeek) dayDate.week = nextWeek;
-      // if (action.payload.today.isSame(date, "d")) dayDate.index = action.payload.slot;
-      // else dayDate.index = -1;
-      // dayDate.day = date;
       return {
         ...state,
         day: dayDate,
@@ -34,12 +27,7 @@ function reducer(state, action) {
         ...(action.payload.today.isSame(dayDate, "d") ? { index: action.payload.slot } : { index: -1 })
       };
     case 'week-shift':
-      // let weekDate = {};
       const weekDate = state.day.clone().add(action.payload.direction * 7, "d");
-      // weekDate.week = date.week();
-      // if (action.payload.today.isSame(date, "d")) weekDate.index = action.payload.slot; 
-      // else weekDate.index = -1;
-      // weekDate.day = date;
       return {
         ...state,
         day: weekDate,
