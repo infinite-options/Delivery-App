@@ -81,7 +81,7 @@ function LeafletMap({ routes, props }) {
   catch(e) { console.log(e); }
   // console.log(latlngLocal);
   const isLatlng = validateLatlng(latlngLocal);
-  console.log(routes_array);
+  // console.log(routes_array);
   const latitude = isLatlng ? latlngLocal[0] : routes_array[0][1].route_data[0].to[0]; //baseLocations_array[0][1][0];
   const longitude = isLatlng ? latlngLocal[1] : routes_array[0][1].route_data[0].to[1]; //baseLocations_array[0][1][1];
   // console.log(`[${latitude}, ${longitude}]`);

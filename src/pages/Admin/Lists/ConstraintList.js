@@ -72,7 +72,7 @@ function MinMax() {
 function VehicleItem({ props }) {
   // const [hidden, setHidden] = useState(true);
   const address = `N/A`;
-  console.log(props.constraint);
+  // console.log(props.constraint);
   
   return (
     <tr>

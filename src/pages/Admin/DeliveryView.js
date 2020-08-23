@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useReducer, useEffect } from "react";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Icons from "utils/Icons/Icons";
@@ -9,33 +9,88 @@ import 'moment-timezone';
 
 const weekdays = moment.weekdays();
 
+function reducer(state, action) {
+  switch(action.type) {
+    case 'today':
+      return {
+        ...state,
+        ...(state.day !== action.payload.today) && { day: action.payload.today },
+        ...(state.week !== action.payload.toweek) && { week: action.payload.toweek },
+        ...(state.index === -1) && { index: action.payload.slot }
+      };
+    case 'day-shift':
+      // let dayDate = {};
+      const dayDate = state.day.clone().add(action.payload.direction, "d");
+      const currentWeek = state.day.week();
+      const nextWeek = dayDate.week();
+      // if (state.weeknextWeek !== currentWeek) dayDate.week = nextWeek;
+      // if (action.payload.today.isSame(date, "d")) dayDate.index = action.payload.slot;
+      // else dayDate.index = -1;
+      // dayDate.day = date;
+      return {
+        ...state,
+        day: dayDate,
+        ...(state.weeknextWeek !== currentWeek) && { week: nextWeek },
+        ...(action.payload.today.isSame(dayDate, "d") ? { index: action.payload.slot } : { index: -1 })
+      };
+    case 'week-shift':
+      // let weekDate = {};
+      const weekDate = state.day.clone().add(action.payload.direction * 7, "d");
+      // weekDate.week = date.week();
+      // if (action.payload.today.isSame(date, "d")) weekDate.index = action.payload.slot; 
+      // else weekDate.index = -1;
+      // weekDate.day = date;
+      return {
+        ...state,
+        day: weekDate,
+        week: weekDate.week(),
+        ...(action.payload.today.isSame(weekDate, "d") ? { index: action.payload.slot } : { index: -1 })
+      };
+    case 'time-change':
+      return {
+        ...state,
+        index: action.payload,
+      }
+    default: 
+      return state;
+  }
+};
+
 function DeliveryView(props) {
   console.log("rendering view..");
 
-  const [columns, setColumns] = useState([]);
+  const times = props.times && Object.keys(props.times).map((idx) => [props.times[idx].value]);
+  const columns = props.type === "day" ? times : weekdays;
 
+  // reason I call this inside of the component instead of outside is because
+  // any time the component rerenders, the date will be updated as well.
+  // basically, my budget way of keeping the date updated
   const today = moment();
-  const toweek = today.week() // TOday.. TOweek... haha funny
-  const weekday = today.weekday();
-  const [day, setDay] = useState(today);
-  const [week, setWeek] = useState(toweek);
-  const [index, setIndex] = useState();
+  const toweek = today.week();
 
-  // is it better to use useEffect to declare column & index values vs declaring them outside?
-  // does this increase or decrease the page's response times?
-  useEffect(() => {
-    const times = props.times && Object.keys(props.times).map((idx) => [props.times[idx].value]);
-    setColumns(props.type === "day" ? times : weekdays);
-  }, []);
+  const [dateData, dateDispatch] = useReducer(reducer, {
+    day: today,
+    week: toweek,
+    index: props.type === "day" ? props.timeSlot : today.weekday(),
+  });
+  const weekday = dateData.day.weekday();
 
   useEffect(() => {
-    if (props.type === "day" && day.isSame(today, "d")) setIndex(props.timeSlot);
+    // first condition prevents dispatch from running on component initialization
+    // since index is already defined and therefore running dispatch would be redundant
+    if (dateData.index !== props.timeSlot && props.type === "day" && dateData.day.isSame(today, "d")) dateDispatch({ type: "time-change", payload: props.timeSlot });
   }, [props.timeSlot]);
 
-  useEffect(() => {
-    if (props.type === "week" && week === toweek) setIndex(today.weekday());
-  }, [weekday]);
-  // console.log(day, week);
+  // try updating day value instantly when day changes - 
+  // this works BUT can be delayed if computer goes to sleep (apparently):
+  //
+  // setTimeout(
+  //   dayChange,
+  //   moment("24:00:00", "hh:mm:ss").diff(moment(), 'seconds')
+  // );
+  // function dayChange() {
+  //   /* do something */
+  // }
 
   // Temp table values
   let drivers = [];
@@ -54,32 +109,13 @@ function DeliveryView(props) {
   for (let i = 0; i < columns.length; i++) totalTimeDeliveries.push('N/A');
 
   const handleTodayClick = (type) => {
-    if (day !== today) setDay(today);
-    if (week !== toweek) setWeek(toweek);
-    if (index === -1) setIndex(props.type === "day" ? props.timeSlot : today.weekday());
+    const data = { type, today, toweek, slot: type === "day" ? props.timeSlot : weekday };
+    dateDispatch({ type: "today", payload: data });
   };
   
   const handleCalendarShift = (type, direction=1) => {
-    if (type === "day") {
-      setDay(prevDay => {
-        const date = prevDay.clone().add(direction, "d");
-        const currentWeek = prevDay.week();
-        const nextWeek = date.week();
-        if (nextWeek !== currentWeek) setWeek(nextWeek);
-        if (today.isSame(date, "d")) setIndex(props.timeSlot);
-        else setIndex(-1);
-        return date;
-      });
-    }
-    else {
-      setDay(prevDay => {
-        const date = prevDay.clone().add(direction * 7, "d");
-        setWeek(date.week());
-        if (today.isSame(date, "d")) setIndex(today.weekday()); 
-        else setIndex(-1)
-        return date;
-      });
-    }
+    const data = { today, slot: type === "day" ? props.timeSlot : weekday, direction };
+    dateDispatch({ type: `${type}-shift`, payload: data });
   };
 
   return (
@@ -96,8 +132,9 @@ function DeliveryView(props) {
               <FontAwesomeIcon icon={Icons.faChevronRight} />
             </button>
             <button className="button is-small is-static ml-4" style={{width: "150px"}}>
-              {props.type === "day" ? `${weekdays[day.weekday()]}: ${day.format("MM-DD-YYYY")}` : `Week ${week} - ${day.clone().weekday(6).format("YYYY")}`}
+              {props.type === "day" ? `${weekdays[weekday]}: ${dateData.day.format("MM-DD-YYYY")}` : `Week ${dateData.week} - ${dateData.day.clone().weekday(6).format("YYYY")}`}
             </button>
+            {/* <button onClick={() => setIndex(index + 1)}></button> */}
           </div>
         </header>
         <section className="modal-card-body" style={{padding: "0"}}>
@@ -106,9 +143,9 @@ function DeliveryView(props) {
               <tr>
                 <th>{props.type === "day" ? "Time Window" : "Day"}</th>
                 {columns.map((value, idx) => (
-                  <th className={"has-text-centered" + (index === idx ? " is-today" : "")} key={idx}>
+                  <th className={"has-text-centered" + (dateData.index === idx ? " is-today" : "")} key={idx}>
                     <p style={{borderBottom: "1px solid lightgrey"}}>
-                      {value + (props.type === "week" ? ` [${day.clone().add(idx - day.weekday(), "d").format("MM/DD")}]` : "")}                                     
+                      {value + (props.type === "week" ? ` [${dateData.day.clone().add(idx - weekday, "d").format("MM/DD")}]` : "")}                                     
                     </p>
                     <ValueRange min="Min" max="Max" isHeader={true} />
                   </th>
@@ -118,27 +155,27 @@ function DeliveryView(props) {
             <tbody>
               <tr>
                 <th title="Current number of drivers"># Drivers</th>
-                <RowItems items={drivers} index={index} />
+                <RowItems items={drivers} index={dateData.index} />
               </tr>
               <tr>
                 <th title="Total distance driven">Dist. Driven</th>
-                <RowItems items={distance} index={index} />
+                <RowItems items={distance} index={dateData.index} />
               </tr>
               <tr>
                 <th title="Number of deliveries made"># Deliveries</th>
-                <RowItems items={amtDeliveries} index={index} hasRange={true} />
+                <RowItems items={amtDeliveries} index={dateData.index} hasRange={true} />
               </tr>
               <tr>
                 <th title="Time spent to deliver each product">Time/Delivery</th>
-                <RowItems items={timeDelivery} index={index} hasRange={true} />
+                <RowItems items={timeDelivery} index={dateData.index} hasRange={true} />
               </tr>
               <tr>
                 <th title="Time spent at each product destination">Time/Location</th>
-                <RowItems items={timeDestination} index={index} hasRange={true} />
+                <RowItems items={timeDestination} index={dateData.index} hasRange={true} />
               </tr>
               <tr>
                 <th title="Total time spent">Total Time</th>
-                <RowItems items={totalTimeDeliveries} index={index} hasRange={true} isLast={true} />
+                <RowItems items={totalTimeDeliveries} index={dateData.index} hasRange={true} isLast={true} />
               </tr>
             </tbody>
           </table>
