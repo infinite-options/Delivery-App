@@ -7,7 +7,7 @@ import moment from "moment";
 
 const weekdays = moment.weekdays();
 
-function BusinessList({ businesses, props }) {
+function BusinessList({ businesses, ...props }) {
   console.log("rendering businesses..");
   
   return (
@@ -15,27 +15,23 @@ function BusinessList({ businesses, props }) {
       {Object.entries(businesses).map((business, index) => (
         <BusinessItem
           key={index}
-          props={{
-            business: business[1],
-            id: business[0],
-            // colors: colors,
-            index,
-          }}
+          business={business[1]}
+          id={business[0]}
         />
       ))}
     </React.Fragment>
   );
 }
 
-function BusinessItem({ props }) {
+function BusinessItem({ business, id, ...props }) {
   const [hidden, setHidden] = useState(true);
   const [showMore, setShowMore] = useState(false);
   const [businessDay, setBusinessDay] = useState(0);
   const [deliveryDay, setDeliveryDay] = useState(0);
   const [acceptingDay, setAcceptingDay] = useState(0);
-  const address = `${props.business.street}${(props.business.unit ? ` ${props.business.unit}` : "")} 
-                   ${props.business.city} ${props.business.state} ${props.business.zip}`;
-  const business_id = Number(props.id.substring(props.id.indexOf("-") + 1, props.id.length));
+  const address = `${business.street}${(business.unit ? ` ${business.unit}` : "")} 
+                   ${business.city} ${business.state} ${business.zip}`;
+  const business_id = Number(id.substring(id.indexOf("-") + 1, id.length));
   const displayDayHours = (type) => {
     const days = JSON.parse(type);
     // console.log(days);
@@ -74,7 +70,7 @@ function BusinessItem({ props }) {
               {/* <button className="tooltip mx-1" onClick={() => setHidden(prevHidden => !prevHidden)}> */}
               <div style={{ width: "300%", maxWidth: "325px" }}>
                 {/* Displaying only the second section of a business id. Ex: 200-000011 => 11 */}
-                <span>Business {business_id}: {props.business.name}</span>
+                <span>Business {business_id}: {business.name}</span>
                 <button
                   className="button is-rounded is-super-small is-pulled-right ml-1"
                   onClick={() => console.log("Not sure what this does atm")}
@@ -108,17 +104,17 @@ function BusinessItem({ props }) {
         <tbody className="is-bordered has-text-centered" hidden={hidden}>
           <tr>
             <td>
-              Business Image<br /><img src={props.business.image} width="48" height="48" />
+              Business Image<br /><img src={business.image} width="48" height="48" />
             </td>
             <td>
-              Registered At<br />{handleDateTime(props.business.registered)}
+              Registered At<br />{handleDateTime(business.registered)}
             </td>
             <td>
-              Type<br />{props.business.type}
+              Type<br />{business.type}
             </td>
             <td>
               <div style={{ width: "215%" }}>
-                Description<br />{props.business.description}
+                Description<br />{business.description}
               </div>
             </td>
             <td style={{ borderLeft: "hidden" }} />
@@ -131,32 +127,32 @@ function BusinessItem({ props }) {
             </td>
             <td style={{ borderLeft: "hidden" }} />
             <td>
-              Business Hours<br />{displayDayHours(props.business.hours)}
+              Business Hours<br />{displayDayHours(business.hours)}
             </td>
             <td>
-              Delivery Hours<br />{displayDayHours(props.business.delivery_hours)}
+              Delivery Hours<br />{displayDayHours(business.delivery_hours)}
             </td>
             <td>
-              Accepting Hours<br />{displayDayHours(props.business.accepting_hours)}
+              Accepting Hours<br />{displayDayHours(business.accepting_hours)}
             </td>
           </tr>
           <tr>
             <td>
-              Contact Person<br />{`${props.business.contact_first_name} ${props.business.contact_last_name}`}
+              Contact Person<br />{`${business.contact_first_name} ${business.contact_last_name}`}
             </td>
             <td>
-              Phone #1: {props.business.phone}
+              Phone #1: {business.phone}
               <br />
-              Phone #2: {props.business.phone2}
+              Phone #2: {business.phone2}
             </td>
             <td>
-              Email<br />{props.business.email}
+              Email<br />{business.email}
             </td>
             <td>
-              Notification Approval<br />{props.business.notification_approval}
+              Notification Approval<br />{business.notification_approval}
             </td>
             <td>
-              Notification Device<br />{props.business.notification_device_id}
+              Notification Device<br />{business.notification_device_id}
             </td>
           </tr>
           <FillerRow numColumns={5} showMore={showMore} setShowMore={setShowMore} />
@@ -164,52 +160,52 @@ function BusinessItem({ props }) {
             <React.Fragment>
               <tr>
                 <td>
-                  Business License #<br />{props.business.license}
+                  Business License #<br />{business.license}
                 </td>
                 <td>
                   Business License Expiration<br />
                 </td>
                 <td>
                   Business Password<br />
-                  <div className="wrap-text">{props.business.password}</div>
+                  <div className="wrap-text">{business.password}</div>
                 </td>
                 <td></td>
                 <td>
-                  Available Zones<br />{props.business.available_zones}
+                  Available Zones<br />{business.available_zones}
                 </td>
               </tr>
               <tr>
                 <td>
-                  EIN #<br />{props.business.EIN}
+                  EIN #<br />{business.EIN}
                 </td>
                 <td>
-                  US DOT #<br />{props.business.USDOT}
+                  US DOT #<br />{business.USDOT}
                 </td>
                 <td>
-                  WA UBI #<br />{props.business.WAUBI}
+                  WA UBI #<br />{business.WAUBI}
                 </td>
                 <td></td>
                 <td>
                   Can Deliver:
                   <FontAwesomeIcon 
-                    icon={props.business.delivery ? Icons.faCheck : Icons.faTimes}
-                    color={props.business.delivery ? "green" : "red"} 
+                    icon={business.delivery ? Icons.faCheck : Icons.faTimes}
+                    color={business.delivery ? "green" : "red"} 
                     className="ml-2" 
                     style={{ position: "relative", top: "0.05rem" }} 
                   />
                   <br />
                   Can Cancel:
                   <FontAwesomeIcon 
-                    icon={props.business.can_cancel ? Icons.faCheck : Icons.faTimes}
-                    color={props.business.can_cancel ? "green" : "red"}
+                    icon={business.can_cancel ? Icons.faCheck : Icons.faTimes}
+                    color={business.can_cancel ? "green" : "red"}
                     className="ml-2" 
                     style={{ position: "relative", top: "0.05rem" }} 
                   />
                   <br />
                   Is Reusable:
                   <FontAwesomeIcon 
-                    icon={props.business.reusable ? Icons.faCheck : Icons.faTimes}
-                    color={props.business.reusable ? "green" : "red"}
+                    icon={business.reusable ? Icons.faCheck : Icons.faTimes}
+                    color={business.reusable ? "green" : "red"}
                     className="ml-2" 
                     style={{ position: "relative", top: "0.05rem" }} 
                   />

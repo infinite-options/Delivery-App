@@ -4,7 +4,7 @@ import Icons from "utils/Icons/Icons";
 import FillerRow from "utils/Components/FillerRow"
 // import axios from "axios";
 
-function CustomerList({ customers, props }) {
+function CustomerList({ customers, ...props }) {
   console.log("rendering customers..");
   
   return (
@@ -12,22 +12,18 @@ function CustomerList({ customers, props }) {
       {Object.entries(customers).map((customer, index) => (
         <CustomerItem
           key={index}
-          props={{
-            customer: customer[1],
-            id: customer[0],
-            // colors: colors,
-            index,
-          }}
+          customer={customer[1]}
+          id={customer[0]}
         />
       ))}
     </React.Fragment>
   );
 }
 
-function CustomerItem({ props }) {
+function CustomerItem({ customer, id, ...props }) {
   const [hidden, setHidden] = useState(true);
   const [showMore, setShowMore] = useState(false);
-  const address = `${props.customer.street}${props.customer.unit ? ` ${props.customer.unit}` : ""} ${props.customer.city} ${props.customer.state} ${props.customer.zip}`;
+  const address = `${customer.street}${customer.unit ? ` ${customer.unit}` : ""} ${customer.city} ${customer.state} ${customer.zip}`;
 
   return (
     <div className="box list-item">
@@ -40,7 +36,7 @@ function CustomerItem({ props }) {
             <th style={{ width: "20%" }}>
               {/* <button className="tooltip mx-1" onClick={() => setHidden(prevHidden => !prevHidden)}> */}
               <div style={{ width: "200%", maxWidth: "240px" }}>
-                <span>Customer {props.id}: {`${props.customer.first_name} ${props.customer.last_name[0]}.`}</span>
+                <span>Customer {id}: {`${customer.first_name} ${customer.last_name[0]}.`}</span>
                 <button
                   className="button is-rounded is-pulled-right is-super-small ml-1"
                   // onClick={() => sendEmail(idx + 1)}
@@ -85,22 +81,22 @@ function CustomerItem({ props }) {
                 </div>
                 <div className="level-item">
                   <span style={{ width: "100%", textAlign: "left" }}>
-                    {props.customer.first_name}
+                    {customer.first_name}
                     <hr style={{ margin: 0, backgroundColor: "#ededed" }} />
-                    {props.customer.last_name}
+                    {customer.last_name}
                   </span>
                 </div>
               </div>
             </td>
             <td style={{ borderLeft: "hidden" }} />
             <td>
-              Phone #<br />{props.customer.phone}
+              Phone #<br />{customer.phone}
             </td>
             <td>
-              SMS Frequency<br />{props.customer.SMS_frequency}
+              SMS Frequency<br />{customer.SMS_frequency}
             </td>
             <td>
-              SMS Last Notification<br />{props.customer.SMS_last_notification}
+              SMS Last Notification<br />{customer.SMS_last_notification}
             </td>
           </tr>
           <tr>
@@ -111,13 +107,13 @@ function CustomerItem({ props }) {
             </td>
             <td style={{ borderLeft: "hidden" }} />
             <td>
-              Email: {props.customer.email}
+              Email: {customer.email}
             </td>
             <td>
-              Notification Approval<br />{props.customer.notification_approval}
+              Notification Approval<br />{customer.notification_approval}
             </td>
             <td>
-              Notification ID<br />{props.customer.notification_id}
+              Notification ID<br />{customer.notification_id}
             </td>
           </tr>
           <FillerRow numColumns={5} showMore={showMore} setShowMore={setShowMore} />
@@ -125,18 +121,18 @@ function CustomerItem({ props }) {
             <React.Fragment>
               <tr>
                 <td>
-                  Account Verified<br />{props.customer.verified}
+                  Account Verified<br />{customer.verified}
                 </td>
                 <td>
                   <div className="level" style={{ width: "415%" }}>
                     <div className="level-item">
-                      Password Salt<br />{props.customer.password_salt}
+                      Password Salt<br />{customer.password_salt}
                     </div>
                     <div className="level-item">
-                      Password Hash<br />{props.customer.password_hash}
+                      Password Hash<br />{customer.password_hash}
                     </div>
                     <div className="level-item">
-                      Password Algorithm<br />{props.customer.password_algorithm}
+                      Password Algorithm<br />{customer.password_algorithm}
                     </div>
                   </div>
                 </td>
@@ -146,19 +142,19 @@ function CustomerItem({ props }) {
               </tr>
               <tr>
                 <td>
-                  Referral Source<br />{props.customer.referral_source}
+                  Referral Source<br />{customer.referral_source}
                 </td>
                 <td>
-                  Role<br />{props.customer.role}
+                  Role<br />{customer.role}
                 </td>
                 <td>
-                  Last Update<br />{props.customer.last_update}
+                  Last Update<br />{customer.last_update}
                 </td>
                 <td>
-                  Customer Representative<br />{props.customer.customer_rep}
+                  Customer Representative<br />{customer.customer_rep}
                 </td>
                 <td>
-                  Routes<br />{props.customer.route_id}
+                  Routes<br />{customer.route_id}
                 </td>
               </tr>
             </React.Fragment>

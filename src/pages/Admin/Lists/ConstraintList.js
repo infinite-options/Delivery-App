@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Icons from "utils/Icons/Icons";
 // import axios from "axios";
 
-function ConstraintList({ constraints, props }) {
+function ConstraintList({ constraints, ...props }) {
   console.log("rendering constraints..");
   const [constraintList, setConstraintList] = useState(Object.entries(constraints));
   
@@ -44,10 +44,8 @@ function ConstraintList({ constraints, props }) {
         {constraintList.map((constraint, index) => (
           <VehicleItem
             key={index}
-            props={{
-              constraint: constraint[1],
-              index,
-            }}
+            constraint={constraint[1]}
+            business_id={constraint[0]}
           />
         ))}
       </tbody>
@@ -69,21 +67,21 @@ function MinMax() {
   );
 }
 
-function VehicleItem({ props }) {
+function VehicleItem({ constraint, business_id, ...props }) {
   // const [hidden, setHidden] = useState(true);
   const address = `N/A`;
-  // console.log(props.constraint);
+  // console.log(constraint);
   
   return (
     <tr>
-      <td>{props.constraint.business_id} N/A</td>
-      <td>{props.constraint.business_name} N/A</td>
+      <td>{business_id}</td>
+      <td>{constraint.business_name} N/A</td>
       <td>{address}</td>
-      <td>{props.constraint.business_phone} N/A</td>
+      <td>{constraint.business_phone} N/A</td>
       <td><InputValue /></td>
-      <td><InputValue value={props.constraint.driver_count} hasRange={true} /></td>
-      <td><InputValue value={props.constraint.time_per_driver} hasRange={true} /></td>
-      <td><InputValue value={props.constraint.delivery_count} hasRange={true} /></td>
+      <td><InputValue value={constraint.driver_count} hasRange /></td>
+      <td><InputValue value={constraint.time_per_driver} hasRange /></td>
+      <td><InputValue value={constraint.delivery_count} hasRange /></td>
     </tr>
   );
 }

@@ -135,7 +135,7 @@ function DeliveryView(props) {
                     <p style={{borderBottom: "1px solid lightgrey"}}>
                       {value + (props.type === "week" ? ` [${dateData.day.clone().add(idx - weekday, "d").format("MM/DD")}]` : "")}                                     
                     </p>
-                    <ValueRange min="Min" max="Max" isHeader={true} />
+                    <ValueRange min="Min" max="Max" isHeader />
                   </th>
                 ))}
               </tr>
@@ -151,19 +151,19 @@ function DeliveryView(props) {
               </tr>
               <tr>
                 <th title="Number of deliveries made"># Deliveries</th>
-                <RowItems items={amtDeliveries} index={dateData.index} hasRange={true} />
+                <RowItems items={amtDeliveries} index={dateData.index} hasRange />
               </tr>
               <tr>
                 <th title="Time spent to deliver each product">Time/Delivery</th>
-                <RowItems items={timeDelivery} index={dateData.index} hasRange={true} />
+                <RowItems items={timeDelivery} index={dateData.index} hasRange />
               </tr>
               <tr>
                 <th title="Time spent at each product destination">Time/Location</th>
-                <RowItems items={timeDestination} index={dateData.index} hasRange={true} />
+                <RowItems items={timeDestination} index={dateData.index} hasRange />
               </tr>
               <tr>
                 <th title="Total time spent">Total Time</th>
-                <RowItems items={totalTimeDeliveries} index={dateData.index} hasRange={true} isLast={true} />
+                <RowItems items={totalTimeDeliveries} index={dateData.index} hasRange isLast />
               </tr>
             </tbody>
           </table>

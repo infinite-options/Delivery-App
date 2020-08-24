@@ -35,11 +35,17 @@ const rainbow = (numOfSteps, step) => {
  *     route_id: {
  *         business_id,
  *         driver_id,
+ *         driver_first_name,
+ *         driver_last_name,
  *         visible,
  *         route_color,
  *         route_data: [
  *             {
  *                 customer_id,
+ *                 customer_first_name,
+ *                 customer_last_name,
+ *                 customer_email,
+ *                 customer_phone,
  *                 from: [prevLatitude, prevLongitude],
  *                 to: [latitude, longitude],
  *                 address,
@@ -58,6 +64,10 @@ const createRoutes = () => {
       const route_id = location.route_id;
       const location_data = {
         customer_id: location.customer_id,
+        customer_first_name: location.customer_first_name,
+        customer_last_name: location.customer_last_name,
+        customer_email: location.customer_email,
+        customer_phone: location.customer_phone_num,
         address: `${location.customer_street} ${location.customer_city} ${location.customer_state} ${location.customer_zip}`,
         // from: tempRoutes[route_id].route_data[route_data.length - 1].to,
         to: [location.customer_latitude, location.customer_longitude],
@@ -77,6 +87,8 @@ const createRoutes = () => {
         tempRoutes[route_id] = {
           business_id: location.business_id,
           driver_id: location.driver_id,
+          driver_first_name: location.driver_first_name,
+          driver_last_name: location.driver_last_name, 
           visible: true,
           route_data: [location_data],
         };

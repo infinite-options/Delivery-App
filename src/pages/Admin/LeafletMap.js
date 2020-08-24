@@ -24,7 +24,7 @@ function validateLatlng(latlng) {
   return true;
 }
 
-function LeafletMap({ routes, props }) {
+function LeafletMap({ routes, ...props }) {
   console.log("rendering map..");
 
   const mapRef = useRef();

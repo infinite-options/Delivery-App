@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Icons from "utils/Icons/Icons";
 
-function DeliveryList({ routes, drivers, businesses, customers, props }) {
+function DeliveryList({ routes, ...props }) {
   console.log("rendering deliveries..");
   
   // const [selectedLocation, setSelectedLocation] = useState({});
@@ -13,33 +13,24 @@ function DeliveryList({ routes, drivers, businesses, customers, props }) {
   return (
     <React.Fragment>
       {Object.entries(routes).map((route, index) => (
+        // think about using fewer components, could probably just do route[0] and route[1]
         <RouteItem
           key={index}
-          props={{
-            id: route[0],
-            route: route[1].route_data,
-            visible: route[1].visible,
-            color: route[1].route_color,
-            driver_id: route[1].driver_id,
-            driver_first_name: drivers[route[1].driver_id].first_name,
-            driver_last_name: drivers[route[1].driver_id].last_name,
-            // business id, business name, etc
-            customers,
-            index,
-            selectedLocation,
-            setSelectedLocation,
-            dispatch,
-          }}
+          route={route[1]}
+          id={route[0]}
+          selectedLocation={selectedLocation}
+          setSelectedLocation={setSelectedLocation}
+          dispatch={dispatch}
         />
       ))}
     </React.Fragment>
   );
 }
 
-function RouteItem({ props }) {
+function RouteItem({ route, id, ...props }) {
   const [hidden, setHidden] = useState(true);
-  const route_values = Object.values(props.route);
-  // console.log(props.route);
+  const route_values = Object.values(route.route_data);
+  console.log(route_values);
 
   useEffect(() => {
     // console.log(props.selectedLocation);
@@ -102,27 +93,27 @@ function RouteItem({ props }) {
               <div style={{ width: "200%", maxWidth: "225px" }}>
                 <button 
                   className="button is-super-small is-rounded mr-3" 
-                  onClick={() => props.dispatch({ type: "route-toggle-visibility", payload: { id: props.id } })}
+                  onClick={() => props.dispatch({ type: "route-toggle-visibility", payload: { id } })}
                 >
-                  <FontAwesomeIcon icon={props.visible ? Icons.faEyeSlash : Icons.faEye} />
+                  <FontAwesomeIcon icon={route.visible ? Icons.faEyeSlash : Icons.faEye} />
                 </button>
                 {/* Adding conditional margin since icons are different sizes, have to account for text shift */}
                 <div
                   className="route"
                   style={{ 
                     // this div refuses to be vertically centered so this is my workaround
-                    backgroundColor: `${props.visible ? props.color : "lightgrey"}`,
-                    borderBottom: `3px solid ${props.visible ? props.color : "lightgrey"}`, 
-                    ...(!props.visible ? {marginLeft: "1.32px"} : {}) 
+                    backgroundColor: `${route.visible ? route.route_color : "lightgrey"}`,
+                    borderBottom: `3px solid ${route.visible ? route.route_color : "lightgrey"}`, 
+                    ...(!route.visible ? {marginLeft: "1.32px"} : {}) 
                   }}
-                ><span>Route {props.id}</span></div>
+                ><span>Route {id}</span></div>
               </div>
-              {/* <span {...(!props.visible ? { style: { marginLeft: "1.32px" } } : {})}>Route {props.id}</span> */}
+              {/* <span {...(!route.visible ? { style: { marginLeft: "1.32px" } } : {})}>Route {id}</span> */}
             </th>
             <th style={{ width: "30%" }} />
             <th style={{ width: "10%" }}>
               <div style={{ width: "300%", maxWidth: "225px" }}>
-                <span>{`Driver ${props.driver_id}: ${props.driver_first_name} ${props.driver_last_name[0]}.`}</span>
+                <span>{`Driver ${route.driver_id}: ${route.driver_first_name} ${route.driver_last_name[0]}.`}</span>
                 <button
                   className="button is-rounded is-super-small is-pulled-right ml-1"
                   onClick={() => console.log("Not sure what this does atm")}
@@ -131,7 +122,7 @@ function RouteItem({ props }) {
                 </button>
                 <button
                   className="button is-rounded is-super-small is-pulled-right"
-                  onClick={() => sendDriverText(props.driver_id)}
+                  onClick={() => sendDriverText(route.driver_id)}
                 >
                   <FontAwesomeIcon icon={Icons.faComment} />
                 </button>
@@ -142,7 +133,7 @@ function RouteItem({ props }) {
               {/* <div style={{ width: "110%" }}>
                 <button
                   className="button is-rounded is-super-small mr-1"
-                  onClick={() => sendDriverText(props.driver_id)}
+                  onClick={() => sendDriverText(route.driver_id)}
                 >
                   <FontAwesomeIcon icon={Icons.faComment} />
                 </button>
@@ -173,7 +164,7 @@ function RouteItem({ props }) {
               {/* <span className="ml-1">{`Driver: ${props.driver_first_name} ${props.driver_last_name[0]}.`}</span>
               <button
                 className="button is-rounded is-super-small mx-3"
-                onClick={() => sendDriverText(props.driver_id)}
+                onClick={() => sendDriverText(route.driver_id)}
               >
                 <FontAwesomeIcon icon={Icons.faComment} />
               </button> */}
@@ -194,6 +185,7 @@ function RouteItem({ props }) {
                   : ""
               }
             >
+              {console.log("What", props)}
               <td>
                 <button
                   className={"button is-rounded is-small mx-1"}
@@ -216,7 +208,7 @@ function RouteItem({ props }) {
                 </button> */}
               </td>
               <td>{location.address}</td>
-              <td>{`${props.customers[location.customer_id].first_name} ${props.customers[location.customer_id].last_name[0]}.`}</td>
+              <td>{`${location.customer_first_name} ${location.customer_last_name[0]}.`}</td>
               <td>N/A</td>
               <td>N/A</td>
               <td>
@@ -243,7 +235,7 @@ function RouteItem({ props }) {
       </table>
       {/* Driver {props.index + 1}
       <div className="mt-2" hidden={hidden}>
-        {props.route.map((location, index) => (
+        {route.map((location, index) => (
           <div key={index} className="box">
             Destination {index + 1} : ({location["to"][0]}, {location["to"][1]})
           </div>

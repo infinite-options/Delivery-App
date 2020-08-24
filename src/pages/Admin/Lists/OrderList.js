@@ -41,7 +41,7 @@ function reducer(state, action) {
   }
 }
 
-function OrderList({ orders, props }) {
+function OrderList({ orders, ...props }) {
   console.log("rendering orders..");
   const [orderData, dispatch] = useReducer(reducer, {
     sortBy: "", // sortBy 'id', 'name', etc
@@ -86,11 +86,8 @@ function OrderList({ orders, props }) {
         {orderData.list.map((order, index) => (
           <OrderItem
             key={index}
-            props={{
-              order: order[1],
-              id: order[0],
-              index,
-            }}
+            order={order[1]}
+            id={order[0]}
           />
         ))}
       </tbody>
@@ -98,10 +95,10 @@ function OrderList({ orders, props }) {
   );
 }
 
-function OrderItem({ props }) {
+function OrderItem({ order, id, ...props }) {
   // const [hidden, setHidden] = useState(true);
-  const address = (`${props.order.customer_street} ${props.order.customer_city} ${props.order.customer_state} ${props.order.customer_zip}`);
-  const items = JSON.parse(props.order.items);
+  const address = (`${order.customer_street} ${order.customer_city} ${order.customer_state} ${order.customer_zip}`);
+  const items = JSON.parse(order.items);
 
   const handleItems = () => {
     let total = 0;
@@ -119,20 +116,20 @@ function OrderItem({ props }) {
   
   return (
     <tr>
-      <td>{props.id}</td>
+      <td>{id}</td>
       <td>N/A</td>
-      <td>{`${props.order.customer_first_name} ${props.order.customer_last_name}`}</td>
-      <td>{address}<br /><br />{props.order.customer_phone}<br />{props.order.customer_email}</td>
-      <td>${props.order.cost}</td>
+      <td>{`${order.customer_first_name} ${order.customer_last_name}`}</td>
+      <td>{address}<br /><br />{order.customer_phone}<br />{order.customer_email}</td>
+      <td>${order.cost}</td>
       <td>
         {handleItems()}
       </td>
       <td>
-        <FontAwesomeIcon {...(props.order.hasPaid ? { icon: Icons.faCheck, color: "green" } : { icon: Icons.faTimes, color: "red" })} />
+        <FontAwesomeIcon {...(order.hasPaid ? { icon: Icons.faCheck, color: "green" } : { icon: Icons.faTimes, color: "red" })} />
       </td>
-      <td>{props.order.type}</td>
+      <td>{order.type}</td>
       <td>N/A</td>
-      <td>{props.order.status}</td>
+      <td>{order.status}</td>
       <td>N/A</td>
       <td>N/A</td>
       <td>N/A</td>
@@ -140,8 +137,8 @@ function OrderItem({ props }) {
       <td>N/A</td>
       <td>N/A</td>
       <td>
-        <p>Order: {props.order.order_instructions}</p><br />
-        <p>Delivery: {props.order.delivery_instructions}</p>
+        <p>Order: {order.order_instructions}</p><br />
+        <p>Delivery: {order.delivery_instructions}</p>
       </td>
       <td className="has-text-centered">
         <button className="button is-rounded is-super-small my-1">

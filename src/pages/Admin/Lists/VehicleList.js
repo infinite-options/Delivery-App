@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Icons from "utils/Icons/Icons";
 // import axios from "axios";
 
-function VehicleList({ vehicles, props }) {
+function VehicleList({ vehicles, ...props }) {
   console.log("rendering vehicles..");
   const [vehicleList, setVehicleList] = useState(Object.entries(vehicles));
   
@@ -40,12 +40,8 @@ function VehicleList({ vehicles, props }) {
         {vehicleList.map((business_vehicles, index) => (
           <VehiclesItem
             key={index}
-            props={{
-              business_id: business_vehicles[0],
-              // business_name: business_vehicles[1].business_name,
-              vehicles: business_vehicles[1], // business_vehicles[1].vehicles_data
-              index,
-            }}
+            vehicles={business_vehicles[1]}
+            business_id={business_vehicles[0]}
           />
         ))}
       </tbody>
@@ -53,16 +49,16 @@ function VehicleList({ vehicles, props }) {
   );
 }
 
-function VehiclesItem({ props }) {
+function VehiclesItem({ vehicles, business_id, ...props }) {
   // const [hidden, setHidden] = useState(true);
-  // console.log(props.vehicles);
+  // console.log(vehicles);
 
   return (
     <tr>
-      <td>{props.business_id}</td>
-      <td>{props.business_name} N/A</td>
+      <td>{business_id}</td>
+      <td>{vehicles.business_name} N/A</td>
       <td>N/A
-        {/* {props.vehicles.map((vehicle, idx) => (
+        {/* {vehicles.map((vehicle, idx) => (
           <p key={idx}>
             {vehicle.name}<br />
             {`${vehicle.model}, ${vehicle.year}`}
@@ -70,35 +66,35 @@ function VehiclesItem({ props }) {
         ))} */}
       </td>
       <td>N/A
-        {/* {props.vehicles.map((vehicle, idx) => (
+        {/* {vehicles.map((vehicle, idx) => (
           <p key={idx}>
             {vehicle.registration}
           </p>
         ))} */}
       </td>
       <td>N/A
-        {/* {props.vehicles.map((vehicle, idx) => (
+        {/* {vehicles.map((vehicle, idx) => (
           <p key={idx}>
             {vehicle.insurance_carrier}
           </p>
         ))} */}
       </td>
       <td>N/A
-        {/* {props.vehicles.map((vehicle, idx) => (
+        {/* {vehicles.map((vehicle, idx) => (
           <p key={idx}>
             {vehicle.insurance_policy}
           </p>
         ))} */}
       </td>
       <td>N/A
-        {/* {props.vehicles.map((vehicle, idx) => (
+        {/* {vehicles.map((vehicle, idx) => (
           <p key={idx}>
             {vehicle.insurance_policy_expiration}
           </p>
         ))} */}
       </td>
       <td>N/A
-        {/* {props.vehicles.map((vehicle, idx) => (
+        {/* {vehicles.map((vehicle, idx) => (
           <React.Fragment>
             {vehicle.drivers.map((driver, idx) => (
               <p>{driver.first_name} {driver.last_name}</p>

@@ -9,6 +9,8 @@ import BusinessList from "./Lists/BusinessList";
 import CustomerList from "./Lists/CustomerList";
 import VehicleList from "./Lists/VehicleList";
 import OrderList from "./Lists/OrderList";
+import PaymentList from "./Lists/PaymentList";
+import CouponList from "./Lists/CouponList";
 import ConstraintList from "./Lists/ConstraintList";
 import DeliveryView from "./DeliveryView";
 import AppIcon from "utils/Icons/app_icon.png";
@@ -150,10 +152,9 @@ function DashboardPage() {
         return (
           <DeliveryList
             routes={data.routes}
-            drivers={data.drivers}
-            businesses={data.businesses}
-            customers={data.customers}
-            props={{ selectedLocation, setSelectedLocation, dispatch }}
+            selectedLocation={selectedLocation}
+            setSelectedLocation={setSelectedLocation}
+            dispatch={dispatch}
           />
         );
       case 1:
@@ -189,11 +190,15 @@ function DashboardPage() {
         );
       case 6:
         return (
-          <p>Payments</p>
+          <PaymentList
+            payments={data.payments}
+          />
         );
       case 7:
         return (
-          <p>Coupons</p>
+          <CouponList
+            coupons={data.coupons}
+          />
         )
       case 8:
         return (
@@ -244,7 +249,8 @@ function DashboardPage() {
                 <div className="sticky">
                   <LeafletMap
                     routes={data.routes}
-                    props={{ selectedLocation, setSelectedLocation }}
+                    selectedLocation={selectedLocation}
+                    setSelectedLocation={setSelectedLocation}
                   />
                 </div>
               </div>
