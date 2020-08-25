@@ -1,49 +1,12 @@
-import React, { useReducer } from "react";
+import React, { useState, useReducer } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Icons from "utils/Icons/Icons";
 import SortingIcon from "utils/Components/SortingIcon";
 // import axios from "axios";
 
-function reducer(state, action) {
-  const newValue = state.sortBy === action.type ? -state.value: -1;
-
-  // console.log(state);
-  switch(action.type) {
-    case 'id':
-      return {
-        sortBy: 'id',
-        value: newValue,
-        list: [...state.list].sort((a, b) => (
-          newValue === 1 ? a[0] - b[0] : b[0] - a[0]
-        )),
-      };
-    case 'customer-name':
-      return {
-        sortBy: 'customer-name',
-        value: newValue,
-        list: [...state.list].sort((a, b) => {
-          const name_a = `${a[1].customer_first_name} ${a[1].customer_last_name}`.toLowerCase();
-          const name_b = `${b[1].customer_first_name} ${b[1].customer_last_name}`.toLowerCase();
-          // console.log(value_a, value_b);
-          return (newValue === 1 ? name_a.localeCompare(name_b) : name_b.localeCompare(name_a));
-        }),
-      };
-    case 'amount':
-      return {
-        sortBy: 'amount',
-        value: newValue,
-        list: [...state.list].sort((a, b) => (
-          newValue === 1 ? a[1].cost - b[1].cost : b[1].cost - a[1].cost
-        )),
-      };
-    default:
-      return state;
-  }
-}
-
 function OrderList({ orders, ...props }) {
   console.log("rendering orders..");
-  const [orderData, dispatch] = useReducer(reducer, {
+  const [orderData, setOrderData] = useState({
     sortBy: "", // sortBy 'id', 'name', etc
     value: 0, // value 1=ascending, -1=descending
     list: Object.entries(orders),
@@ -55,22 +18,25 @@ function OrderList({ orders, ...props }) {
         <tr>
           <th>
             Order #
-            <SortingIcon type='id' data={orderData} dispatch={dispatch} />
+            <SortingIcon type='id' typeOf='string' data={orderData} update={setOrderData} />
           </th>
           <th>Date &amp; Time</th>
           <th>
             Customer Name
-            <SortingIcon type='customer-name' data={orderData} dispatch={dispatch} />  
+            <SortingIcon type='customer-name' typeOf='string' data={orderData} update={setOrderData} /> 
           </th>
           <th>Customer Info</th>
           <th>
             Amount
-            <SortingIcon type='amount' data={orderData} dispatch={dispatch} />  
+            <SortingIcon type='cost' typeOf='number' data={orderData} update={setOrderData} /> 
           </th>
           <th>Items</th>
           <th>Paid?</th>
           <th>Order Type</th>
-          <th>Business ID</th>
+          <th>
+            Business ID
+            <SortingIcon type='business_id' typeOf='string' data={orderData} update={setOrderData} /> 
+          </th>
           <th>Order Status</th>
           <th>Delivery #</th>
           <th>Route</th>

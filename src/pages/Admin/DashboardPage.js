@@ -1,5 +1,6 @@
 import React, { useState, useReducer, useEffect } from "react";
 
+import "./style.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Icons from "utils/Icons/Icons";
 import LeafletMap from "./LeafletMap";
