@@ -23,7 +23,7 @@ function validateLatlng(latlng) {
   return true;
 }
 
-function LeafletMap({ routes, ...props }) {
+function LeafletMap({ routes, drivers, businesses, customers, ...props }) {
   console.log("rendering map..");
 
   const mapRef = useRef();
