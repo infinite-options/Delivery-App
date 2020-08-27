@@ -84,6 +84,8 @@ const createRoutes = () => {
       } else {
         // console.log("route's business", businesses[location.business_id]);
         // location_data.from = [0, 0];
+        // NOTE: This should be business_latlng
+        location_data.from = [+location.customer_latitude + (Math.random() * 0.22 - 0.1), +location.customer_longitude + (Math.random() * 0.22 - 0.1)];
         tempRoutes[route_id] = {
           business_id: location.business_id,
           driver_id: location.driver_id,

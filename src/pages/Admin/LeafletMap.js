@@ -64,15 +64,21 @@ function LeafletMap({ routes, drivers, businesses, customers, ...props }) {
     }
   }, [selectedLocation]);
   
-  // let baseLocations = {};
-  // for (let route_id in routes) {
-  //   // console.log(route);
-  //   const latlng = routes[route_id].route_data[0].from;
-  //   if (!baseLocations[routes[route_id].business_id]) baseLocations[routes[route_id].business_id] = latlng;
-  // }
-  // console.log(baseLocations);
+  // creating a list of businesses locations
+  let businessLocations = {};
+  for (let route_id in routes) {
+    // console.log(route);
+    // console.log(routes[route_id].visible);
+    const latlng = routes[route_id].route_data[0].from;
+    const businessInfo = businessLocations[routes[route_id].business_id];
+    // if this business id is not currently in our list, add the latlng and visibility values to the list
+    if (!businessInfo) businessLocations[routes[route_id].business_id] = { latlng, visible: routes[route_id].visible };
+    // if the business location visibility value is currently false, but there is a visible route connected to the business location, toggle the visibility to true
+    else if (!businessInfo.visible && routes[route_id].visible) businessLocations[routes[route_id].business_id].visible = true; 
+  }
+  // console.log(businessLocations);
   // console.log(routes);
-  // const baseLocations_array = Object.entries(baseLocations);
+  const businessLocations_array = Object.entries(businessLocations);
   const routes_array = Object.entries(routes);
 
   // let latlngLocal;
@@ -81,8 +87,8 @@ function LeafletMap({ routes, drivers, businesses, customers, ...props }) {
   // console.log(latlngLocal);
   const isLatlng = validateLatlng(latlngLocal);
   // console.log(routes_array);
-  const latitude = isLatlng ? latlngLocal[0] : routes_array[0][1].route_data[0].to[0]; //baseLocations_array[0][1][0];
-  const longitude = isLatlng ? latlngLocal[1] : routes_array[0][1].route_data[0].to[1]; //baseLocations_array[0][1][1];
+  const latitude = isLatlng ? latlngLocal[0] : routes_array[0][1].route_data[0].to[0]; //businessLocations_array[0][1][0];
+  const longitude = isLatlng ? latlngLocal[1] : routes_array[0][1].route_data[0].to[1]; //businessLocations_array[0][1][1];
   // console.log(`[${latitude}, ${longitude}]`);
 
   const handleMapLoad = () => {
@@ -96,7 +102,8 @@ function LeafletMap({ routes, drivers, businesses, customers, ...props }) {
         markers.push(layer);
         // check if Marker should be visible initially
         // console.log(routes[layer.options.route]);
-        const routeVisible = routes[layer.options.route] ? routes[layer.options.route].visible : true;
+        const routeVisible = routes[layer.options.route] ? routes[layer.options.route].visible : (
+                             businessLocations[layer.options.business] ? businessLocations[layer.options.business].visible : true);
         const isVisible = routeVisible && map.getBounds().contains(layer.getLatLng());
         if (!isVisible) map.removeLayer(layer);
       }
@@ -119,7 +126,8 @@ function LeafletMap({ routes, drivers, businesses, customers, ...props }) {
       const marker = mapMarkers[i];
       // console.log("Marker:", marker);
       // console.log(routes[marker.options.route]);
-      const routeVisible = routes[marker.options.route] ? routes[marker.options.route].visible : true;
+      const routeVisible = routes[marker.options.route] ? routes[marker.options.route].visible : (
+                           businessLocations[marker.options.business] ? businessLocations[marker.options.business].visible : true);
       const mapBounds = map.getBounds();
       const isVisible = routeVisible && mapBounds.contains(marker.getLatLng());
       if (marker._icon && !isVisible) map.removeLayer(marker);
@@ -149,9 +157,15 @@ function LeafletMap({ routes, drivers, businesses, customers, ...props }) {
         // updateWhenIdle={true}
         // onload={}
       />
-      {/* {baseLocations_array.map((location, index) => (
-        <Marker key={index} position={location[1]} icon={Icons.Headquarters} onClick={() => console.log(`Hi this is Business ${location[0]}`)} />
-      ))} */}
+      {businessLocations_array.map((location, index) => (
+        <Marker 
+          key={index} 
+          business={location[0]}
+          position={location[1].latlng} 
+          icon={Icons.Headquarters} 
+          onClick={() => console.log(`Hi this is Business ${location[0]}`)} 
+        />
+      ))}
       {routes_array.map((route, index) => (
         <RouteMarkers
           key={index}
@@ -165,7 +179,7 @@ function LeafletMap({ routes, drivers, businesses, customers, ...props }) {
             selectedLocation,
             setSelectedLocation,
             manageMarkers,
-            // baseLocation: route[1].route_data[0].from,
+            // businessLocation: route[1].route_data[0].from,
           }}
         />
       ))}
@@ -175,9 +189,8 @@ function LeafletMap({ routes, drivers, businesses, customers, ...props }) {
 
 const RouteMarkers = ({ props }) => {
   const [coords, setCoords] = useState([]);
-  const [driverLocation, setDriverLocation] = useState(props.route[0].to); // useState(CURRENT_DRIVER_LOCATION ? CURRENT_DRIVER_LOCATION : props.baseLocation)
-  const [destination, setDestination] = useState(1); // useState(CURRENT_DRIVER_DESTINATION ? CURRENT_DRIVER_DESTINATION : props.baseLocation)
-
+  const [driverLocation, setDriverLocation] = useState(props.route[0].from); // useState(CURRENT_DRIVER_LOCATION ? CURRENT_DRIVER_LOCATION : props.businessLocation)
+  const [destination, setDestination] = useState(1); // useState(CURRENT_DRIVER_DESTINATION ? CURRENT_DRIVER_DESTINATION : props.businessLocation)
   const selectedLocation = props.selectedLocation;
 
   useEffect(() => {
@@ -191,7 +204,7 @@ const RouteMarkers = ({ props }) => {
   const createRouteCoords = () => {
     let latlngs = [];
     for (let location of props.route) {
-      latlngs.push([location.from ? location.from : location.to, location.to, location.address]); // calling it coords/latlngs is a bit misleading now that it also contains the address string
+      latlngs.push([location.from, location.to, location.address]); // calling it coords/latlngs is a bit misleading now that it also contains the address string
     }
     createManyCoordinates(latlngs, 0); // test
     createDriverCoords(latlngs);
@@ -204,13 +217,13 @@ const RouteMarkers = ({ props }) => {
     // checking if there are more drivers than delivery locations
     if (routeCoords.length) {
       // point from previous location to driver location
+      // console.log("yo", routeCoords[destination-1]);
       const temp = routeCoords[destination - 1][1];
       routeCoords[destination - 1][1] = driverLocation;
       // create route from driver location to next location
       const fromDriverToNext = [driverLocation, temp];
+      // console.log(fromDriverToNext);
       routeCoords.splice(destination, 0, fromDriverToNext);
-    } else {
-      routeCoords.push([props.baseLocation, props.baseLocation]);
     }
   };
 
@@ -287,8 +300,16 @@ const RouteMarkers = ({ props }) => {
 
   return (
     <React.Fragment>
+      {/* {console.log(coords)} */}
+      {/* {coords.length && (
+        <Marker 
+          route={props.id} 
+          position={coords[0][0]} 
+          icon={Icons.Headquarters} 
+        />
+      )} */}
       {coords.map((location, idx) => {
-        // console.log(idx, location[1]);
+        // console.log(coords);
         return <Marker
           key={idx}
           route={props.id}

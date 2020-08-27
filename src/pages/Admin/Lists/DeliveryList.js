@@ -30,7 +30,7 @@ function DeliveryList({ routes, ...props }) {
 function RouteItem({ route, id, ...props }) {
   const [hidden, setHidden] = useState(true);
   const route_values = Object.values(route.route_data);
-  console.log(route_values);
+  // console.log(route_values);
 
   useEffect(() => {
     // console.log(props.selectedLocation);
@@ -185,7 +185,7 @@ function RouteItem({ route, id, ...props }) {
                   : ""
               }
             >
-              {console.log("What", props)}
+              {/* {console.log("What", props)} */}
               <td>
                 <button
                   className={"button is-rounded is-small mx-1"}
