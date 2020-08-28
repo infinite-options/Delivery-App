@@ -12,6 +12,7 @@ function CustomerList({ customers, ...props }) {
       {Object.entries(customers).map((customer, index) => (
         <CustomerItem
           key={index}
+          index={index}
           customer={customer[1]}
           id={customer[0]}
         />

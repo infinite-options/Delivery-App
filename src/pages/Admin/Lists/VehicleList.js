@@ -40,6 +40,7 @@ function VehicleList({ vehicles, ...props }) {
         {vehicleList.map((business_vehicles, index) => (
           <VehiclesItem
             key={index}
+            index={index}
             vehicles={business_vehicles[1]}
             business_id={business_vehicles[0]}
           />

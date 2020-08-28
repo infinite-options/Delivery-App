@@ -33,6 +33,7 @@ function PaymentList({ payments, ...props }) {
         {paymentList.map((payment, index) => (
           <PaymentItem
             key={index}
+            index={index}
             payment={payment[1]}
             id={payment[0]}
           />

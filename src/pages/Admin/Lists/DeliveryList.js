@@ -16,6 +16,7 @@ function DeliveryList({ routes, ...props }) {
         // think about using fewer components, could probably just do route[0] and route[1]
         <RouteItem
           key={index}
+          index={index}
           route={route[1]}
           id={route[0]}
           selectedLocation={selectedLocation}

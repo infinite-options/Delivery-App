@@ -13,6 +13,7 @@ function DriverList({ drivers, routes, ...props }) {
       {Object.entries(drivers).map((driver, index) => (
         <DriverItem
           key={index}
+          index={index}
           driver={driver[1]}
           id={driver[0]}
           routes={routes}

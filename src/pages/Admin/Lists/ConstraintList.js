@@ -44,6 +44,7 @@ function ConstraintList({ constraints, ...props }) {
         {constraintList.map((constraint, index) => (
           <VehicleItem
             key={index}
+            index={index}
             constraint={constraint[1]}
             business_id={constraint[0]}
           />

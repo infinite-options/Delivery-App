@@ -23,7 +23,7 @@ function validateLatlng(latlng) {
   return true;
 }
 
-function LeafletMap({ routes, drivers, businesses, customers, ...props }) {
+function LeafletMap({ header, routes, drivers, businesses, customers, ...props }) {
   console.log("rendering map..");
 
   const mapRef = useRef();
@@ -160,6 +160,7 @@ function LeafletMap({ routes, drivers, businesses, customers, ...props }) {
       {businessLocations_array.map((location, index) => (
         <Marker 
           key={index} 
+          index={index}
           business={location[0]}
           position={location[1].latlng} 
           icon={Icons.Headquarters} 
@@ -169,27 +170,21 @@ function LeafletMap({ routes, drivers, businesses, customers, ...props }) {
       {routes_array.map((route, index) => (
         <RouteMarkers
           key={index}
-          props={{
-            id: route[0],
-            driver_id: route[1].driver_id,
-            route: route[1].route_data,
-            visible: route[1].visible,
-            index,
-            color: route[1].route_color,
-            selectedLocation,
-            setSelectedLocation,
-            manageMarkers,
-            // businessLocation: route[1].route_data[0].from,
-          }}
+          index={index}
+          id={route[0]}
+          route={route[1]}
+          selectedLocation={selectedLocation}
+          setSelectedLocation={setSelectedLocation}
+          manageMarkers={manageMarkers}
         />
       ))}
     </Map>
   );
 }
 
-const RouteMarkers = ({ props }) => {
+const RouteMarkers = ({ route, id, ...props }) => {
   const [coords, setCoords] = useState([]);
-  const [driverLocation, setDriverLocation] = useState(props.route[0].from); // useState(CURRENT_DRIVER_LOCATION ? CURRENT_DRIVER_LOCATION : props.businessLocation)
+  const [driverLocation, setDriverLocation] = useState(route.route_data[0].from); // useState(CURRENT_DRIVER_LOCATION ? CURRENT_DRIVER_LOCATION : props.businessLocation)
   const [destination, setDestination] = useState(1); // useState(CURRENT_DRIVER_DESTINATION ? CURRENT_DRIVER_DESTINATION : props.businessLocation)
   const selectedLocation = props.selectedLocation;
 
@@ -199,11 +194,11 @@ const RouteMarkers = ({ props }) => {
 
   useEffect(() => {
     props.manageMarkers();
-  }, [props.visible])
+  }, [route.visible])
 
   const createRouteCoords = () => {
     let latlngs = [];
-    for (let location of props.route) {
+    for (let location of route.route_data) {
       latlngs.push([location.from, location.to, location.address]); // calling it coords/latlngs is a bit misleading now that it also contains the address string
     }
     createManyCoordinates(latlngs, 0); // test
@@ -230,7 +225,7 @@ const RouteMarkers = ({ props }) => {
   const handleDriverLocation = () => {
     setCoords((prevCoords) => {
       let coords = [...prevCoords];
-      const randomCoords = getRandomCoordinates(props.route[0].to, 0.1); // testing
+      const randomCoords = getRandomCoordinates(route.route_data[0].to, 0.1); // testing
       coords[destination - 1][1] = randomCoords; // = driverLocation
       coords[destination][0] = randomCoords; // = driverLocation
       return coords;
@@ -300,25 +295,17 @@ const RouteMarkers = ({ props }) => {
 
   return (
     <React.Fragment>
-      {/* {console.log(coords)} */}
-      {/* {coords.length && (
-        <Marker 
-          route={props.id} 
-          position={coords[0][0]} 
-          icon={Icons.Headquarters} 
-        />
-      )} */}
       {coords.map((location, idx) => {
         // console.log(coords);
         return <Marker
           key={idx}
-          route={props.id}
+          route={id}
           position={location[1]}
           icon={
             destination === idx + 1
               ? Icons.Truck
               : Icons.DefaultIcon(
-                  destination > idx ? "#696969" : props.color,
+                  destination > idx ? "#696969" : route.route_color,
                   selectedLocation.driver - 1 === props.index &&
                     selectedLocation.location ===
                       (destination > idx ? idx + 1 : idx)
@@ -329,7 +316,7 @@ const RouteMarkers = ({ props }) => {
           onClick={(e) =>
             destination !== idx + 1
               ? handleSelect(e, props.index + 1, destination > idx ? idx + 1 : idx)
-              : handleDriverSelect(e, props.driver_id)
+              : handleDriverSelect(e, route.driver_id)
           }
           onDblClick={() => false} // disabling zoom on marker double click
         >
@@ -350,14 +337,14 @@ const RouteMarkers = ({ props }) => {
           </Popup> */}
         </Marker>
       })}
-      {props.visible && coords.map((location, index) => {
+      {route.visible && coords.map((location, index) => {
         // console.log(index, location);
         return (
           <Polyline
             key={index}
             positions={[location[0] ? location[0] : [DEFAULT_LATITUDE, DEFAULT_LONGITUDE], location[1]]}
             // weight={2}
-            color={destination > index ? "dimgrey" : props.color}
+            color={destination > index ? "dimgrey" : route.route_color}
           />
         );
       })}

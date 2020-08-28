@@ -15,6 +15,7 @@ function BusinessList({ businesses, ...props }) {
       {Object.entries(businesses).map((business, index) => (
         <BusinessItem
           key={index}
+          index={index}
           business={business[1]}
           id={business[0]}
         />

@@ -52,6 +52,7 @@ function OrderList({ orders, ...props }) {
         {orderData.list.map((order, index) => (
           <OrderItem
             key={index}
+            index={index}
             order={order[1]}
             id={order[0]}
           />

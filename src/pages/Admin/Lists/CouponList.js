@@ -31,6 +31,7 @@ function CouponList({ coupons, ...props }) {
           {couponList.map((coupon, index) => (
             <CouponItem
               key={index}
+              index={index}
               coupon={coupon[1]}
               id={coupon[0]}
             />
@@ -56,6 +57,7 @@ function CouponList({ coupons, ...props }) {
           {couponList.map((refund, index) => ( // NOTE: create refindList array
             <RefundItem
               key={index}
+              index={index}
               refund={refund[1]}
               id={refund[0]}
             />
