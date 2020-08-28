@@ -295,35 +295,35 @@ const RouteMarkers = ({ route, id, ...props }) => {
 
   return (
     <React.Fragment>
-      {coords.map((location, idx) => {
+      {coords.map((location, index) => {
         // console.log(coords);
         return <Marker
-          key={idx}
+          key={index}
           route={id}
           position={location[1]}
           icon={
-            destination === idx + 1
+            destination === index + 1
               ? Icons.Truck
               : Icons.DefaultIcon(
-                  destination > idx ? "#696969" : route.route_color,
+                  destination > index ? "#696969" : route.route_color,
                   selectedLocation.driver - 1 === props.index &&
                     selectedLocation.location ===
-                      (destination > idx ? idx + 1 : idx)
+                      (destination > index ? index + 1 : index)
                     ? { mult: 1.25 }
                     : {}
                 )
           }
           onClick={(e) =>
-            destination !== idx + 1
-              ? handleSelect(e, props.index + 1, destination > idx ? idx + 1 : idx)
+            destination !== index + 1
+              ? handleSelect(e, props.index + 1, destination > index ? index + 1 : index)
               : handleDriverSelect(e, route.driver_id)
           }
           onDblClick={() => false} // disabling zoom on marker double click
         >
           {/* TODO: Learn how to set conditional popups, i.e. if Marker is already selected, do not show popup on click */}
           {/* <Popup closeButton={false}>
-            <p>{destination !== idx + 1 ? `Destination ${destination > idx ? idx + 1 : idx}` : `Driver ${props.index + 1}`}</p>
-            {destination !== idx + 1 ? (
+            <p>{destination !== index + 1 ? `Destination ${destination > index ? index + 1 : index}` : `Driver ${props.index + 1}`}</p>
+            {destination !== index + 1 ? (
               <React.Fragment>
                 <p>{`Address: ${location[2]}`}</p>
                 <p>{`ETA: 00:00 am`}</p>

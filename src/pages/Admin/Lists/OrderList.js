@@ -72,9 +72,9 @@ function OrderItem({ order, id, ...props }) {
 
     return (
       <React.Fragment>
-        {Object.entries(items).map((item, idx) => {
+        {Object.entries(items).map((item, index) => {
           total += item[1];
-          return (<p key={idx}>{`${item[0]}: ${item[1]}`}</p>);
+          return (<p key={index}>{`${item[0]}: ${item[1]}`}</p>);
         })}
         <br /><p>total: {total}</p>
       </React.Fragment>

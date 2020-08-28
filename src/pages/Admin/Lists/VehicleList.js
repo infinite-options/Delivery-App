@@ -59,45 +59,45 @@ function VehiclesItem({ vehicles, business_id, ...props }) {
       <td>{business_id}</td>
       <td>{vehicles.business_name} N/A</td>
       <td>N/A
-        {/* {vehicles.map((vehicle, idx) => (
-          <p key={idx}>
+        {/* {vehicles.map((vehicle, index) => (
+          <p key={index}>
             {vehicle.name}<br />
             {`${vehicle.model}, ${vehicle.year}`}
           </p>
         ))} */}
       </td>
       <td>N/A
-        {/* {vehicles.map((vehicle, idx) => (
-          <p key={idx}>
+        {/* {vehicles.map((vehicle, index) => (
+          <p key={index}>
             {vehicle.registration}
           </p>
         ))} */}
       </td>
       <td>N/A
-        {/* {vehicles.map((vehicle, idx) => (
-          <p key={idx}>
+        {/* {vehicles.map((vehicle, index) => (
+          <p key={index}>
             {vehicle.insurance_carrier}
           </p>
         ))} */}
       </td>
       <td>N/A
-        {/* {vehicles.map((vehicle, idx) => (
-          <p key={idx}>
+        {/* {vehicles.map((vehicle, index) => (
+          <p key={index}>
             {vehicle.insurance_policy}
           </p>
         ))} */}
       </td>
       <td>N/A
-        {/* {vehicles.map((vehicle, idx) => (
-          <p key={idx}>
+        {/* {vehicles.map((vehicle, index) => (
+          <p key={index}>
             {vehicle.insurance_policy_expiration}
           </p>
         ))} */}
       </td>
       <td>N/A
-        {/* {vehicles.map((vehicle, idx) => (
+        {/* {vehicles.map((vehicle, index) => (
           <React.Fragment>
-            {vehicle.drivers.map((driver, idx) => (
+            {vehicle.drivers.map((driver, index) => (
               <p>{driver.first_name} {driver.last_name}</p>
             ))}
           </React.Fragment>

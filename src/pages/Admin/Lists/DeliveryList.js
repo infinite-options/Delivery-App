@@ -176,12 +176,12 @@ function RouteItem({ route, id, ...props }) {
             <th style={{borderBottomWidth: "2px"}}>Arrival</th>
             <th style={{borderBottomWidth: "2px"}}><span className="ml-2">Confirm</span></th>
           </tr>
-          {route_values.map((location, idx) => (
+          {route_values.map((location, index) => (
             <tr
-              key={idx}
+              key={index}
               className={
                 props.selectedLocation.driver === props.index + 1 &&
-                props.selectedLocation.location === idx + 1
+                props.selectedLocation.location === index + 1
                   ? "is-selected"
                   : ""
               }
@@ -190,20 +190,20 @@ function RouteItem({ route, id, ...props }) {
               <td>
                 <button
                   className={"button is-rounded is-small mx-1"}
-                  onClick={() => handleSelect(props.index + 1, idx + 1)}
+                  onClick={() => handleSelect(props.index + 1, index + 1)}
                   style={{ padding: "0.69rem" }}
                 >
-                  {idx + 1}
+                  {index + 1}
                 </button>
                 <button
                   className="button is-rounded is-small mx-1"
-                  onClick={() => skipLocation(idx + 1)}
+                  onClick={() => skipLocation(index + 1)}
                 >
                   Skip
                 </button>
                 {/* <button
                   className="button is-rounded is-small mx-1"
-                  onClick={() => changeLocation(idx + 1)}
+                  onClick={() => changeLocation(index + 1)}
                 >
                   Change
                 </button> */}
@@ -216,7 +216,7 @@ function RouteItem({ route, id, ...props }) {
                 {/* <button className="tooltip button is-rounded is-small mx-1"> */}
                 <button
                   className="button is-rounded is-small mx-1"
-                  onClick={() => sendConfirmationText(idx + 1)}
+                  onClick={() => sendConfirmationText(index + 1)}
                 >
                   <FontAwesomeIcon icon={Icons.faComment} />
                   {/* <span className="tooltiptext">Message Customer</span> */}
@@ -224,7 +224,7 @@ function RouteItem({ route, id, ...props }) {
                 {/* <button className="tooltip button is-rounded is-small mx-1"> */}
                 <button
                   className="button is-rounded is-small mx-1"
-                  onClick={() => sendConfirmationEmail(idx + 1)}
+                  onClick={() => sendConfirmationEmail(index + 1)}
                 >
                   <FontAwesomeIcon icon={Icons.faEnvelope} />
                   {/* <span className="tooltiptext">Email Customer</span> */}

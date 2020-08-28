@@ -40,14 +40,14 @@ function CustomerItem({ customer, id, ...props }) {
                 <span>Customer {id}: {`${customer.first_name} ${customer.last_name[0]}.`}</span>
                 <button
                   className="button is-rounded is-pulled-right is-super-small ml-1"
-                  // onClick={() => sendEmail(idx + 1)}
+                  // onClick={() => sendEmail(index + 1)}
                 >
                   <FontAwesomeIcon icon={Icons.faEnvelope} />
                 </button>
                 {/* <button className="tooltip mx-1" onClick={() => setHidden(prevHidden => !prevHidden)}> */}
                 <button
                   className="button is-rounded is-pulled-right is-super-small"
-                  // onClick={() => sendText(idx + 1)}
+                  // onClick={() => sendText(index + 1)}
                 >
                   <FontAwesomeIcon icon={Icons.faComment} />
                 </button>

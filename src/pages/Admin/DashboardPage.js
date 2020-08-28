@@ -294,12 +294,12 @@ function Header(props) {
         >
           ADMIN DASHBOARD
         </h1>
-        {tabs.map((value, idx) => (
+        {tabs.map((value, index) => (
           <button 
-            key={idx} 
+            key={index} 
             className="button is-lightgrey is-sharp is-tilted-right header-button"
-            onClick={() => handleTabChange(idx)}
-            style={{ backgroundColor: props.tab === idx && "yellow" }}
+            onClick={() => handleTabChange(index)}
+            style={{ backgroundColor: props.tab === index && "yellow" }}
           >
             {value}
           </button>
@@ -342,16 +342,16 @@ function RouteTimes(props) {
 
   return (
     <div className="columns routes" style={{ margin: "0" }}>
-      {props.times.map((time, idx) => (
+      {props.times.map((time, index) => (
         <div
-          key={idx}
+          key={index}
           className="column"
           style={{ maxWidth: `${100 / props.times.length}%` }}
         >
           <button
             className="button is-fullwidth is-small"
-            onClick={() => handleTimeChange(idx)}
-            style={{ backgroundColor: props.timeSlot === idx && "yellow" }}
+            onClick={() => handleTimeChange(index)}
+            style={{ backgroundColor: props.timeSlot === index && "yellow" }}
           >
             {time.value}
           </button>

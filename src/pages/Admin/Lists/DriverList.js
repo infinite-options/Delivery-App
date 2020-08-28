@@ -63,14 +63,14 @@ function DriverItem({ driver, id, ...props }) {
                 <span>Driver {id}: {`${driver.first_name} ${driver.last_name[0]}.`}</span>
                 <button
                   className="button is-rounded is-pulled-right is-super-small ml-1"
-                  // onClick={() => sendEmail(idx + 1)}
+                  // onClick={() => sendEmail(index + 1)}
                 >
                   <FontAwesomeIcon icon={Icons.faEnvelope} />
                 </button>
                 {/* <button className="tooltip mx-1" onClick={() => setHidden(prevHidden => !prevHidden)}> */}
                 <button
                   className="button is-rounded is-pulled-right is-super-small"
-                  // onClick={() => sendText(idx + 1)}
+                  // onClick={() => sendText(index + 1)}
                 >
                   <FontAwesomeIcon icon={Icons.faComment} />
                 </button>
@@ -161,7 +161,7 @@ function DriverItem({ driver, id, ...props }) {
             </td>
             <td>
               Preferred Routes<br />{driver.preferred_routes}
-              {/* {driver.preferred_routes.map((route, idx) => (
+              {/* {driver.preferred_routes.map((route, index) => (
                 <p>Route {route.id}: <span>ROUTE COLOR</span></p>
               ))} */}
             </td>

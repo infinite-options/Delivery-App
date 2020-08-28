@@ -47,7 +47,7 @@ function reducer(state, action) {
 function DeliveryView(props) {
   console.log("rendering view..");
 
-  const times = props.times && Object.keys(props.times).map((idx) => [props.times[idx].value]);
+  const times = props.times && Object.keys(props.times).map((index) => [props.times[index].value]);
   const columns = props.type === "day" ? times : weekdays;
 
   // reason I call this inside of the component instead of outside is because
@@ -130,10 +130,10 @@ function DeliveryView(props) {
             <thead>
               <tr>
                 <th>{props.type === "day" ? "Time Window" : "Day"}</th>
-                {columns.map((value, idx) => (
-                  <th className={"has-text-centered" + (dateData.index === idx ? " is-today" : "")} key={idx}>
+                {columns.map((value, index) => (
+                  <th className={"has-text-centered" + (dateData.index === index ? " is-today" : "")} key={index}>
                     <p style={{borderBottom: "1px solid lightgrey"}}>
-                      {value + (props.type === "week" ? ` [${dateData.day.clone().add(idx - weekday, "d").format("MM/DD")}]` : "")}                                     
+                      {value + (props.type === "week" ? ` [${dateData.day.clone().add(index - weekday, "d").format("MM/DD")}]` : "")}                                     
                     </p>
                     <ValueRange min="Min" max="Max" isHeader />
                   </th>
@@ -178,8 +178,8 @@ function RowItems(props) {
   // console.log("rendering items..");
   return (
     <React.Fragment>
-      {props.items.map((value, idx) => (
-        <td key={idx} className={props.index === idx ? " is-today" + (props.isLast ? "-end" : "") : ""}>
+      {props.items.map((value, index) => (
+        <td key={index} className={props.index === index ? " is-today" + (props.isLast ? "-end" : "") : ""}>
           {props.hasRange ? (
             <ValueRange min={value} max={value} />
           ) : (

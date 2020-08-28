@@ -38,8 +38,8 @@ function BusinessItem({ business, id, ...props }) {
     // console.log(days);
     return (
       <React.Fragment>
-        {weekdays.map((day, idx) => (
-          <p key={idx}>{day}: {days[day]}</p>
+        {weekdays.map((day, index) => (
+          <p key={index}>{day}: {days[day]}</p>
         ))}
       </React.Fragment>
     );
