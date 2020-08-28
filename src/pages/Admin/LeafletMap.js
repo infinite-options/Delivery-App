@@ -99,6 +99,7 @@ function LeafletMap({ header, routes, drivers, businesses, customers, ...props }
     map.eachLayer((layer) => {
       // console.log("Scanning", layer);
       if (layer instanceof L.Marker) {
+        // console.log(layer);
         markers.push(layer);
         // check if Marker should be visible initially
         // console.log(routes[layer.options.route]);
@@ -134,6 +135,8 @@ function LeafletMap({ header, routes, drivers, businesses, customers, ...props }
       else if (!marker._icon && isVisible) map.addLayer(marker);
     }
   };
+
+  // console.log(`[${latitude}, ${longitude}]`)
 
   return (
     <Map

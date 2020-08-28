@@ -55,7 +55,7 @@ const rainbow = (numOfSteps, step) => {
  * }
  */
 const createRoutes = () => {
-  return axios.get(BASE_URL + "getCustomerRoutes")
+  return axios.get("https://uqu7qejuee.execute-api.us-west-1.amazonaws.com/dev/api/v2/getRoutes")
   .then((response) => {
     // console.log("temprouteS:", response);
     const result = response.data.result.result;
@@ -64,13 +64,19 @@ const createRoutes = () => {
       const route_id = location.route_id;
       const location_data = {
         customer_id: location.customer_id,
-        customer_first_name: location.customer_first_name,
-        customer_last_name: location.customer_last_name,
-        customer_email: location.customer_email,
-        customer_phone: location.customer_phone_num,
-        address: `${location.customer_street} ${location.customer_city} ${location.customer_state} ${location.customer_zip}`,
-        // from: tempRoutes[route_id].route_data[route_data.length - 1].to,
-        to: [location.customer_latitude, location.customer_longitude],
+        customer_first_name: location.delivery_first_name,
+        customer_last_name: location.delivery_last_name,
+        customer_email: location.delivery_email,
+        customer_phone: location.delivery_phone_num,
+        address: `${location.delivery_address} ${location.delivery_city} ${location.delivery_state} ${location.delivery_zip}`,
+        to: [location.delivery_latitude, location.delivery_longitude],
+        //* customer_id: location.customer_id,
+        //* customer_first_name: location.customer_first_name,
+        //* customer_last_name: location.customer_last_name,
+        //* customer_email: location.customer_email,
+        //* customer_phone: location.customer_phone_num,
+        //* address: `${location.customer_street} ${location.customer_city} ${location.customer_state} ${location.customer_zip}`,
+        //* to: [location.customer_latitude, location.customer_longitude],
       };
       // console.log(route_id);
       if (route_id in tempRoutes) {
@@ -85,12 +91,13 @@ const createRoutes = () => {
         // console.log("route's business", businesses[location.business_id]);
         // location_data.from = [0, 0];
         // NOTE: This should be business_latlng
-        location_data.from = [+location.customer_latitude + (Math.random() * 0.22 - 0.1), +location.customer_longitude + (Math.random() * 0.22 - 0.1)];
+        location_data.from = [+location.delivery_latitude + (Math.random() * 0.22 - 0.1), +location.delivery_longitude + (Math.random() * 0.22 - 0.1)];
+        //* location_data.from = [+location.customer_latitude + (Math.random() * 0.22 - 0.1), +location.customer_longitude + (Math.random() * 0.22 - 0.1)];
         tempRoutes[route_id] = {
           business_id: location.business_id,
-          driver_id: location.driver_id,
-          driver_first_name: location.driver_first_name,
-          driver_last_name: location.driver_last_name, 
+          driver_id: location.driver_num, //* location.driver_id,
+          driver_first_name: "Bob", //* location.driver_first_name,
+          driver_last_name: "Jones", //* location.driver_last_name, 
           visible: true,
           route_data: [location_data],
         };
