@@ -61,6 +61,14 @@ function RouteItem({ route, id, ...props }) {
     });
   };
 
+  const handleVisibilitySelect = () => {
+    props.setSelectedLocation({
+      driver: undefined,
+      location: undefined,
+    });
+    props.dispatch({ type: "route-toggle-visibility", payload: { id } });
+  }
+
   const sendDriverText = (driverNumber) => {
     console.log(`Sending Driver ${driverNumber} a text..`);
   };
@@ -94,7 +102,7 @@ function RouteItem({ route, id, ...props }) {
               <div style={{ width: "200%", maxWidth: "225px" }}>
                 <button 
                   className="button is-super-small is-rounded mr-3" 
-                  onClick={() => props.dispatch({ type: "route-toggle-visibility", payload: { id } })}
+                  onClick={handleVisibilitySelect}
                 >
                   <FontAwesomeIcon icon={route.visible ? Icons.faEyeSlash : Icons.faEye} />
                 </button>
@@ -190,6 +198,8 @@ function RouteItem({ route, id, ...props }) {
               <td>
                 <button
                   className={"button is-rounded is-small mx-1"}
+                  disabled={!route.visible}
+                  // {...(!route.visible && { title: "this route is hidden" })}
                   onClick={() => handleSelect(props.index + 1, index + 1)}
                   style={{ padding: "0.69rem" }}
                 >
