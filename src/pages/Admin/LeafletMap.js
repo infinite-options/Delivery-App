@@ -12,8 +12,7 @@ import {
 import Icons from "utils/Icons/Icons";
 import L from "leaflet";
 // use San Jose, CA as the default center
-const DEFAULT_LATITUDE = 37.338208;
-const DEFAULT_LONGITUDE = -121.886329;
+const DEFAULT_LATLNG = [37.338208, -121.886329];
 
 function validateLatlng(latlng) {
   if (!Array.isArray(latlng)) return false;
@@ -21,25 +20,50 @@ function validateLatlng(latlng) {
   if (isNaN(latlng[0]) || (latlng[0] <=  -90 || latlng[0] >=  90) || 
       isNaN(latlng[1]) || (latlng[1] <= -180 || latlng[1] >= 180)) return false;
   return true;
-}
+};
 
+function calculateLatlng(routes_array) {
+  const latlngLocal = (() => {
+    try { return JSON.parse(window.localStorage.getItem("mapLatlng")); }
+    catch (e) { return null; }
+  })();
+
+  try { 
+    const isLatlng = validateLatlng(latlngLocal);
+    return [
+      isLatlng ? latlngLocal[0] : routes_array[0][1].route_data[0].to[0], 
+      isLatlng ? latlngLocal[1] : routes_array[0][1].route_data[0].to[1]
+    ];
+  } 
+  catch (e) { return DEFAULT_LATLNG; } 
+};
+
+function calculateZoom() {
+  const zoomLocal = Number(window.localStorage.getItem("mapZoom"));
+  return zoomLocal && zoomLocal >= 2 && zoomLocal <= 18 ? zoomLocal : 11;
+};
+
+// NOTE: This section of code feels really messy to me, think about cleaning it up and making it
+//       more readable, if possible.
 function LeafletMap({ header, routes, drivers, businesses, customers, ...props }) {
   console.log("rendering map..");
 
   const mapRef = useRef();
   const [leafletMap, setLeafletMap] = useState();
   const [mapMarkers, setMapMarkers] = useState([]);
+  // NOTE: may wanna make a reducer here
   const [businessLocations, setBusinessLocations] = useState([]);
   const [customerLocations, setCustomerLocations] = useState([]);
-  // const selectedLocation = props.selectedLocation;
-  // const setSelectedLocation = props.setSelectedLocation;
   
   useEffect(() => {
     const { current={} } = mapRef;
-    const {leafletElement: map } = current;
+    const { leafletElement: map } = current;
     // console.log(map);
     setLeafletMap(map);
-  }, [])
+  }, []);
+  useEffect(() => {
+    if (leafletMap) setTimeout(() => handleMapLoad(), 0); // waiting for RouteMarkers to finish rendering
+  }, [leafletMap]);
 
   useEffect(() => {
     setBusinessLocations(() => {
@@ -57,22 +81,21 @@ function LeafletMap({ header, routes, drivers, businesses, customers, ...props }
             // if the business location visibility value is currently false, but there is a visible route connected to the business location, toggle the visibility to true
             else if (!businessInfo.visible && routes[route_id].visible) businessLocations[routes[route_id].business_id].visible = true; 
           } break;
-        case 2:
+        case 2: case 3: // case 3 being part of case 2 is temporary, just so map doesn't bug out
           for (let business_id in businesses) {
             const latlng = [businesses[business_id].latitude, businesses[business_id].longitude];
             businessLocations[business_id] = { latlng, visible: businesses[business_id].visible };
           } break;
+        // case 3: break;
         default: 
           console.log("Shouldn't be printing"); break;
       }
       return businessLocations;
     });
-  }, [routes, header])
-
-  useEffect(() => {
-    if (leafletMap) setTimeout(() => handleMapLoad(), 0); // waiting for RouteMarkers to finish rendering
-    // if (leafletMap) handleMapLoad();
-  }, [leafletMap])
+  }, [routes, header]);
+  useEffect(() => { // Essentially what this is doing is 'manage markers after routes or header is updated'
+    manageMarkers();
+  }, [businessLocations]);
 
   useEffect(() => {
     const selected = { ...props.selectedLocation };
@@ -97,17 +120,11 @@ function LeafletMap({ header, routes, drivers, businesses, customers, ...props }
   // console.log(businessLocations);
   // console.log(routes);
   const businessLocations_array = Object.entries(businessLocations);
+  const customerLocations_array = Object.entries(customerLocations);
   const routes_array = Object.entries(routes);
 
-  // let latlngLocal;
-  try { var latlngLocal = JSON.parse(window.localStorage.getItem("mapLatlng")); }
-  catch(e) { console.log(e); }
-  // console.log(latlngLocal);
-  const isLatlng = validateLatlng(latlngLocal);
-  // console.log(routes_array);
-  const latitude = isLatlng ? latlngLocal[0] : routes_array[0][1].route_data[0].to[0]; //businessLocations_array[0][1][0];
-  const longitude = isLatlng ? latlngLocal[1] : routes_array[0][1].route_data[0].to[1]; //businessLocations_array[0][1][1];
-  // console.log(`[${latitude}, ${longitude}]`);
+  const mapLatlng = calculateLatlng(routes_array);
+  const mapZoom = calculateZoom();
 
   const handleMapLoad = () => {
     // onLoad does not work on Map component, so must be called from its child component (TileLayer)
@@ -134,12 +151,13 @@ function LeafletMap({ header, routes, drivers, businesses, customers, ...props }
   const handleMapUpdate = () => {
     manageMarkers(); // updating Markers' visibility as user drags map around
     window.localStorage.setItem("mapLatlng", JSON.stringify([leafletMap.getCenter().lat, leafletMap.getCenter().lng]));
+    if (mapZoom != leafletMap.getZoom()) window.localStorage.setItem("mapZoom", leafletMap.getZoom());
     // console.log(mapMarkers);
     console.log("updating map..");
   };
 
   const manageMarkers = (map=leafletMap) => {
-    console.log(mapMarkers);
+    // console.log(mapMarkers);
     for (let i = mapMarkers.length - 1; i >= 0; i--) {
       const marker = mapMarkers[i];
       // console.log("Marker:", marker);
@@ -147,6 +165,7 @@ function LeafletMap({ header, routes, drivers, businesses, customers, ...props }
       const routeVisible = checkVisibility(marker);
       const mapBounds = map.getBounds();
       const isVisible = routeVisible && mapBounds.contains(marker.getLatLng());
+      // console.log(isVisible, marker);
       if (marker._icon && !isVisible) map.removeLayer(marker);
       else if (!marker._icon && isVisible) map.addLayer(marker);
     }
@@ -155,27 +174,25 @@ function LeafletMap({ header, routes, drivers, businesses, customers, ...props }
   const checkVisibility = (marker) => {
     switch (header) {
       case 0: case 1:
-        console.log(businessLocations[marker.options.business]);
+        // console.log(businessLocations[marker.options.business]);
         return (
           routes[marker.options.route] ? routes[marker.options.route].visible : (
-          businessLocations[marker.options.business] ? businessLocations[marker.options.business].visible : true)
+          businessLocations[marker.options.business] ? businessLocations[marker.options.business].visible : false)
         );
       case 2:
         return (
-          businessLocations[marker.options.business] ? businessLocations[marker.options.business].visible : true
+          businessLocations[marker.options.business] ? businessLocations[marker.options.business].visible : false
         );
       default:
         return undefined;
     }
   };
 
-  // console.log(`[${latitude}, ${longitude}]`)
-
   return (
     <Map
       ref={mapRef}
-      center={[latitude, longitude]}
-      zoom={leafletMap ? leafletMap.getZoom() : 11}
+      center={mapLatlng}
+      zoom={mapZoom}
       minZoom={2}
       maxBounds={[
         [-83.75, -180], // preventing users from seeing map edge
@@ -203,7 +220,7 @@ function LeafletMap({ header, routes, drivers, businesses, customers, ...props }
           onClick={() => console.log(`Hi this is Business ${location[0]}`)} 
         />
       ))}
-      {header !== 2 && (routes_array.map((route, index) => (
+      {routes_array.map((route, index) => (
         <RouteMarkers
           key={index}
           index={index}
@@ -212,8 +229,9 @@ function LeafletMap({ header, routes, drivers, businesses, customers, ...props }
           selectedLocation={props.selectedLocation}
           setSelectedLocation={props.setSelectedLocation}
           manageMarkers={manageMarkers}
+          header={header}
         />
-      )))}
+      ))}
     </Map>
   );
 }
@@ -228,9 +246,9 @@ const RouteMarkers = ({ route, id, ...props }) => {
     createRouteCoords();
   }, []);
 
-  useEffect(() => {
-    props.manageMarkers();
-  }, [route.visible])
+  // useEffect(() => {
+  //   props.manageMarkers();
+  // }, [route.visible])
 
   const createRouteCoords = () => {
     let latlngs = [];
@@ -374,12 +392,12 @@ const RouteMarkers = ({ route, id, ...props }) => {
           </Popup> */}
         </Marker>
       })}
-      {route.visible && coords.map((location, index) => {
+      {(props.header < 2 && route.visible) && coords.map((location, index) => {
         // console.log(index, location);
         return (
           <Polyline
             key={index}
-            positions={[location[0] ? location[0] : [DEFAULT_LATITUDE, DEFAULT_LONGITUDE], location[1]]}
+            positions={[location[0], location[1]]}
             // weight={2}
             color={destination > index ? "dimgrey" : route.route_color}
           />

@@ -58,14 +58,15 @@ const rainbow = (numOfSteps, step) => {
 const createRoutes = () => {
   return axios.get(NEW_NEW_BASE_URL + "getRoutes")
   .then((response) => {
-    console.log("temprouteS:", response);
+    // console.log("temprouteS:", response);
     const result = response.data.result.result;
+    let totalOptions = 0;
     let tempRoutes = {};
     for (let location of result) {
-      console.log(location);
+      // console.log(location);
       const route_id = location.route_id;
       const latlngs = JSON.parse(location.customer_coords);
-      console.log(latlngs);
+      // console.log(latlngs);
       const location_data = {
         to: [latlngs.latitude, latlngs.longitude],
         customer_first_name: "Bill",
@@ -89,17 +90,18 @@ const createRoutes = () => {
       };
       // console.log(route_id);
       if (route_id in tempRoutes) {
-        location_data.from =
+        location_data.from = 
           tempRoutes[route_id].route_data[
             tempRoutes[route_id].route_data.length - 1
           ].to;
         // console.log(location_data);
         // console.log("route data:", tempRoutes[route_id].route_data);
         tempRoutes[route_id].route_data.push(location_data);
-      } else {
+      } 
+      else {
         // console.log("route's business", businesses[location.business_id]);
         // location_data.from = [0, 0];
-        // NOTE: This should be business_latlng
+        if (totalOptions < location.route_option) totalOptions = location.route_option;
         location_data.from = [latlngs.latitude, latlngs.longitude];
         //* location_data.from = [+location.customer_latitude + (Math.random() * 0.22 - 0.1), +location.customer_longitude + (Math.random() * 0.22 - 0.1)];
         tempRoutes[route_id] = {
@@ -118,11 +120,12 @@ const createRoutes = () => {
     const routes_length = Object.keys(tempRoutes).length;
     let route_option = 1;
     for (let route_id in tempRoutes) {
+      tempRoutes[route_id].route_data.shift(); // delete first location, since that's the starting location
       if (route_option != tempRoutes[route_id].route_option) {
         if (tempRoutes[route_id].route_option == 1) { route_option = 1; i = 0; }
         else { route_option++; i++; }
       }
-      tempRoutes[route_id].route_color = rainbow(4, i);
+      tempRoutes[route_id].route_color = rainbow(totalOptions, i);
     }
       // console.log(tempRoutes);
     return tempRoutes;

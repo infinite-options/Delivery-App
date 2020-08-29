@@ -79,10 +79,8 @@ function DashboardPage() {
     { value: "03 am - 03 pm" },
     { value: "04 am - 04 pm" },
   ]); // useState(GET_ROUTE_TIMES)
-  const timeSlotInit = Number(window.localStorage.getItem("timeSlot")) || 0; 
-  const headerTabInit = Number(window.localStorage.getItem("headerTab")) || 0;
-  const [timeSlot, setTimeSlot] = useState(timeSlotInit); 
-  const [headerTab, setHeaderTab] = useState(headerTabInit); 
+  const [timeSlot, setTimeSlot] = useState(Number(window.localStorage.getItem("timeSlot")) || 0); 
+  const [headerTab, setHeaderTab] = useState(Number(window.localStorage.getItem("headerTab")) || 0); 
   const [selectedLocation, setSelectedLocation] = useState({});
 
   useEffect(() => {
