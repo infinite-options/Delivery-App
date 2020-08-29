@@ -52,6 +52,7 @@ function LeafletMap({ header, routes, drivers, businesses, customers, ...props }
             const latlng = routes[route_id].route_data[0].from;
             const businessInfo = businessLocations[routes[route_id].business_id];
             // if this business id is not currently in our list, add the latlng and visibility values to the list
+            // console.log(routes[route_id].visible);
             if (!businessInfo) businessLocations[routes[route_id].business_id] = { latlng, visible: routes[route_id].visible };
             // if the business location visibility value is currently false, but there is a visible route connected to the business location, toggle the visibility to true
             else if (!businessInfo.visible && routes[route_id].visible) businessLocations[routes[route_id].business_id].visible = true; 
@@ -66,7 +67,7 @@ function LeafletMap({ header, routes, drivers, businesses, customers, ...props }
       }
       return businessLocations;
     });
-  }, [header])
+  }, [routes, header])
 
   useEffect(() => {
     if (leafletMap) setTimeout(() => handleMapLoad(), 0); // waiting for RouteMarkers to finish rendering
@@ -154,6 +155,7 @@ function LeafletMap({ header, routes, drivers, businesses, customers, ...props }
   const checkVisibility = (marker) => {
     switch (header) {
       case 0: case 1:
+        console.log(businessLocations[marker.options.business]);
         return (
           routes[marker.options.route] ? routes[marker.options.route].visible : (
           businessLocations[marker.options.business] ? businessLocations[marker.options.business].visible : true)
@@ -233,6 +235,7 @@ const RouteMarkers = ({ route, id, ...props }) => {
   const createRouteCoords = () => {
     let latlngs = [];
     for (let location of route.route_data) {
+      // if (location === route.route_data[0]) continue;
       latlngs.push([location.from, location.to, location.address]); // calling it coords/latlngs is a bit misleading now that it also contains the address string
     }
     createManyCoordinates(latlngs, 0); // test

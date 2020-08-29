@@ -1,6 +1,7 @@
 import axios from "axios";
 
 // "https://wrguk721j7.execute-api.us-west-1.amazonaws.com/dev/api/v1/";
+const NEW_NEW_BASE_URL = "https://uqu7qejuee.execute-api.us-west-1.amazonaws.com/dev/api/v2/";
 const NEW_BASE_URL = "https://tsx3rnuidi.execute-api.us-west-1.amazonaws.com/dev/api/v2/";
 const BASE_URL = "https://lu636s0qy3.execute-api.us-west-1.amazonaws.com/dev/api/v2/";
 
@@ -55,22 +56,29 @@ const rainbow = (numOfSteps, step) => {
  * }
  */
 const createRoutes = () => {
-  return axios.get("https://uqu7qejuee.execute-api.us-west-1.amazonaws.com/dev/api/v2/getRoutes")
+  return axios.get(NEW_NEW_BASE_URL + "getRoutes")
   .then((response) => {
-    // console.log("temprouteS:", response);
+    console.log("temprouteS:", response);
     const result = response.data.result.result;
     let tempRoutes = {};
     for (let location of result) {
+      console.log(location);
       const route_id = location.route_id;
+      const latlngs = JSON.parse(location.customer_coords);
+      console.log(latlngs);
       const location_data = {
-        customer_id: location.customer_id,
-        customer_first_name: location.delivery_first_name,
-        customer_last_name: location.delivery_last_name,
-        customer_email: location.delivery_email,
-        customer_phone: location.delivery_phone_num,
-        address: `${location.delivery_address} ${location.delivery_city} ${location.delivery_state} ${location.delivery_zip}`,
+        to: [latlngs.latitude, latlngs.longitude],
+        customer_first_name: "Bill",
+        customer_last_name: "Gates",
+
+        // customer_id: location.customer_id,
+        // customer_first_name: location.delivery_first_name,
+        // customer_last_name: location.delivery_last_name,
+        // customer_email: location.delivery_email,
+        // customer_phone: location.delivery_phone_num,
+        // address: `${location.delivery_address} ${location.delivery_city} ${location.delivery_state} ${location.delivery_zip}`,
         // NOTE: This regex stuff is temporary, the endpoint gives messy coordinate values so I gotta clean it
-        to: [location.delivery_latitude.replace( /^,/g, ''), location.delivery_longitude.replace( /^,/g, '')],
+        // to: [location.delivery_latitude.replace( /^,/g, ''), location.delivery_longitude.replace( /^,/g, '')],
         //* customer_id: location.customer_id,
         //* customer_first_name: location.customer_first_name,
         //* customer_last_name: location.customer_last_name,
@@ -92,9 +100,10 @@ const createRoutes = () => {
         // console.log("route's business", businesses[location.business_id]);
         // location_data.from = [0, 0];
         // NOTE: This should be business_latlng
-        location_data.from = [+location.delivery_latitude.replace( /^,/g, '') + (Math.random() * 0.22 - 0.1), +location.delivery_longitude.replace( /^,/g, '') + (Math.random() * 0.22 - 0.1)];
+        location_data.from = [latlngs.latitude, latlngs.longitude];
         //* location_data.from = [+location.customer_latitude + (Math.random() * 0.22 - 0.1), +location.customer_longitude + (Math.random() * 0.22 - 0.1)];
         tempRoutes[route_id] = {
+          route_option: location.route_option,
           business_id: location.business_id,
           driver_id: location.driver_num, //* location.driver_id,
           driver_first_name: "Bob", //* location.driver_first_name,
@@ -107,9 +116,15 @@ const createRoutes = () => {
     // let colors = [];
     let i = 0;
     const routes_length = Object.keys(tempRoutes).length;
-    for (let route_id in tempRoutes)
-      tempRoutes[route_id].route_color = rainbow(routes_length, i++);
-    // console.log(tempRoutes);
+    let route_option = 1;
+    for (let route_id in tempRoutes) {
+      if (route_option != tempRoutes[route_id].route_option) {
+        if (tempRoutes[route_id].route_option == 1) { route_option = 1; i = 0; }
+        else { route_option++; i++; }
+      }
+      tempRoutes[route_id].route_color = rainbow(4, i);
+    }
+      // console.log(tempRoutes);
     return tempRoutes;
   });
 
@@ -159,7 +174,7 @@ const createRoutes = () => {
 };
 
 const createDrivers = () => {
-  return axios.get(BASE_URL + "getDrivers")
+  return axios.get(NEW_NEW_BASE_URL + "getDrivers")
   .then((response) => {
     // console.log("response_drivers:", response);
     const result = response.data.result.result;
