@@ -156,10 +156,10 @@ function LeafletMap({ header, routes, drivers, businesses, customers, ...props }
     console.log("updating map..");
   };
 
-  const manageMarkers = (map=leafletMap) => {
+  const manageMarkers = (map=leafletMap, { business_id, driver_id, customer_id } = {}) => {
     // console.log(mapMarkers);
-    for (let i = mapMarkers.length - 1; i >= 0; i--) {
-      const marker = mapMarkers[i];
+    for (let marker of mapMarkers) {
+      // const marker = mapMarkers[i];
       // console.log("Marker:", marker);
       // console.log(routes[marker.options.route]);
       const routeVisible = checkVisibility(marker);
@@ -228,7 +228,7 @@ function LeafletMap({ header, routes, drivers, businesses, customers, ...props }
           route={route[1]}
           selectedLocation={props.selectedLocation}
           setSelectedLocation={props.setSelectedLocation}
-          manageMarkers={manageMarkers}
+          // manageMarkers={manageMarkers}
           header={header}
         />
       ))}

@@ -183,7 +183,7 @@ const createDrivers = () => {
     const result = response.data.result.result;
     let tempDrivers = {};
     for (let driver of result) {
-      const driver_id = driver.driver_id;
+      const driver_id = driver.driver_uid;
       const driver_data = {
         rating: driver.driver_rating,
 
@@ -254,7 +254,7 @@ const createBusinesses = () => {
     const result = response.data.result.result;
     let tempBusinesses = {};
     for (let business of result) {
-      const business_id = business.business_id;
+      const business_id = business.business_uid;
       const business_data = {
         visible: true, //temp
 

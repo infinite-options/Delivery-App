@@ -28,6 +28,7 @@ import {
 
 const initState = {
   isLoading: true,
+  filter: { type: undefined, option: undefined }, // { type: "routes", option: "business_id" }
   routes: {},
   drivers: {},
   businesses: {},
@@ -46,6 +47,11 @@ function reducer(state, action) {
         ...state, 
         ...action.payload.data 
       };
+    case 'filter':
+      return {
+        ...state,
+        filter: action.payload.filter,
+      }
     case 'route-toggle-visibility':
       // console.log({...state});
       return { 
@@ -153,6 +159,7 @@ function DashboardPage() {
             routes={data.routes}
             selectedLocation={selectedLocation}
             setSelectedLocation={setSelectedLocation}
+            filter={data.filter}
             dispatch={dispatch}
           />
         );
@@ -252,6 +259,7 @@ function DashboardPage() {
                     drivers={data.drivers}
                     businesses={data.businesses}
                     customers={data.customers}
+                    filter={data.filter}
                     selectedLocation={selectedLocation}
                     setSelectedLocation={setSelectedLocation}
                   />
@@ -260,8 +268,9 @@ function DashboardPage() {
             )}
             <div
               className={"column" + (headerTab < 4 ? " is-half" : " is-full")}
-              style={{ padding: "0 0.75rem", marginTop: (headerTab < 4 ? "5vh" : "1vh") }}
+              style={{ padding: "0 0.75rem", marginTop: (headerTab < 4 ? "" : "1vh") }}
             >
+              <FilterDropdown data={data} header={headerTab} dispatch={dispatch} />
               <div className={"box" + (headerTab < 4 ? " map" : " no-map")}>
                 {handleHeaderTab()}
               </div>
@@ -359,6 +368,61 @@ function RouteTimes(props) {
           </button>
         </div>
       ))}
+    </div>
+  );
+}
+
+function FilterDropdown({ data, header, ...props }) {
+  const [open, setOpen] = useState(false);
+  const [dataType, setDataType] = useState();
+
+  useEffect(() => {
+    let type;
+    switch(header) {
+      case 0: type = data.routes; break;
+      case 1: type = data.drivers; break;
+      case 2: type = data.businesses; break;
+      case 3: type = data.customers; break;
+      case 4: type = data.vehicles; break;
+      case 5: type = data.orders; break;
+      case 6: type = data.payments; break;
+      case 7: type = data.coupons; break;
+      case 8: type = data.constraints; break;
+      default: break;
+    }
+    console.log(type);
+    setDataType(type);
+  }, [header]);
+
+  const handleFilter = (option) => {
+    console.log(option);
+    console.log(Object.keys(data)[header + 2]); // get name of data type, +2 is for ignoring isLoading and filter keys
+    const type = Object.keys(data)[header + 2];
+    const filter = {
+      type,
+      option,
+    }
+    console.log(filter);
+    props.dispatch({ type: "filter", payload: { filter } });
+  }
+
+  return (
+    <div style={{ height: "5vh", display: "flex", alignItems: "center" }}>
+      <div className={"dropdown" + (open ? " is-active" : "")}>
+        <div className="dropdown-trigger">
+          <button className="button is-small" onClick={() => setOpen(prevOpen => !prevOpen)} aria-haspopup="true" aria-controls="dropdown-menu">
+            <span>Filter By: </span>
+            <FontAwesomeIcon icon={Icons.faCaretDown} />
+          </button>
+        </div>
+        <div className="dropdown-menu" style={{ paddingTop: 0 }} id="dropdown-menu" role="menu">
+          <div className="dropdown-content">
+            {dataType && Object.keys(Object.values(dataType)[0]).map((option, index) => (
+              <button key={index} className="button is-small is-white dropdown-item" onClick={() => handleFilter(option)}>{option}</button>
+            ))}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
