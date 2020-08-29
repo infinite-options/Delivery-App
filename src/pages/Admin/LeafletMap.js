@@ -29,8 +29,10 @@ function LeafletMap({ header, routes, drivers, businesses, customers, ...props }
   const mapRef = useRef();
   const [leafletMap, setLeafletMap] = useState();
   const [mapMarkers, setMapMarkers] = useState([]);
-  const selectedLocation = props.selectedLocation;
-  const setSelectedLocation = props.setSelectedLocation;
+  const [businessLocations, setBusinessLocations] = useState([]);
+  const [customerLocations, setCustomerLocations] = useState([]);
+  // const selectedLocation = props.selectedLocation;
+  // const setSelectedLocation = props.setSelectedLocation;
   
   useEffect(() => {
     const { current={} } = mapRef;
@@ -40,12 +42,39 @@ function LeafletMap({ header, routes, drivers, businesses, customers, ...props }
   }, [])
 
   useEffect(() => {
+    setBusinessLocations(() => {
+      let businessLocations = {};
+      switch (header) {
+        case 0: case 1:
+          for (let route_id in routes) {
+            // console.log(route);
+            // console.log(routes[route_id].visible);
+            const latlng = routes[route_id].route_data[0].from;
+            const businessInfo = businessLocations[routes[route_id].business_id];
+            // if this business id is not currently in our list, add the latlng and visibility values to the list
+            if (!businessInfo) businessLocations[routes[route_id].business_id] = { latlng, visible: routes[route_id].visible };
+            // if the business location visibility value is currently false, but there is a visible route connected to the business location, toggle the visibility to true
+            else if (!businessInfo.visible && routes[route_id].visible) businessLocations[routes[route_id].business_id].visible = true; 
+          } break;
+        case 2:
+          for (let business_id in businesses) {
+            const latlng = [businesses[business_id].latitude, businesses[business_id].longitude];
+            businessLocations[business_id] = { latlng, visible: businesses[business_id].visible };
+          } break;
+        default: 
+          console.log("Shouldn't be printing"); break;
+      }
+      return businessLocations;
+    });
+  }, [header])
+
+  useEffect(() => {
     if (leafletMap) setTimeout(() => handleMapLoad(), 0); // waiting for RouteMarkers to finish rendering
     // if (leafletMap) handleMapLoad();
   }, [leafletMap])
 
   useEffect(() => {
-    const selected = { ...selectedLocation };
+    const selected = { ...props.selectedLocation };
     const driver = selected.driver;
     const location = selected.location;
     // console.log(routes);
@@ -62,20 +91,8 @@ function LeafletMap({ header, routes, drivers, businesses, customers, ...props }
 
       leafletMap.setView(latlng, zoom);
     }
-  }, [selectedLocation]);
+  }, [props.selectedLocation]);
   
-  // creating a list of businesses locations
-  let businessLocations = {};
-  for (let route_id in routes) {
-    // console.log(route);
-    // console.log(routes[route_id].visible);
-    const latlng = routes[route_id].route_data[0].from;
-    const businessInfo = businessLocations[routes[route_id].business_id];
-    // if this business id is not currently in our list, add the latlng and visibility values to the list
-    if (!businessInfo) businessLocations[routes[route_id].business_id] = { latlng, visible: routes[route_id].visible };
-    // if the business location visibility value is currently false, but there is a visible route connected to the business location, toggle the visibility to true
-    else if (!businessInfo.visible && routes[route_id].visible) businessLocations[routes[route_id].business_id].visible = true; 
-  }
   // console.log(businessLocations);
   // console.log(routes);
   const businessLocations_array = Object.entries(businessLocations);
@@ -103,8 +120,7 @@ function LeafletMap({ header, routes, drivers, businesses, customers, ...props }
         markers.push(layer);
         // check if Marker should be visible initially
         // console.log(routes[layer.options.route]);
-        const routeVisible = routes[layer.options.route] ? routes[layer.options.route].visible : (
-                             businessLocations[layer.options.business] ? businessLocations[layer.options.business].visible : true);
+        const routeVisible = checkVisibility(layer);
         const isVisible = routeVisible && map.getBounds().contains(layer.getLatLng());
         if (!isVisible) map.removeLayer(layer);
       }
@@ -122,17 +138,32 @@ function LeafletMap({ header, routes, drivers, businesses, customers, ...props }
   };
 
   const manageMarkers = (map=leafletMap) => {
-    // console.log(mapMarkers);
+    console.log(mapMarkers);
     for (let i = mapMarkers.length - 1; i >= 0; i--) {
       const marker = mapMarkers[i];
       // console.log("Marker:", marker);
       // console.log(routes[marker.options.route]);
-      const routeVisible = routes[marker.options.route] ? routes[marker.options.route].visible : (
-                           businessLocations[marker.options.business] ? businessLocations[marker.options.business].visible : true);
+      const routeVisible = checkVisibility(marker);
       const mapBounds = map.getBounds();
       const isVisible = routeVisible && mapBounds.contains(marker.getLatLng());
       if (marker._icon && !isVisible) map.removeLayer(marker);
       else if (!marker._icon && isVisible) map.addLayer(marker);
+    }
+  };
+
+  const checkVisibility = (marker) => {
+    switch (header) {
+      case 0: case 1:
+        return (
+          routes[marker.options.route] ? routes[marker.options.route].visible : (
+          businessLocations[marker.options.business] ? businessLocations[marker.options.business].visible : true)
+        );
+      case 2:
+        return (
+          businessLocations[marker.options.business] ? businessLocations[marker.options.business].visible : true
+        );
+      default:
+        return undefined;
     }
   };
 
@@ -170,17 +201,17 @@ function LeafletMap({ header, routes, drivers, businesses, customers, ...props }
           onClick={() => console.log(`Hi this is Business ${location[0]}`)} 
         />
       ))}
-      {routes_array.map((route, index) => (
+      {header !== 2 && (routes_array.map((route, index) => (
         <RouteMarkers
           key={index}
           index={index}
           id={route[0]}
           route={route[1]}
-          selectedLocation={selectedLocation}
-          setSelectedLocation={setSelectedLocation}
+          selectedLocation={props.selectedLocation}
+          setSelectedLocation={props.setSelectedLocation}
           manageMarkers={manageMarkers}
         />
-      ))}
+      )))}
     </Map>
   );
 }
@@ -189,7 +220,7 @@ const RouteMarkers = ({ route, id, ...props }) => {
   const [coords, setCoords] = useState([]);
   const [driverLocation, setDriverLocation] = useState(route.route_data[0].from); // useState(CURRENT_DRIVER_LOCATION ? CURRENT_DRIVER_LOCATION : props.businessLocation)
   const [destination, setDestination] = useState(1); // useState(CURRENT_DRIVER_DESTINATION ? CURRENT_DRIVER_DESTINATION : props.businessLocation)
-  const selectedLocation = props.selectedLocation;
+  // const selectedLocation = props.selectedLocation;
 
   useEffect(() => {
     createRouteCoords();
@@ -309,8 +340,8 @@ const RouteMarkers = ({ route, id, ...props }) => {
               ? Icons.Truck
               : Icons.DefaultIcon(
                   destination > index ? "#696969" : route.route_color,
-                  selectedLocation.driver - 1 === props.index &&
-                    selectedLocation.location ===
+                  props.selectedLocation.driver - 1 === props.index &&
+                    props.selectedLocation.location ===
                       (destination > index ? index + 1 : index)
                     ? { mult: 1.25 }
                     : {}

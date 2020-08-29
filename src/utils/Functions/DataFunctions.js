@@ -69,7 +69,8 @@ const createRoutes = () => {
         customer_email: location.delivery_email,
         customer_phone: location.delivery_phone_num,
         address: `${location.delivery_address} ${location.delivery_city} ${location.delivery_state} ${location.delivery_zip}`,
-        to: [location.delivery_latitude, location.delivery_longitude],
+        // NOTE: This regex stuff is temporary, the endpoint gives messy coordinate values so I gotta clean it
+        to: [location.delivery_latitude.replace( /^,/g, ''), location.delivery_longitude.replace( /^,/g, '')],
         //* customer_id: location.customer_id,
         //* customer_first_name: location.customer_first_name,
         //* customer_last_name: location.customer_last_name,
@@ -91,7 +92,7 @@ const createRoutes = () => {
         // console.log("route's business", businesses[location.business_id]);
         // location_data.from = [0, 0];
         // NOTE: This should be business_latlng
-        location_data.from = [+location.delivery_latitude + (Math.random() * 0.22 - 0.1), +location.delivery_longitude + (Math.random() * 0.22 - 0.1)];
+        location_data.from = [+location.delivery_latitude.replace( /^,/g, '') + (Math.random() * 0.22 - 0.1), +location.delivery_longitude.replace( /^,/g, '') + (Math.random() * 0.22 - 0.1)];
         //* location_data.from = [+location.customer_latitude + (Math.random() * 0.22 - 0.1), +location.customer_longitude + (Math.random() * 0.22 - 0.1)];
         tempRoutes[route_id] = {
           business_id: location.business_id,
@@ -237,6 +238,8 @@ const createBusinesses = () => {
     for (let business of result) {
       const business_id = business.business_id;
       const business_data = {
+        visible: true, //temp
+
         name: business.business_name,
         type: business.business_type,
         description: business.business_desc,

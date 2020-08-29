@@ -249,7 +249,11 @@ function DashboardPage() {
                 />
                 <div className="sticky">
                   <LeafletMap
+                    header={headerTab}
                     routes={data.routes}
+                    drivers={data.drivers}
+                    businesses={data.businesses}
+                    customers={data.customers}
                     selectedLocation={selectedLocation}
                     setSelectedLocation={setSelectedLocation}
                   />
