@@ -28,7 +28,7 @@ import {
 
 const initState = {
   isLoading: true,
-  filter: { type: undefined, option: undefined }, // { type: "routes", option: "business_id" }
+  filter: undefined, // { type: "routes", option: "business_id", value: "200-00001" }
   routes: {},
   drivers: {},
   businesses: {},
@@ -390,38 +390,76 @@ function FilterDropdown({ data, header, ...props }) {
       case 8: type = data.constraints; break;
       default: break;
     }
-    console.log(type);
+    // console.log(type);
+    if (data.filter) props.dispatch({ type: "filter", payload: { filter: undefined } });
+    if (document.getElementById("filter-value").value) document.getElementById("filter-value").value = "";
     setDataType(type);
   }, [header]);
 
   const handleFilter = (option) => {
     console.log(option);
-    console.log(Object.keys(data)[header + 2]); // get name of data type, +2 is for ignoring isLoading and filter keys
-    const type = Object.keys(data)[header + 2];
-    const filter = {
-      type,
-      option,
+    if (option) {
+      console.log(Object.keys(data)[header + 2]); // get name of data type, +2 is for ignoring isLoading and filter keys
+      const type = Object.keys(data)[header + 2];
+      const filter = {
+        type,
+        option,
+        value: undefined,
+      };
+      console.log(filter);
+      props.dispatch({ type: "filter", payload: { filter } });
     }
-    console.log(filter);
-    props.dispatch({ type: "filter", payload: { filter } });
-  }
+    else { props.dispatch({ type: "filter", payload: { filter: undefined } }); }
+    if (document.getElementById("filter-value").value) document.getElementById("filter-value").value = "";
+    setOpen(false);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // console.log(document.getElementById("filter-value").value);
+    if (document.getElementById("filter-value").value) {
+      const filter = {
+        ...data.filter,
+        value: document.getElementById("filter-value").value,
+      }
+      props.dispatch({ type: "filter", payload: { filter } });
+    }
+  };
 
   return (
-    <div style={{ height: "5vh", display: "flex", alignItems: "center" }}>
-      <div className={"dropdown" + (open ? " is-active" : "")}>
-        <div className="dropdown-trigger">
-          <button className="button is-small" onClick={() => setOpen(prevOpen => !prevOpen)} aria-haspopup="true" aria-controls="dropdown-menu">
-            <span>Filter By: </span>
-            <FontAwesomeIcon icon={Icons.faCaretDown} />
-          </button>
-        </div>
-        <div className="dropdown-menu" style={{ paddingTop: 0 }} id="dropdown-menu" role="menu">
-          <div className="dropdown-content">
-            {dataType && Object.keys(Object.values(dataType)[0]).map((option, index) => (
-              <button key={index} className="button is-small is-white dropdown-item" onClick={() => handleFilter(option)}>{option}</button>
-            ))}
+    <div className="level" style={{ height: "5vh", margin: 0, justifyContent: "end" }}>
+      <div className="level-item" style={{ flexGrow: 0 }}>
+        <div className={"dropdown" + (open ? " is-active" : "")}>
+          <div className="dropdown-trigger">
+            <button className="button is-small" onClick={() => setOpen(prevOpen => !prevOpen)} aria-haspopup="true" aria-controls="dropdown-menu">
+              <span>Filter: {data.filter ? data.filter.option : "NONE"}</span>
+              <FontAwesomeIcon icon={Icons.faCaretDown} className= "ml-2" />
+            </button>
+          </div>
+          <div className="dropdown-menu" style={{ paddingTop: 0 }} id="dropdown-menu" role="menu">
+            <div className="dropdown-content">
+              <button className="button is-small is-white dropdown-item" onClick={() => handleFilter()}>NONE</button>
+              <hr className="dropdown-divider" />
+              {dataType && Object.keys(Object.values(dataType)[0]).map((option, index) => (
+                <button key={index} className="button is-small is-white dropdown-item" onClick={() => handleFilter(option)}>{option}</button>
+              ))}
+            </div>
           </div>
         </div>
+      </div>
+      <div className="level-item" style={{ flexGrow: 0 }}>
+        <form onSubmit={handleSubmit}>
+          <div className="level">
+            <div className="level-item px-2">
+              <input className="input is-small" id="filter-value" type="text" disabled={!data.filter} />
+            </div>
+            <div className="level-item">
+              <button className="button is-small" type="submit" disabled={!data.filter}>
+                <FontAwesomeIcon icon={Icons.faCheck} />
+              </button>
+            </div>
+          </div>
+        </form>
       </div>
     </div>
   );

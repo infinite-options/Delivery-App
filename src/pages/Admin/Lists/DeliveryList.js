@@ -4,24 +4,38 @@ import Icons from "utils/Icons/Icons";
 
 function DeliveryList({ routes, ...props }) {
   console.log("rendering deliveries..");
+  const [routeData, setRouteData] = useState([]);
+
+  useEffect(() => {
+    const routeData = Object.entries(routes);
+    setRouteData(() => {
+      if (props.filter) {
+        return routeData.filter(route => {
+          // console.log(route[1][props.filter.option], props.filter.value);
+          return route[1][props.filter.option] === props.filter.value
+        });
+      }
+      return routeData;
+    });
+  }, [routes, props.filter]);
   
   // const [selectedLocation, setSelectedLocation] = useState({});
-  const selectedLocation = props.selectedLocation;
-  const setSelectedLocation = props.setSelectedLocation;
-  const dispatch = props.dispatch;
+  // const selectedLocation = props.selectedLocation;
+  // const setSelectedLocation = props.setSelectedLocation;
+  // const dispatch = props.dispatch;
 
   return (
     <React.Fragment>
-      {Object.entries(routes).map((route, index) => (
+      {routeData.map((route, index) => (
         // think about using fewer components, could probably just do route[0] and route[1]
         <RouteItem
           key={index}
           index={index}
           route={route[1]}
           id={route[0]}
-          selectedLocation={selectedLocation}
-          setSelectedLocation={setSelectedLocation}
-          dispatch={dispatch}
+          selectedLocation={props.selectedLocation}
+          setSelectedLocation={props.setSelectedLocation}
+          dispatch={props.dispatch}
         />
       ))}
     </React.Fragment>

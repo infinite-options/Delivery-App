@@ -117,7 +117,7 @@ const createRoutes = () => {
     }
     // let colors = [];
     let i = 0;
-    const routes_length = Object.keys(tempRoutes).length;
+    // const routes_length = Object.keys(tempRoutes).length;
     let route_option = 1;
     for (let route_id in tempRoutes) {
       tempRoutes[route_id].route_data.shift(); // delete first location, since that's the starting location
