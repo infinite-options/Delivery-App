@@ -51,7 +51,16 @@ function reducer(state, action) {
       return {
         ...state,
         filter: action.payload.filter,
+      };
+    case 'filter-routes':
+      let routes = { ...state.routes };
+      for (let key of Object.keys(routes)) {
+        routes[key].visible = action.payload.keys.includes(key) ? true : false; 
       }
+      return {
+        ...state,
+        routes: routes,
+      };
     case 'route-toggle-visibility':
       // console.log({...state});
       return { 
@@ -262,6 +271,7 @@ function DashboardPage() {
                     filter={data.filter}
                     selectedLocation={selectedLocation}
                     setSelectedLocation={setSelectedLocation}
+                    dispatch={dispatch}
                   />
                 </div>
               </div>

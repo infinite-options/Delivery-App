@@ -4,19 +4,19 @@ import Icons from "utils/Icons/Icons";
 
 function DeliveryList({ routes, ...props }) {
   console.log("rendering deliveries..");
-  const [routeData, setRouteData] = useState([]);
+  const [routeData, setRouteData] = useState(Object.entries(routes));
 
   useEffect(() => {
     const routeData = Object.entries(routes);
-    setRouteData(() => {
-      if (props.filter) {
+    if (props.filter) {
+      setRouteData(() => {
         return routeData.filter(route => {
           // console.log(route[1][props.filter.option], props.filter.value);
           return route[1][props.filter.option] === props.filter.value
         });
-      }
-      return routeData;
-    });
+      });
+    }
+    else setRouteData(routeData);
   }, [routes, props.filter]);
   
   // const [selectedLocation, setSelectedLocation] = useState({});
