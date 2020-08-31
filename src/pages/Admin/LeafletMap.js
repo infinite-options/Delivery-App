@@ -48,48 +48,74 @@ function calculateZoom() {
 function LeafletMap({ header, routes, drivers, businesses, customers, ...props }) {
   console.log("rendering map..");
 
-  const [mapRoutes, setMapRoutes] = useState(routes);
-  console.log("ROUTES", mapRoutes);
-
-  useEffect(() => {
-    if (props.filter && props.filter.type === "routes" /* or drivers possibly? */) {
-      setMapRoutes(() => {
-        const routeData = Object.entries(routes);
-        const filtered = routeData.filter(route => {
-          // console.log(route[1][props.filter.option], props.filter.value);
-          return route[1][props.filter.option] !== props.filter.value
-        });
-        // console.log(filtered);
-        const keys = Array.from(filtered, entry => entry[0]);
-        let routesObj = { ...routes };
-        for (let key of keys) {
-          delete routesObj[key];
-        }
-        // console.log(routesObj);
-        return routesObj;
-      });
-      // props.dispatch({ type: "filter-routes", payload: { keys } });
-    }
-    else setMapRoutes(routes);
-  }, [routes, props.filter]);
-
   const mapRef = useRef();
   const [leafletMap, setLeafletMap] = useState();
+  const [mapRoutes, setMapRoutes] = useState(routes);
+  // console.log("ROUTES", mapRoutes);
   const [mapMarkers, setMapMarkers] = useState([]);
   // NOTE: may wanna make a reducer here
   const [businessLocations, setBusinessLocations] = useState([]);
   const [customerLocations, setCustomerLocations] = useState([]);
   
+  /* rendering leafletMap */
   useEffect(() => {
     const { current={} } = mapRef;
     const { leafletElement: map } = current;
     // console.log(map);
     setLeafletMap(map);
   }, []);
+
   useEffect(() => {
     if (leafletMap) setTimeout(() => handleMapLoad(), 0); // waiting for RouteMarkers to finish rendering
   }, [leafletMap]);
 
+  /* rendering/updating mapRoutes */
+  useEffect(() => {
+    let newRoute = { ...routes };
+    const routeKeys = Object.keys(routes);
+    
+    if (props.filter && props.filter.type === "routes" /* or drivers possibly? */) {
+      setMapRoutes(() => {
+        // create an array of routes that do not satisfy the filter condition
+        const filtered = Object.entries(routes).filter(route => {
+          // console.log(route[1][props.filter.option], props.filter.value);
+          return route[1][props.filter.option] !== props.filter.value;
+        });
+        // console.log(filtered);
+        // create an array of route keys that failed to satisfy and therefore need to be hidden
+        const routesToHide = Array.from(filtered, entry => entry[0]);
+        for (let key of routeKeys) {
+          if (routesToHide.includes(key)) newRoute[key].visible = false;
+          else newRoute[key].visible = true;
+        }
+        // console.log(newRoute);
+        return newRoute;
+      });
+    }
+    else if (leafletMap) {
+      setMapRoutes(() => {
+        for (let key of routeKeys) newRoute[key].visible = true;
+        return newRoute;
+      });
+    }
+  }, [props.filter]);
+
+  useEffect(() => {
+    if (leafletMap) setMapRoutes(prevMapRoutes => {
+      const routeKeys = Object.keys(routes);
+      const filteredKeys = Object.keys(mapRoutes);
+      let newRoute = { ...prevMapRoutes };
+      for (let key of routeKeys) {
+        if (filteredKeys.includes(key)) {
+          newRoute[key].visible = routes[key].visible;
+          // other keys that may be modified by an admin user?
+        }
+      }
+      return newRoute;
+    });
+  }, [routes])
+
+  /* rendering/updating business/customer locations */
   useEffect(() => {
     setBusinessLocations(() => {
       let businessLocations = {};
@@ -118,10 +144,12 @@ function LeafletMap({ header, routes, drivers, businesses, customers, ...props }
       return businessLocations;
     });
   }, [mapRoutes, header]);
-  useEffect(() => { // Essentially what this is doing is 'manage markers after mapRoutes or header is updated'
+
+  useEffect(() => { // Essentially what this is doing is 'manage marker visibility after mapRoutes or header is updated'
     manageMarkers();
   }, [businessLocations]);
 
+  /* updating selected marker' size */
   useEffect(() => {
     const selected = { ...props.selectedLocation };
     const driver = selected.driver;
@@ -152,7 +180,6 @@ function LeafletMap({ header, routes, drivers, businesses, customers, ...props }
   const mapZoom = calculateZoom();
 
   const handleMapLoad = () => {
-    // onLoad does not work on Map component, so must be called from its child component (TileLayer)
     const map = leafletMap;
     // console.log(map);
     let markers = [];
@@ -182,9 +209,9 @@ function LeafletMap({ header, routes, drivers, businesses, customers, ...props }
   };
 
   const manageMarkers = (map=leafletMap) => {
-    console.log(mapMarkers);
-    for (let i = mapMarkers.length - 1; i >= 0; i--) {
-      const marker = mapMarkers[i];
+    // console.log(mapMarkers);
+    for (let marker of mapMarkers) {
+      // const marker = mapMarkers[i];
       // console.log("Marker:", marker);
       // console.log(mapRoutes[marker.options.route]);
       const routeVisible = checkVisibility(marker);
@@ -255,6 +282,7 @@ function LeafletMap({ header, routes, drivers, businesses, customers, ...props }
           setSelectedLocation={props.setSelectedLocation}
           manageMarkers={manageMarkers}
           header={header}
+          // visible={routes[route[0]].visible}
         />
       ))}
     </Map>
@@ -273,7 +301,7 @@ const RouteMarkers = ({ route, id, ...props }) => {
 
   // useEffect(() => {
   //   props.manageMarkers();
-  // }, [route.visible])
+  // }, [props.visible])
 
   const createRouteCoords = () => {
     let latlngs = [];
