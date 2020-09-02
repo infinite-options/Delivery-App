@@ -79,7 +79,7 @@ function LeafletMap({ header, routes, drivers, businesses, customers, ...props }
         // create an array of routes that do not satisfy the filter condition
         const filtered = Object.entries(routes).filter(route => {
           // console.log(route[1][props.filter.option], props.filter.value);
-          return route[1][props.filter.option] !== props.filter.value;
+          return route[1][props.filter.option] != props.filter.value;
         });
         // console.log(filtered);
         // create an array of route keys that failed to satisfy and therefore need to be hidden
@@ -203,7 +203,8 @@ function LeafletMap({ header, routes, drivers, businesses, customers, ...props }
   const handleMapUpdate = () => {
     manageMarkers(); // updating Markers' visibility as user drags map around
     window.localStorage.setItem("mapLatlng", JSON.stringify([leafletMap.getCenter().lat, leafletMap.getCenter().lng]));
-    if (mapZoom != leafletMap.getZoom()) window.localStorage.setItem("mapZoom", leafletMap.getZoom());
+    // is this if-statement even necessary?
+    if (window.localStorage.getItem("mapZoom") != leafletMap.getZoom()) window.localStorage.setItem("mapZoom", leafletMap.getZoom());
     // console.log(mapMarkers);
     console.log("updating map..");
   };
@@ -270,6 +271,7 @@ function LeafletMap({ header, routes, drivers, businesses, customers, ...props }
           position={location[1].latlng} 
           icon={Icons.Headquarters} 
           onClick={() => console.log(`Hi this is Business ${location[0]}`)} 
+          onDblClick={() => false} // disabling zoom on marker double click
         />
       ))}
       {routes_array.map((route, index) => (

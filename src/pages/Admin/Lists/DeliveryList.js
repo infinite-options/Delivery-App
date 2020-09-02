@@ -12,7 +12,7 @@ function DeliveryList({ routes, ...props }) {
       setRouteData(() => {
         return routeData.filter(route => {
           // console.log(route[1][props.filter.option], props.filter.value);
-          return route[1][props.filter.option] === props.filter.value
+          return route[1][props.filter.option] == props.filter.value
         });
       });
     }
