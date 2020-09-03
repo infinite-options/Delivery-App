@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Icons from "utils/Icons/Icons";
 import FillerRow from "utils/Components/FillerRow";
@@ -9,10 +9,25 @@ const weekdays = moment.weekdays();
 
 function BusinessList({ businesses, ...props }) {
   console.log("rendering businesses..");
+  const [businessData, setBusinessData] = useState(Object.entries(businesses));
+  // console.log(businessData);
+
+  useEffect(() => {
+    const businessData = Object.entries(businesses);
+    if (props.filter) {
+      setBusinessData(() => {
+        return businessData.filter(business => {
+          // console.log(business[1][props.filter.option], props.filter.value);
+          return business[1][props.filter.option] == props.filter.value
+        });
+      });
+    }
+    else setBusinessData(businessData);
+  }, [businesses, props.filter]);
   
   return (
     <React.Fragment>
-      {Object.entries(businesses).map((business, index) => (
+      {businessData.map((business, index) => (
         <BusinessItem
           key={index}
           index={index}

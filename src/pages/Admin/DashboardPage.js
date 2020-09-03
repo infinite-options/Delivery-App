@@ -177,18 +177,24 @@ function DashboardPage() {
           <DriverList
             drivers={data.drivers}
             routes={data.routes} // for creating route preferences, probably
+            filter={data.filter}
+            dispatch={dispatch}
           />
         );
       case 2:
         return (
           <BusinessList 
             businesses={data.businesses}
+            filter={data.filter}
+            dispatch={dispatch}
           />
         );
       case 3:
         return (
           <CustomerList 
             customers={data.customers}
+            filter={data.filter}
+            dispatch={dispatch}
           />
         );
       case 4:
@@ -234,6 +240,7 @@ function DashboardPage() {
         handleBurger={handleBurger} 
         handleDayView={() => handleView("day")}
         handleWeekView={() => handleView("week")}
+        dispatch={dispatch}
       />
       {/* Views */}
       <DeliveryView
@@ -297,7 +304,10 @@ function Header(props) {
   const tabs = ["Delivery", "Drivers", "Businesses", "Customers", "Vehicles", "Purchases", "Payments", "Coupons", "Constraints"];
 
   const handleTabChange = (index) => {
-    if (props.tab !== index) props.changeTab(index);
+    if (props.tab !== index) {
+      props.dispatch({ type: "filter", payload: { filter: undefined } });
+      props.changeTab(index);
+    }
   }
 
   return (
@@ -401,13 +411,13 @@ function FilterDropdown({ data, header, ...props }) {
       default: break;
     }
     // console.log(type);
-    if (data.filter) props.dispatch({ type: "filter", payload: { filter: undefined } });
+    // if (data.filter) props.dispatch({ type: "filter", payload: { filter: undefined } });
     if (document.getElementById("filter-value").value) document.getElementById("filter-value").value = "";
     setDataType(type);
   }, [header]);
 
   const handleFilter = (option) => {
-    console.log(option);
+    // console.log(option);
     if (option) {
       console.log(Object.keys(data)[header + 2]); // get name of data type, +2 is for ignoring isLoading and filter keys
       const type = Object.keys(data)[header + 2];

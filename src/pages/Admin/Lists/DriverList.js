@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Icons from "utils/Icons/Icons";
 import FillerRow from "utils/Components/FillerRow";
@@ -7,10 +7,25 @@ import Rating from '@material-ui/lab/Rating';
 
 function DriverList({ drivers, routes, ...props }) {
   console.log("rendering drivers..");
+  const [driverData, setDriverData] = useState(Object.entries(drivers));
+  // console.log(driverData);
+
+  useEffect(() => {
+    const driverData = Object.entries(drivers);
+    if (props.filter) {
+      setDriverData(() => {
+        return driverData.filter(driver => {
+          // console.log(driver[1][props.filter.option], props.filter.value);
+          return driver[1][props.filter.option] == props.filter.value
+        });
+      });
+    }
+    else setDriverData(driverData);
+  }, [drivers, props.filter]);
   
   return (
     <React.Fragment>
-      {Object.entries(drivers).map((driver, index) => (
+      {driverData.map((driver, index) => (
         <DriverItem
           key={index}
           index={index}

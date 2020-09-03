@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Icons from "utils/Icons/Icons";
 import FillerRow from "utils/Components/FillerRow"
@@ -6,10 +6,24 @@ import FillerRow from "utils/Components/FillerRow"
 
 function CustomerList({ customers, ...props }) {
   console.log("rendering customers..");
-  
+  const [customerData, setCustomerData] = useState(Object.entries(customers));
+
+  useEffect(() => {
+    const customerData = Object.entries(customers);
+    if (props.filter) {
+      setCustomerData(() => {
+        return customerData.filter(customer => {
+          // console.log(customer[1][props.filter.option], props.filter.value);
+          return customer[1][props.filter.option] == props.filter.value
+        });
+      });
+    }
+    else setCustomerData(customerData);
+  }, [customers, props.filter]);
+
   return (
     <React.Fragment>
-      {Object.entries(customers).map((customer, index) => (
+      {customerData.map((customer, index) => (
         <CustomerItem
           key={index}
           index={index}
