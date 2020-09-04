@@ -14,6 +14,7 @@ function CustomerList({ customers, ...props }) {
       setCustomerData(() => {
         return customerData.filter(customer => {
           // console.log(customer[1][props.filter.option], props.filter.value);
+          // eslint-disable-next-line
           return customer[1][props.filter.option] == props.filter.value
         });
       });

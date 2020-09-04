@@ -16,6 +16,7 @@ function DriverList({ drivers, routes, ...props }) {
       setDriverData(() => {
         return driverData.filter(driver => {
           // console.log(driver[1][props.filter.option], props.filter.value);
+          // eslint-disable-next-line
           return driver[1][props.filter.option] == props.filter.value
         });
       });

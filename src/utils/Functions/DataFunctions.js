@@ -121,7 +121,9 @@ const createRoutes = () => {
     let route_option = 1;
     for (let route_id in tempRoutes) {
       tempRoutes[route_id].route_data.shift(); // delete first location, since that's the starting location
+      // eslint-disable-next-line
       if (route_option != tempRoutes[route_id].route_option) {
+        // eslint-disable-next-line
         if (tempRoutes[route_id].route_option == 1) { route_option = 1; i = 0; }
         else { route_option++; i++; }
       }

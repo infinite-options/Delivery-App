@@ -55,7 +55,7 @@ function LeafletMap({ header, routes, drivers, businesses, customers, ...props }
   const [mapMarkers, setMapMarkers] = useState([]);
   // NOTE: may wanna make a reducer here
   const [businessLocations, setBusinessLocations] = useState([]);
-  console.log(businessLocations);
+  // console.log(businessLocations);
   const [customerLocations, setCustomerLocations] = useState([]);
   
   /* rendering leafletMap */
@@ -72,7 +72,7 @@ function LeafletMap({ header, routes, drivers, businesses, customers, ...props }
 
   /* rendering/updating mapRoutes */
   useEffect(() => {
-    let newRoute = { ...routes };
+    let newRoutes = { ...routes };
     const routeKeys = Object.keys(routes);
     
     if (props.filter && props.filter.type === "routes" /* or drivers possibly? */) {
@@ -86,17 +86,17 @@ function LeafletMap({ header, routes, drivers, businesses, customers, ...props }
         // create an array of route keys that failed to satisfy and therefore need to be hidden
         const routesToHide = Array.from(filtered, entry => entry[0]);
         for (let key of routeKeys) {
-          if (routesToHide.includes(key)) newRoute[key].visible = false;
-          else newRoute[key].visible = true;
+          if (routesToHide.includes(key)) newRoutes[key].visible = false;
+          else newRoutes[key].visible = true;
         }
-        // console.log(newRoute);
-        return newRoute;
+        // console.log(newRoutes);
+        return newRoutes;
       });
     }
     else if (leafletMap) {
       setMapRoutes(() => {
-        for (let key of routeKeys) newRoute[key].visible = true;
-        return newRoute;
+        for (let key of routeKeys) newRoutes[key].visible = true;
+        return newRoutes;
       });
     }
   }, [props.filter]);
@@ -105,14 +105,14 @@ function LeafletMap({ header, routes, drivers, businesses, customers, ...props }
     if (leafletMap) setMapRoutes(prevMapRoutes => {
       const routeKeys = Object.keys(routes);
       const filteredKeys = Object.keys(mapRoutes);
-      let newRoute = { ...prevMapRoutes };
+      let newRoutes = { ...prevMapRoutes };
       for (let key of routeKeys) {
         if (filteredKeys.includes(key)) {
-          newRoute[key].visible = routes[key].visible;
+          newRoutes[key].visible = routes[key].visible;
           // other keys that may be modified by an admin user?
         }
       }
-      return newRoute;
+      return newRoutes;
     });
   }, [routes])
 

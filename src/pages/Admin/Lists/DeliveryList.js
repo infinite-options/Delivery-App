@@ -12,6 +12,7 @@ function DeliveryList({ routes, ...props }) {
       setRouteData(() => {
         return routeData.filter(route => {
           // console.log(route[1][props.filter.option], props.filter.value);
+          // eslint-disable-next-line
           return route[1][props.filter.option] == props.filter.value
         });
       });

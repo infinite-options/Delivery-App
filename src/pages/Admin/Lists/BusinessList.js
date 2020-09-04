@@ -18,6 +18,7 @@ function BusinessList({ businesses, ...props }) {
       setBusinessData(() => {
         return businessData.filter(business => {
           // console.log(business[1][props.filter.option], props.filter.value);
+          // eslint-disable-next-line
           return business[1][props.filter.option] == props.filter.value
         });
       });

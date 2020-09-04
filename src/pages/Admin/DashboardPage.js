@@ -52,15 +52,15 @@ function reducer(state, action) {
         ...state,
         filter: action.payload.filter,
       };
-    case 'filter-routes':
-      let routes = { ...state.routes };
-      for (let key of Object.keys(routes)) {
-        routes[key].visible = action.payload.keys.includes(key) ? true : false; 
-      }
-      return {
-        ...state,
-        routes: routes,
-      };
+    // case 'filter-routes':
+    //   let routes = { ...state.routes };
+    //   for (let key of Object.keys(routes)) {
+    //     routes[key].visible = action.payload.keys.includes(key) ? true : false; 
+    //   }
+    //   return {
+    //     ...state,
+    //     routes,
+    //   };
     case 'toggle-visibility':
       // console.log({...state});
       return { 
@@ -285,7 +285,7 @@ function DashboardPage() {
             )}
             <div
               className={"column" + (headerTab < 4 ? " is-half" : " is-full")}
-              style={{ padding: "0 0.75rem", marginTop: (headerTab < 4 ? "" : "1vh") }}
+              style={{ padding: "0 0.75rem"/*, marginTop: (headerTab < 4 ? "" : "1vh")*/ }}
             >
               <FilterDropdown data={data} header={headerTab} dispatch={dispatch} />
               <div className={"box" + (headerTab < 4 ? " map" : " no-map")}>

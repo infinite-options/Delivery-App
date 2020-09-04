@@ -42,6 +42,8 @@ function SortingIcon({ type, data, update, typeOf, ...props }) {
                 // NOTE: Finish this
               }
               return newValue === 1 ? a[1].localeCompare(b[1]) : b[1].localeCompare(a[1]);
+            
+            default: return prevState;
           }
         }),
       };
