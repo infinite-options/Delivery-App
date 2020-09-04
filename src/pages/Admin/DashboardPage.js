@@ -61,7 +61,7 @@ function reducer(state, action) {
         ...state,
         routes: routes,
       };
-    case 'route-toggle-visibility':
+    case 'toggle-visibility':
       // console.log({...state});
       return { 
         ...state,

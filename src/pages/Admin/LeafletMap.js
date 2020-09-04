@@ -55,6 +55,7 @@ function LeafletMap({ header, routes, drivers, businesses, customers, ...props }
   const [mapMarkers, setMapMarkers] = useState([]);
   // NOTE: may wanna make a reducer here
   const [businessLocations, setBusinessLocations] = useState([]);
+  console.log(businessLocations);
   const [customerLocations, setCustomerLocations] = useState([]);
   
   /* rendering leafletMap */
@@ -117,6 +118,8 @@ function LeafletMap({ header, routes, drivers, businesses, customers, ...props }
 
   /* rendering/updating business/customer locations */
   useEffect(() => {
+    // FIXME: Same bug that used to appear for routes, when map loads, the markers are saved so changing 
+    //        businessLocations does not remove those markers' existence. Fixed by toggling visibility
     setBusinessLocations(() => {
       let businessLocations = {};
       switch (header) {
@@ -134,7 +137,8 @@ function LeafletMap({ header, routes, drivers, businesses, customers, ...props }
           } break;
         case 2: case 3: // case 3 being part of case 2 is temporary, just so map doesn't bug out
           for (let business_id in businesses) {
-            const latlng = [businesses[business_id].latitude, businesses[business_id].longitude];
+            // `|| 0` is for testing purposes, since currently the endpoint does not return any latlng values :(
+            const latlng = [businesses[business_id].latitude || 0, businesses[business_id].longitude || 0];
             businessLocations[business_id] = { latlng, visible: businesses[business_id].visible };
           } break;
         // case 3: break;

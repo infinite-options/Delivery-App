@@ -257,6 +257,7 @@ const createBusinesses = () => {
       const business_id = business.business_uid;
       const business_data = {
         visible: true, //temp
+        zones: undefined,
 
         name: business.business_name,
         type: business.business_type,

@@ -33,6 +33,7 @@ function BusinessList({ businesses, ...props }) {
           index={index}
           business={business[1]}
           id={business[0]}
+          dispatch={props.dispatch}
         />
       ))}
     </React.Fragment>
@@ -48,6 +49,7 @@ function BusinessItem({ business, id, ...props }) {
   const address = `${business.street}${(business.unit ? ` ${business.unit}` : "")} 
                    ${business.city} ${business.state} ${business.zip}`;
   const business_id = Number(id.substring(id.indexOf("-") + 1, id.length));
+  
   const displayDayHours = (type) => {
     const days = JSON.parse(type);
     // console.log(days);
@@ -74,6 +76,11 @@ function BusinessItem({ business, id, ...props }) {
     console.log(`Sending Business ${businessNumber} a text..`);
   };
 
+  const handleVisibilitySelect = () => {
+    console.log("hi");
+    props.dispatch({ type: "business-toggle-visibility", payload: { id } });
+  }
+
   return (
     <div className="box list-item">
       <table
@@ -86,6 +93,12 @@ function BusinessItem({ business, id, ...props }) {
               {/* <button className="tooltip mx-1" onClick={() => setHidden(prevHidden => !prevHidden)}> */}
               <div style={{ width: "300%", maxWidth: "325px" }}>
                 {/* Displaying only the second section of a business id. Ex: 200-000011 => 11 */}
+                <button 
+                  className="button is-super-small is-rounded mr-3" 
+                  onClick={handleVisibilitySelect}
+                >
+                  <FontAwesomeIcon icon={business.visible ? Icons.faEyeSlash : Icons.faEye} />
+                </button>
                 <span>Business {business_id}: {business.name}</span>
                 <button
                   className="button is-rounded is-super-small is-pulled-right ml-1"
