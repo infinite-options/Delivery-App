@@ -81,7 +81,7 @@ function RouteItem({ route, id, ...props }) {
       driver: undefined,
       location: undefined,
     });
-    props.dispatch({ type: "toggle-visibility", payload: { id } });
+    props.dispatch({ type: "toggle-visibility", payload: { id, type: "routes" } });
   }
 
   const sendDriverText = (driverNumber) => {

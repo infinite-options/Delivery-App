@@ -65,11 +65,11 @@ function reducer(state, action) {
       // console.log({...state});
       return { 
         ...state,
-        routes: {
-          ...state.routes,
+        [action.payload.type]: {
+          ...state[action.payload.type],
           [action.payload.id]: {
-            ...state.routes[action.payload.id],
-            visible: !state.routes[action.payload.id].visible,
+            ...state[action.payload.type][action.payload.id],
+            visible: !state[action.payload.type][action.payload.id].visible,
           }
         }
       };
