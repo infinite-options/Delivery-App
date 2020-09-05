@@ -87,13 +87,21 @@ function DashboardPage() {
   // possibly use this with useContext, figure out how to reduce rerenders upon data change
   const [data, dispatch] = useReducer(reducer, initState);
   console.log(data);
-  const [times, setTimes] = useState([
-    { value: "00 am - 00 pm" },
+  // const [times, setTimes] = useState([
+  //   { value: "00 am - 00 pm" },
+  //   { value: "01 am - 01 pm" },
+  //   { value: "02 am - 02 pm" },
+  //   { value: "03 am - 03 pm" },
+  //   { value: "04 am - 04 pm" },
+  // ]); // useState(GET_ROUTE_TIMES)
+  // NOTE: create dropdown for route dates & for route times
+  const times = [
+    { value: data.routes['920-000001'] ? data.routes['920-000001'].date : "" },
     { value: "01 am - 01 pm" },
     { value: "02 am - 02 pm" },
     { value: "03 am - 03 pm" },
     { value: "04 am - 04 pm" },
-  ]); // useState(GET_ROUTE_TIMES)
+  ];
   const [timeSlot, setTimeSlot] = useState(Number(window.localStorage.getItem("timeSlot")) || 0); 
   const [headerTab, setHeaderTab] = useState(Number(window.localStorage.getItem("headerTab")) || 0); 
   const [selectedLocation, setSelectedLocation] = useState({});

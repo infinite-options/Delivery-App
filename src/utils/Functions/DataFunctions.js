@@ -56,21 +56,28 @@ const rainbow = (numOfSteps, step) => {
  * }
  */
 const createRoutes = () => {
-  return axios.get(NEW_NEW_BASE_URL + "getRoutes")
+  return axios.get("https://uqu7qejuee.execute-api.us-west-1.amazonaws.com/dev/api/v2/getTestRoutes")
   .then((response) => {
     // console.log("temprouteS:", response);
     const result = response.data.result.result;
     let totalOptions = 0;
     let tempRoutes = {};
     for (let location of result) {
-      // console.log(location);
+      console.log(location, result.length);
+      const deliveryInfo = JSON.parse(location.route_delivery_info);
       const route_id = location.route_id;
-      const latlngs = JSON.parse(location.customer_coords);
-      // console.log(latlngs);
+      console.log("Test -3", deliveryInfo)
+      // const latlngs = JSON.parse(location.customer_coords);
+      const latlngs = [deliveryInfo[0].coordinates.latitude, deliveryInfo[0].coordinates.longitude];
+      console.log(latlngs);
+      console.log("Test -2")
       const location_data = {
-        to: [latlngs.latitude, latlngs.longitude],
+        // to: [latlngs.latitude, latlngs.longitude],
+        to: latlngs,
+        customer_id: deliveryInfo[0].customer_id,
         customer_first_name: "Bill",
         customer_last_name: "Gates",
+        address: deliveryInfo.delivery_street,
 
         // customer_id: location.customer_id,
         // customer_first_name: location.delivery_first_name,
@@ -90,6 +97,7 @@ const createRoutes = () => {
       };
       // console.log(route_id);
       if (route_id in tempRoutes) {
+        console.log("Test 0");
         location_data.from = 
           tempRoutes[route_id].route_data[
             tempRoutes[route_id].route_data.length - 1
@@ -99,6 +107,7 @@ const createRoutes = () => {
         tempRoutes[route_id].route_data.push(location_data);
       } 
       else {
+        console.log("Test 1");
         // console.log("route's business", businesses[location.business_id]);
         // location_data.from = [0, 0];
         if (totalOptions < location.route_option) totalOptions = location.route_option;
@@ -106,10 +115,12 @@ const createRoutes = () => {
         //* location_data.from = [+location.customer_latitude + (Math.random() * 0.22 - 0.1), +location.customer_longitude + (Math.random() * 0.22 - 0.1)];
         tempRoutes[route_id] = {
           route_option: location.route_option,
-          business_id: location.business_id,
-          driver_id: location.driver_num, //* location.driver_id,
+          business_id: location.route_business_id,
+          driver_id: location.driver_id, //* location.driver_id,
           driver_first_name: "Bob", //* location.driver_first_name,
           driver_last_name: "Jones", //* location.driver_last_name, 
+          distance: location.route_distance,
+          date: location.shipment_date,
           visible: true,
           route_data: [location_data],
         };
