@@ -313,3 +313,10 @@ table.is-view td.is-today-end {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+
+/* Input classes */
+.input.is-super-small {
+  height: 1.7em;
+  border-radius: 2px;
+  font-size: 0.75rem;
+}

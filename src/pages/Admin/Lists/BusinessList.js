@@ -27,11 +27,12 @@ function BusinessList({ businesses, ...props }) {
     else setBusinessData(businessData);
   }, [businesses, props.filter]);
   
-  const addBusiness = (action) => {
+  const editBusiness = (action, id) => {
     console.log("adding business.........");
-    if (action === 'create') setDataEdit('add');
+    if (action === 'edit') setDataEdit(id);
+    else if (action === 'add') setDataEdit('add');
     else {
-      if (action === 'save') { console.log("SAVED") }
+      if (action === 'save') { console.log("SAVED"); }
       setDataEdit();
     }
   };
@@ -41,8 +42,8 @@ function BusinessList({ businesses, ...props }) {
       <button
         className="button mx-1" 
         style={{ width: "24px", height: "24px", marginBottom: "1.5rem" }}
-        onClick={() => addBusiness(dataEdit !== 'add' ? 'create' : 'cancel')}
-        disabled={dataEdit && dataEdit !== 'add'}
+        onClick={() => editBusiness(dataEdit !== 'add' ? 'add' : 'cancel')}
+        // disabled={dataEdit && dataEdit !== 'add'}
       >
         <FontAwesomeIcon 
           icon={Icons[dataEdit !== 'add' ? 'faPlus' : 'faTimes']} 
@@ -52,17 +53,10 @@ function BusinessList({ businesses, ...props }) {
       </button>
       {dataEdit === 'add' && (
         <React.Fragment>
-          {/* <button
-            className="button mx-1" 
-            style={{ width: "24px", height: "24px", marginBottom: "1.5rem" }}
-            onClick={() => addBusiness('cancel')}
-          >
-            <FontAwesomeIcon icon={Icons.faTimes} size="xs" color="red" />
-          </button> */}
           <button
             className="button mx-1" 
             style={{ width: "24px", height: "24px", marginBottom: "1.5rem" }}
-            onClick={() => addBusiness('save')}
+            onClick={() => editBusiness('save')}
           >
             <FontAwesomeIcon icon={Icons.faCheck} size="xs" color="green" />
           </button>
@@ -77,13 +71,13 @@ function BusinessList({ businesses, ...props }) {
               business={business[1]}
               id={business[0]}
               dispatch={props.dispatch}
-              handleEdit={setDataEdit}
+              handleEdit={editBusiness}
             />
           ) : (
             <EditItem 
               business={business[1]} 
               id={business[0]} 
-              handleEdit={setDataEdit} 
+              handleEdit={editBusiness} 
             />
           )}
         </React.Fragment>
@@ -181,10 +175,10 @@ function BusinessItem({ business, id, ...props }) {
               {!hidden && (
                 <button
                   className="button is-super-small is-pulled-right mr-1"
-                  onClick={() => props.handleEdit(id)}
+                  onClick={() => props.handleEdit('edit', id)}
                 >
                   <FontAwesomeIcon
-                    icon={Icons.faTimes}
+                    icon={Icons.faPlus}
                   />
                   {/* <span className="tooltiptext">{hidden ? "Expand" : "Collapse"}</span> */}
                 </button>
@@ -310,10 +304,70 @@ function BusinessItem({ business, id, ...props }) {
   );
 }
 
-function EditItem() {
+function EditItem({ business, id, ...props }) {
+  const [businessData, setBusinessData] = useState(business);
+  const exists = Boolean(Object.values(business).length);
+
+  const handleChange = (e, type) => {
+    e.persist();
+    setBusinessData(prevBusinessData => ({
+      ...prevBusinessData,
+      [type]: e.target.value,
+    }));
+  };
+
   return (
     <div className="box list-item">
-      placeholder
+      <table
+        className="table is-hoverable is-fullwidth is-size-7"
+        style={{ backgroundColor: "#f8f7fa" }}
+      >
+        <thead>
+          <tr className="list-item-head">
+            <th style={{ width: "20%" }}>
+              <div style={{ width: "300%", maxWidth: "325px" }}>
+                <span>
+                  {exists ? 
+                    `Business ${Number(id.substring(id.indexOf("-") + 1, id.length))}: ` : 
+                    'New Business: '
+                  }
+                </span>
+                <input 
+                  className="input is-super-small ml-1" 
+                  style={{ width: "auto" }} 
+                  value={businessData.name} 
+                  onChange={(e) => handleChange(e, 'name')}
+                />
+              </div>
+            </th>
+            <th style={{ width: "20%" }} />
+            <th style={{ width: "20%" }} />
+            <th style={{ width: "20%" }} />
+            <th style={{ width: "20%" }}>
+              {exists && (
+                <React.Fragment>
+                  <button
+                    className="button is-super-small is-pulled-right"
+                    onClick={() => props.handleEdit('save', exists ? id : undefined)}
+                  >
+                    <FontAwesomeIcon
+                      icon={Icons.faCheck}
+                    />
+                  </button>
+                  <button
+                    className="button is-super-small is-pulled-right mr-1"
+                    onClick={() => props.handleEdit('cancel', exists ? id : undefined)}
+                  >
+                    <FontAwesomeIcon
+                      icon={Icons.faTimes}
+                    />
+                  </button>
+                </React.Fragment>
+              )}
+            </th>
+          </tr>
+        </thead>
+      </table>
     </div>
   );
 }
