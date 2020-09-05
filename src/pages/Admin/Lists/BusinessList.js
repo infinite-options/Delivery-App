@@ -10,6 +10,7 @@ const weekdays = moment.weekdays();
 function BusinessList({ businesses, ...props }) {
   console.log("rendering businesses..");
   const [businessData, setBusinessData] = useState(Object.entries(businesses));
+  const [dataEdit, setDataEdit] = useState(); // undefined, 'add', or `${business_id}`
   // console.log(businessData);
 
   useEffect(() => {
@@ -26,16 +27,66 @@ function BusinessList({ businesses, ...props }) {
     else setBusinessData(businessData);
   }, [businesses, props.filter]);
   
+  const addBusiness = (action) => {
+    console.log("adding business.........");
+    if (action === 'create') setDataEdit('add');
+    else {
+      if (action === 'save') { console.log("SAVED") }
+      setDataEdit();
+    }
+  };
+
   return (
     <React.Fragment>
-      {businessData.map((business, index) => (
-        <BusinessItem
-          key={index}
-          index={index}
-          business={business[1]}
-          id={business[0]}
-          dispatch={props.dispatch}
+      <button
+        className="button mx-1" 
+        style={{ width: "24px", height: "24px", marginBottom: "1.5rem" }}
+        onClick={() => addBusiness(dataEdit !== 'add' ? 'create' : 'cancel')}
+        disabled={dataEdit && dataEdit !== 'add'}
+      >
+        <FontAwesomeIcon 
+          icon={Icons[dataEdit !== 'add' ? 'faPlus' : 'faTimes']} 
+          size="xs" 
+          color={dataEdit !== 'add' ? 'blue' : 'red'} 
         />
+      </button>
+      {dataEdit === 'add' && (
+        <React.Fragment>
+          {/* <button
+            className="button mx-1" 
+            style={{ width: "24px", height: "24px", marginBottom: "1.5rem" }}
+            onClick={() => addBusiness('cancel')}
+          >
+            <FontAwesomeIcon icon={Icons.faTimes} size="xs" color="red" />
+          </button> */}
+          <button
+            className="button mx-1" 
+            style={{ width: "24px", height: "24px", marginBottom: "1.5rem" }}
+            onClick={() => addBusiness('save')}
+          >
+            <FontAwesomeIcon icon={Icons.faCheck} size="xs" color="green" />
+          </button>
+          <EditItem business={{}} id={dataEdit} handleEdit={setDataEdit} />
+        </React.Fragment>
+      )}
+      {businessData.map((business, index) => (
+        <React.Fragment key={index}>
+          {dataEdit !== business[0] ? (
+            <BusinessItem
+              index={index}
+              business={business[1]}
+              id={business[0]}
+              dispatch={props.dispatch}
+              handleEdit={setDataEdit}
+            />
+          ) : (
+            <EditItem 
+              business={business[1]} 
+              id={business[0]} 
+              handleEdit={setDataEdit} 
+            />
+          )}
+        </React.Fragment>
       ))}
     </React.Fragment>
   );
@@ -52,7 +103,7 @@ function BusinessItem({ business, id, ...props }) {
   const business_id = Number(id.substring(id.indexOf("-") + 1, id.length));
   
   const displayDayHours = (type) => {
-    const days = JSON.parse(type);
+    if (type) {const days = JSON.parse(type);
     // console.log(days);
     return (
       <React.Fragment>
@@ -60,7 +111,7 @@ function BusinessItem({ business, id, ...props }) {
           <p key={index}>{day}: {days[day]}</p>
         ))}
       </React.Fragment>
-    );
+    );}
   };
   // console.log(weekdays);
 
@@ -78,9 +129,8 @@ function BusinessItem({ business, id, ...props }) {
   };
 
   const handleVisibilitySelect = () => {
-    console.log("hi");
-    props.dispatch({ type: "business-toggle-visibility", payload: { id } });
-  }
+    props.dispatch({ type: "toggle-visibility", payload: { id, type: "businesses" } });
+  };
 
   return (
     <div className="box list-item">
@@ -128,6 +178,17 @@ function BusinessItem({ business, id, ...props }) {
                 />
                 {/* <span className="tooltiptext">{hidden ? "Expand" : "Collapse"}</span> */}
               </button>
+              {!hidden && (
+                <button
+                  className="button is-super-small is-pulled-right mr-1"
+                  onClick={() => props.handleEdit(id)}
+                >
+                  <FontAwesomeIcon
+                    icon={Icons.faTimes}
+                  />
+                  {/* <span className="tooltiptext">{hidden ? "Expand" : "Collapse"}</span> */}
+                </button>
+              )}
             </th>
           </tr>
         </thead>
@@ -245,6 +306,14 @@ function BusinessItem({ business, id, ...props }) {
           )}
         </tbody>
       </table>
+    </div>
+  );
+}
+
+function EditItem() {
+  return (
+    <div className="box list-item">
+      placeholder
     </div>
   );
 }
