@@ -50,13 +50,8 @@ function LeafletMap({ header, routes, drivers, businesses, customers, ...props }
 
   const mapRef = useRef();
   const [leafletMap, setLeafletMap] = useState();
-  const [mapRoutes, setMapRoutes] = useState(routes);
-  // console.log("ROUTES", mapRoutes);
+  const [mapData, setMapData] = useState({ routes, drivers, businesses, customers });
   const [mapMarkers, setMapMarkers] = useState([]);
-  // NOTE: may wanna make a reducer here
-  const [businessLocations, setBusinessLocations] = useState([]);
-  // console.log(businessLocations);
-  const [customerLocations, setCustomerLocations] = useState([]);
   
   /* rendering leafletMap */
   useEffect(() => {
@@ -70,88 +65,97 @@ function LeafletMap({ header, routes, drivers, businesses, customers, ...props }
     if (leafletMap) setTimeout(() => handleMapLoad(), 0); // waiting for RouteMarkers to finish rendering
   }, [leafletMap]);
 
-  /* rendering/updating mapRoutes */
+  /* rendering/updating data when user filters data */
+  // FIXME: A business' visibility value should be set to false IF:
+  //        user is on the deliveries tab
+  //        -- AND --
+  //        all routes associated with the business have visibility values = false;
   useEffect(() => {
-    let newRoutes = { ...routes };
-    const routeKeys = Object.keys(routes);
-    
-    if (props.filter && props.filter.type === "routes" /* or drivers possibly? */) {
-      setMapRoutes(() => {
-        // create an array of routes that do not satisfy the filter condition
-        const filtered = Object.entries(routes).filter(route => {
-          // console.log(route[1][props.filter.option], props.filter.value);
-          return route[1][props.filter.option] != props.filter.value;
-        });
-        // console.log(filtered);
-        // create an array of route keys that failed to satisfy and therefore need to be hidden
-        const routesToHide = Array.from(filtered, entry => entry[0]);
-        for (let key of routeKeys) {
-          if (routesToHide.includes(key)) newRoutes[key].visible = false;
-          else newRoutes[key].visible = true;
-        }
-        // console.log(newRoutes);
-        return newRoutes;
-      });
-    }
-    else if (leafletMap) {
-      setMapRoutes(() => {
-        for (let key of routeKeys) newRoutes[key].visible = true;
-        return newRoutes;
-      });
-    }
+    if (leafletMap) handleFilterUpdate(props.filter ? props.filter.type : undefined);
   }, [props.filter]);
 
-  useEffect(() => {
-    if (leafletMap) setMapRoutes(prevMapRoutes => {
-      const routeKeys = Object.keys(routes);
-      const filteredKeys = Object.keys(mapRoutes);
-      let newRoutes = { ...prevMapRoutes };
-      for (let key of routeKeys) {
-        if (filteredKeys.includes(key)) {
-          newRoutes[key].visible = routes[key].visible;
-          // other keys that may be modified by an admin user?
+  const handleFilterUpdate = (type) => {
+    let dataType = type;
+    let newData;
+    setMapData(prevMapData => {
+      if (dataType) {
+        newData = { ...prevMapData[dataType] };
+        const dataKeys = Object.keys(prevMapData[dataType]);
+        const filtered = Object.entries(prevMapData[dataType]).filter(entry => {
+          return entry[1][props.filter.option] != props.filter.value;
+        });
+        const dataToHide = Array.from(filtered, entry => entry[0]);
+        for (let key of dataKeys) {
+          if(dataToHide.includes(key)) newData[key].visible = false;
+          else newData[key].visible = true;
         }
       }
-      return newRoutes;
-    });
-  }, [routes])
-
-  /* rendering/updating business/customer locations */
-  useEffect(() => {
-    // FIXME: Same bug that used to appear for routes, when map loads, the markers are saved so changing 
-    //        businessLocations does not remove those markers' existence. Fixed by toggling visibility
-    setBusinessLocations(() => {
-      let businessLocations = {};
-      switch (header) {
-        case 0: case 1:
-          for (let route_id in mapRoutes) {
-            // console.log(route);
-            // console.log(mapRoutes[route_id].visible);
-            const latlng = mapRoutes[route_id].route_data[0].from;
-            const businessInfo = businessLocations[mapRoutes[route_id].business_id];
-            // if this business id is not currently in our list, add the latlng and visibility values to the list
-            // console.log(mapRoutes[route_id].visible);
-            if (!businessInfo) businessLocations[mapRoutes[route_id].business_id] = { latlng, visible: mapRoutes[route_id].visible };
-            // if the business location visibility value is currently false, but there is a visible route connected to the business location, toggle the visibility to true
-            else if (!businessInfo.visible && mapRoutes[route_id].visible) businessLocations[mapRoutes[route_id].business_id].visible = true; 
-          } break;
-        case 2: case 3: // case 3 being part of case 2 is temporary, just so map doesn't bug out
-          for (let business_id in businesses) {
-            // `|| 0` is for testing purposes, since currently the endpoint does not return any latlng values :(
-            const latlng = [businesses[business_id].latitude || 0, businesses[business_id].longitude || 0];
-            businessLocations[business_id] = { latlng, visible: businesses[business_id].visible };
-          } break;
-        // case 3: break;
-        default: 
-          console.log("Shouldn't be printing"); break;
+      else {
+        newData = header === 0 ? { ...routes } :
+                  header === 1 ? { ...drivers } :
+                  header === 2 ? { ...businesses } :
+                /*header === 3 ?*/ { ...customers };
+        const dataKeys = Object.keys(newData);
+        for (let key of dataKeys) newData[key].visible = true;
+        dataType = header === 0 ? 'routes' :
+                   header === 1 ? 'drivers' :
+                   header === 2 ? 'businesses' :
+                 /*header === 3 ?*/ 'customers';
       }
-      return businessLocations;
+      console.log(newData);
+      console.log("YO", {
+        ...prevMapData,
+        [dataType]: newData,
+      });
+      return {
+        ...prevMapData,
+        [dataType]: newData,
+      };
     });
-  }, [mapRoutes, header]);
+  };
 
-  useEffect(() => { // Essentially what this is doing is 'manage marker visibility after mapRoutes or header is updated'
-    manageMarkers();
-  }, [businessLocations]);
+  /* updating routes/drivers/businesses/customers upon user interaction (Ex: toggle visibility) */
+  useEffect(() => {
+    handleDataUpdate("routes");
+  }, [routes]);
+
+  useEffect(() => {
+    handleDataUpdate("drivers");
+  }, [drivers]);
+
+  useEffect(() => {
+    handleDataUpdate("businesses");
+  }, [businesses]);
+
+  useEffect(() => {
+    handleDataUpdate("customers");
+  }, [customers]);
+
+  const handleDataUpdate = (type) => {
+    if (leafletMap) setMapData(prevMapData => {
+      const changedData = type === 'routes' ? routes : 
+                          type === 'drivers' ? drivers :
+                          type === 'businesses' ? businesses :
+                        /*type === 'customers' ?*/ customers;
+      const dataKeys = Object.keys(changedData);
+      const filteredKeys = Object.keys(prevMapData[type]);
+      let newData = { ...prevMapData[type] };
+      for (let key of dataKeys) {
+        if (filteredKeys.includes(key)) {
+          newData[key].visible = changedData[key].visible;
+          // other values that may be modified by an admin user?
+        }
+      }
+      return {
+        ...prevMapData,
+        [type]: newData,
+      };
+    });
+  };
+
+  useEffect(() => {
+    if (leafletMap) manageMarkers();
+  }, [mapData, header]);
 
   /* updating selected marker' size */
   useEffect(() => {
@@ -176,9 +180,10 @@ function LeafletMap({ header, routes, drivers, businesses, customers, ...props }
   
   // console.log(businessLocations);
   // console.log(mapRoutes);
-  const businessLocations_array = Object.entries(businessLocations);
-  const customerLocations_array = Object.entries(customerLocations);
-  const routes_array = Object.entries(mapRoutes);
+  const businesses_array = Object.entries(mapData.businesses);
+  const customers_array = Object.entries(mapData.customers);
+  const routes_array = Object.entries(mapData.routes);
+  console.log(businesses_array);
 
   const mapLatlng = calculateLatlng(routes_array);
   const mapZoom = calculateZoom();
@@ -233,15 +238,15 @@ function LeafletMap({ header, routes, drivers, businesses, customers, ...props }
       case 0: case 1:
         // console.log(businessLocations[marker.options.business]);
         return (
-          mapRoutes[marker.options.route] ? mapRoutes[marker.options.route].visible : (
-          businessLocations[marker.options.business] ? businessLocations[marker.options.business].visible : false)
+          mapData.routes[marker.options.route] ? mapData.routes[marker.options.route].visible : (
+          mapData.businesses[marker.options.business] ? mapData.businesses[marker.options.business].visible : false)
         );
       case 2:
         return (
-          businessLocations[marker.options.business] ? businessLocations[marker.options.business].visible : false
+          mapData.businesses[marker.options.business] ? mapData.businesses[marker.options.business].visible : false
         );
       default:
-        return undefined;
+        return false;
     }
   };
 
@@ -267,12 +272,12 @@ function LeafletMap({ header, routes, drivers, businesses, customers, ...props }
         // updateWhenIdle={true}
         // onload={}
       />
-      {businessLocations_array.map((location, index) => (
+      {businesses_array.map((location, index) => (
         <Marker 
           key={index} 
           index={index}
           business={location[0]}
-          position={location[1].latlng} 
+          position={[location[1].latitude || Math.random(), location[1].longitude || Math.random()]} 
           icon={Icons.Headquarters} 
           onClick={() => console.log(`Hi this is Business ${location[0]}`)} 
           onDblClick={() => false} // disabling zoom on marker double click
