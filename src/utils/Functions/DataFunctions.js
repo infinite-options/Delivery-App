@@ -36,9 +36,10 @@ const rainbow = (numOfSteps, step) => {
  *     route_id: {
  *         business_id,
  *         driver_id,
- *         driver_first_name,
- *         driver_last_name,
+ *         // driver_first_name,
+ *         // driver_last_name,
  *         visible,
+ *         route_option
  *         route_color,
  *         route_data: [
  *             {
@@ -113,8 +114,8 @@ const createRoutes = () => {
           route_option: location.route_option,
           business_id: location.route_business_id,
           driver_id: location.driver_id, //* location.driver_id,
-          driver_first_name: "Bob", //* location.driver_first_name,
-          driver_last_name: "Jones", //* location.driver_last_name, 
+          // driver_first_name: "Bob", //* location.driver_first_name,
+          // driver_last_name: "Jones", //* location.driver_last_name, 
           distance: location.route_distance,
           date: location.shipment_date,
           visible: true,

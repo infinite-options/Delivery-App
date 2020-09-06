@@ -62,7 +62,6 @@ function reducer(state, action) {
     //     routes,
     //   };
     case 'toggle-visibility':
-      // console.log({...state});
       return { 
         ...state,
         [action.payload.type]: {
@@ -73,6 +72,28 @@ function reducer(state, action) {
           }
         }
       };
+    case 'update-route-drivers':
+      let newRoutes = { ...state.routes };
+      const routeDrivers = Object.entries(action.payload.route_drivers);
+      routeDrivers.forEach(entry => {
+        newRoutes[entry[0]] = { ...state.routes[entry[0]], driver_id: entry[1] }
+      });
+      console.log(newRoutes);
+      return {
+        ...state,
+        routes: newRoutes,
+        // routes: {
+        //   ...state.routes,
+        //   ...routeDrivers.map(entry => {
+        //     return {
+        //       [entry[0]]: {
+        //         ...state.routes[entry[0]],
+        //         driver_id: entry[1],
+        //       }
+        //     };
+        //   })
+        // },
+      }; 
     default:
       return state;
   }

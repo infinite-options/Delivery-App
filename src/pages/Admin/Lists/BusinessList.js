@@ -189,7 +189,7 @@ function BusinessItem({ business, id, ...props }) {
         <tbody className="is-bordered has-text-centered" hidden={hidden}>
           <tr>
             <td>
-              Business Image<br /><img src={business.image} width="48" height="48" />
+              Business Image<br /><img src={business.image} alt={`${business.name}`} width="48" height="48" />
             </td>
             <td>
               Registered At<br />{handleDateTime(business.registered)}
