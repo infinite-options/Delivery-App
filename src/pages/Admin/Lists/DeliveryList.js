@@ -5,6 +5,8 @@ import Icons from "utils/Icons/Icons";
 function DeliveryList({ routes, ...props }) {
   console.log("rendering deliveries..");
   const [routeData, setRouteData] = useState(Object.entries(routes));
+  const [driversList, setDriversList] = useState(props.driversList);
+  const [driversToRoutes, setDriversToRoutes] = useState(); // { [route_id]: [driver_id], ... }
 
   useEffect(() => {
     const routeData = Object.entries(routes);
@@ -28,7 +30,6 @@ function DeliveryList({ routes, ...props }) {
   return (
     <React.Fragment>
       {routeData.map((route, index) => (
-        // think about using fewer components, could probably just do route[0] and route[1]
         <RouteItem
           key={index}
           index={index}
@@ -36,6 +37,8 @@ function DeliveryList({ routes, ...props }) {
           id={route[0]}
           selectedLocation={props.selectedLocation}
           setSelectedLocation={props.setSelectedLocation}
+          driversList={driversList}
+          setDriversList={setDriversList}
           dispatch={props.dispatch}
         />
       ))}
@@ -47,6 +50,7 @@ function RouteItem({ route, id, ...props }) {
   const [hidden, setHidden] = useState(true);
   const route_values = Object.values(route.route_data);
   // console.log(route_values);
+  const route_id = Number(id.substring(id.indexOf("-") + 1, id.length));
 
   useEffect(() => {
     // console.log(props.selectedLocation);
@@ -113,7 +117,6 @@ function RouteItem({ route, id, ...props }) {
         <thead>
           <tr className="list-item-head">
             <th style={{ width: "17.5%" }}>
-              {/* <button className="tooltip mx-1" onClick={() => setHidden(prevHidden => !prevHidden)}> */}
               <div style={{ width: "200%", maxWidth: "225px" }}>
                 <button 
                   className="button is-super-small is-rounded mr-3" 
@@ -121,23 +124,26 @@ function RouteItem({ route, id, ...props }) {
                 >
                   <FontAwesomeIcon icon={route.visible ? Icons.faEyeSlash : Icons.faEye} />
                 </button>
-                {/* Adding conditional margin since icons are different sizes, have to account for text shift */}
                 <div
                   className="route"
                   style={{ 
-                    // this div refuses to be vertically centered so this is my workaround
                     backgroundColor: `${route.visible ? route.route_color : "lightgrey"}`,
                     borderBottom: `3px solid ${route.visible ? route.route_color : "lightgrey"}`, 
+                    // Adding conditional margin since icon sizes vary, accounting for text shift
                     ...(!route.visible ? {marginLeft: "1.32px"} : {}) 
                   }}
-                ><span>Route {id}</span></div>
+                >
+                  <span>Route {route_id}</span></div>
               </div>
-              {/* <span {...(!route.visible ? { style: { marginLeft: "1.32px" } } : {})}>Route {id}</span> */}
             </th>
-            <th style={{ width: "30%" }} />
-            <th style={{ width: "10%" }}>
+            <th style={{ width: "29%" }} />
+            <th style={{ width: "11%" }}>
               <div style={{ width: "300%", maxWidth: "225px" }}>
-                <span>{`Driver ${route.driver_id}: ${route.driver_first_name} ${route.driver_last_name[0]}.`}</span>
+                <DriversDropdown 
+                  driver={props.driversList.find(entry => entry[0] === route.driver_id)} 
+                  list={props.driversList} 
+                  setList={props.setDriversList} 
+                />
                 <button
                   className="button is-rounded is-super-small is-pulled-right ml-1"
                   onClick={() => console.log("Not sure what this does atm")}
@@ -154,30 +160,13 @@ function RouteItem({ route, id, ...props }) {
             </th>
             <th style={{ width: "12.5%" }} />
             <th style={{ width: "12.5%" }}>
-              {/* <div style={{ width: "110%" }}>
-                <button
-                  className="button is-rounded is-super-small mr-1"
-                  onClick={() => sendDriverText(route.driver_id)}
-                >
-                  <FontAwesomeIcon icon={Icons.faComment} />
-                </button>
-                <button
-                  className="button is-rounded is-super-small"
-                  onClick={() => console.log("Not sure what this does atm")}
-                >
-                  <FontAwesomeIcon icon={Icons.faPhone} />
-                </button>
-              </div> */}
             </th>
             <th style={{ width: "17.5%" }}>
               <button
                 className="button is-super-small is-pulled-right"
                 onClick={() => setHidden((prevHidden) => !prevHidden)}
               >
-                <FontAwesomeIcon
-                  icon={hidden ? Icons.faCaretDown : Icons.faCaretUp}
-                />
-                {/* <span className="tooltiptext">{hidden ? "Expand" : "Collapse"}</span> */}
+                <FontAwesomeIcon icon={hidden ? Icons.faCaretDown : Icons.faCaretUp} />
               </button>
             </th>
           </tr>
@@ -185,13 +174,6 @@ function RouteItem({ route, id, ...props }) {
         <tbody hidden={hidden}>
           <tr>
             <th style={{borderBottomWidth: "2px"}}>
-              {/* <span className="ml-1">{`Driver: ${props.driver_first_name} ${props.driver_last_name[0]}.`}</span>
-              <button
-                className="button is-rounded is-super-small mx-3"
-                onClick={() => sendDriverText(route.driver_id)}
-              >
-                <FontAwesomeIcon icon={Icons.faComment} />
-              </button> */}
             </th>
             <th style={{borderBottomWidth: "2px"}}>Destination</th>
             <th style={{borderBottomWidth: "2px"}}>Customer</th>
@@ -209,12 +191,10 @@ function RouteItem({ route, id, ...props }) {
                   : ""
               }
             >
-              {/* {console.log("What", props)} */}
               <td>
                 <button
                   className={"button is-rounded is-small mx-1"}
                   disabled={!route.visible}
-                  // {...(!route.visible && { title: "this route is hidden" })}
                   onClick={() => handleSelect(props.index + 1, index + 1)}
                   style={{ padding: "0.69rem" }}
                 >
@@ -226,12 +206,6 @@ function RouteItem({ route, id, ...props }) {
                 >
                   Skip
                 </button>
-                {/* <button
-                  className="button is-rounded is-small mx-1"
-                  onClick={() => changeLocation(index + 1)}
-                >
-                  Change
-                </button> */}
               </td>
               <td>{location.address}</td>
               <td>{`${location.customer_first_name} ${location.customer_last_name[0]}.`}</td>
@@ -259,31 +233,76 @@ function RouteItem({ route, id, ...props }) {
           ))}
         </tbody>
       </table>
-      {/* Driver {props.index + 1}
-      <div className="mt-2" hidden={hidden}>
-        {route.map((location, index) => (
-          <div key={index} className="box">
-            Destination {index + 1} : ({location["to"][0]}, {location["to"][1]})
-          </div>
-        ))}
-      </div> */}
     </div>
   );
 }
 
-function RouteColor({ color }) {
+function DriversDropdown({ list, setList, ...props }) {
+  const [open, setOpen] = useState(false);
+  const [driver, setDriver] = useState(props.driver);
+  const route_driver_id = driver ? 
+    Number(driver[0].substring(driver[0].indexOf("-") + 1, driver[0].length)) : 
+    undefined;
+
+  useEffect(() => {
+    // if route already has a driver selected, remove the driver as an option from the dropdown
+    if (driver) setList(prevList => {
+      return [...prevList].filter(entry => entry[0] !== driver[0]);
+    });
+  }, []);
+
+  const handleDriverSelect = (driver_id) => {
+    setList(prevList => {
+      let newList = [...prevList].filter(entry => entry[0] !== driver_id);
+      if (driver) newList.push(driver);
+      return newList;
+    });
+    setDriver(driver_id ? list.find(entry => entry[0] === driver_id) : undefined);
+    setOpen(false);
+  };
+
   return (
-    <div className="level" style={{ justifyContent: "flex-start" }}>
-      <div className="level-left">
-        <div
-          className="level-item route"
-          style={{ width: "150px", borderBottom: `3px solid ${color}` }}
-        ></div>
+    <React.Fragment>
+      <span className="mr-1">
+        {/* {driver ? (`Driver ${route_driver_id}:`) : (`Driver:`)} */}
+        Driver:
+      </span>
+      <div className={"dropdown" + (open ? " is-active" : "")}>
+        <div className="dropdown-trigger">
+          <button 
+            className="button is-super-small"
+            style={{ width: "100px", ...(!driver && { borderColor: "red", color: "red" }) }} 
+            onClick={() => setOpen(prevOpen => !prevOpen)} 
+            aria-haspopup="true" 
+            aria-controls="dropdown-menu"
+          >
+            {driver ? (driver[1]) : ('Choose Driver')}
+            <FontAwesomeIcon icon={Icons.faCaretDown} className= "ml-2" />
+          </button>
+        </div>
+        <div className="dropdown-menu" style={{ paddingTop: 0 }} id="dropdown-menu" role="menu">
+          <div className="dropdown-content">
+            <button 
+              className="button is-small is-white dropdown-item" 
+              disabled={!driver} 
+              onClick={() => handleDriverSelect()}
+            >
+              Deselect
+            </button>
+            <hr className="dropdown-divider" />
+            {list.map((item, index) => (
+              <button 
+                key={index} 
+                className="button is-small is-white dropdown-item" 
+                onClick={() => handleDriverSelect(item[0])}
+              >
+                {item[1]}
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
-      <div className="level-right" style={{ alignItems: "left" }}>
-        <span className="level-item ml-2" style={{ backgroundColor: "#ededed" }}>Route</span>
-      </div>
-    </div>
+    </React.Fragment>
   );
 }
 

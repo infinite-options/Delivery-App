@@ -176,6 +176,17 @@ function DashboardPage() {
             routes={data.routes}
             selectedLocation={selectedLocation}
             setSelectedLocation={setSelectedLocation}
+            driversList={() => {
+              return (
+                Array.from(
+                  Object.entries(data.drivers), 
+                  entry => ([
+                    entry[0], 
+                    `${entry[1].first_name} ${entry[1].last_name}`
+                  ])
+                )
+              );
+            }}
             filter={data.filter}
             dispatch={dispatch}
           />
