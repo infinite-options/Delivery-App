@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Icons from "utils/Icons/Icons";
+import { faSave } from "@fortawesome/free-solid-svg-icons";
 
 function DeliveryList({ routes, ...props }) {
   console.log("rendering deliveries..");
   const [routeData, setRouteData] = useState(Object.entries(routes));
   const [driversList, setDriversList] = useState(props.driversList);
-  const [driversToRoutes, setDriversToRoutes] = useState(); // { [route_id]: [driver_id], ... }
+  const [driversToRoutes, setDriversToRoutes] = useState({}); // { [route_id]: [driver_id], ... }
+  // console.log(Object.values(driversToRoutes).length, Object.values(routes).length);
 
   useEffect(() => {
     const routeData = Object.entries(routes);
@@ -22,13 +24,26 @@ function DeliveryList({ routes, ...props }) {
     else setRouteData(routeData);
   }, [routes, props.filter]);
   
-  // const [selectedLocation, setSelectedLocation] = useState({});
-  // const selectedLocation = props.selectedLocation;
-  // const setSelectedLocation = props.setSelectedLocation;
-  // const dispatch = props.dispatch;
+  const saveRoutesDrivers = () => {
+    console.log("SAVING DRIVERS TO THEIR ROUTES");
+    // axios.put(ENDPOINT_URL, ROUTES_OBJECT)
+    // .then(response => {
+    //   props.dispatch({ type: 'update-route-drivers', payload: { route_drivers: driversToRoutes } })
+    // });
+  };
 
   return (
     <React.Fragment>
+      {/* NOTE: User only able to save once drivers are chosen for ALL routes, is this what we want? */}
+      <button
+        className="button is-small mx-1 is-success is-outlined is-rounded" 
+        style={{ marginBottom: "1rem" }}
+        disabled={Object.values(driversToRoutes).length !== Object.values(routes).length}
+        onClick={saveRoutesDrivers}
+      >
+        <FontAwesomeIcon icon={Icons.faCheck} className="mr-2" />
+        Save Changes
+      </button>
       {routeData.map((route, index) => (
         <RouteItem
           key={index}
@@ -39,6 +54,7 @@ function DeliveryList({ routes, ...props }) {
           setSelectedLocation={props.setSelectedLocation}
           driversList={driversList}
           setDriversList={setDriversList}
+          setDriversToRoutes={setDriversToRoutes}
           dispatch={props.dispatch}
         />
       ))}
@@ -140,9 +156,11 @@ function RouteItem({ route, id, ...props }) {
             <th style={{ width: "11%" }}>
               <div style={{ width: "300%", maxWidth: "225px" }}>
                 <DriversDropdown 
+                  route_id={id}
                   driver={props.driversList.find(entry => entry[0] === route.driver_id)} 
                   list={props.driversList} 
                   setList={props.setDriversList} 
+                  setDriversToRoutes={props.setDriversToRoutes}
                 />
                 <button
                   className="button is-rounded is-super-small is-pulled-right ml-1"
@@ -246,9 +264,17 @@ function DriversDropdown({ list, setList, ...props }) {
 
   useEffect(() => {
     // if route already has a driver selected, remove the driver as an option from the dropdown
-    if (driver) setList(prevList => {
-      return [...prevList].filter(entry => entry[0] !== driver[0]);
-    });
+    if (driver) {
+      setList(prevList => {
+        return [...prevList].filter(entry => entry[0] !== driver[0]);
+      });
+      props.setDriversToRoutes(prevDriversToRoutes => {
+        return ({
+          ...prevDriversToRoutes,
+          [props.route_id]: driver[0],
+        });
+      });
+    }
   }, []);
 
   const handleDriverSelect = (driver_id) => {
@@ -256,6 +282,12 @@ function DriversDropdown({ list, setList, ...props }) {
       let newList = [...prevList].filter(entry => entry[0] !== driver_id);
       if (driver) newList.push(driver);
       return newList;
+    });
+    props.setDriversToRoutes(prevDriversToRoutes => {
+      let newDriversToRoutes = { ...prevDriversToRoutes };
+      if (driver_id) newDriversToRoutes[props.route_id] = driver_id;
+      else delete newDriversToRoutes[props.route_id];
+      return newDriversToRoutes;
     });
     setDriver(driver_id ? list.find(entry => entry[0] === driver_id) : undefined);
     setOpen(false);

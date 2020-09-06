@@ -63,14 +63,12 @@ const createRoutes = () => {
     let totalOptions = 0;
     let tempRoutes = {};
     for (let location of result) {
-      console.log(location, result.length);
+      // console.log(location, result.length);
       const deliveryInfo = JSON.parse(location.route_delivery_info);
       const route_id = location.route_id;
-      console.log("Test -3", deliveryInfo)
       // const latlngs = JSON.parse(location.customer_coords);
       const latlngs = [deliveryInfo[0].coordinates.latitude, deliveryInfo[0].coordinates.longitude];
-      console.log(latlngs);
-      console.log("Test -2")
+      // console.log(latlngs);
       const location_data = {
         // to: [latlngs.latitude, latlngs.longitude],
         to: latlngs,
@@ -97,7 +95,6 @@ const createRoutes = () => {
       };
       // console.log(route_id);
       if (route_id in tempRoutes) {
-        console.log("Test 0");
         location_data.from = 
           tempRoutes[route_id].route_data[
             tempRoutes[route_id].route_data.length - 1
@@ -107,7 +104,6 @@ const createRoutes = () => {
         tempRoutes[route_id].route_data.push(location_data);
       } 
       else {
-        console.log("Test 1");
         // console.log("route's business", businesses[location.business_id]);
         // location_data.from = [0, 0];
         if (totalOptions < location.route_option) totalOptions = location.route_option;
