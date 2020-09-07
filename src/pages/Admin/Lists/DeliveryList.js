@@ -3,10 +3,16 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Icons from "utils/Icons/Icons";
 import { faSave } from "@fortawesome/free-solid-svg-icons";
 
-function DeliveryList({ routes, ...props }) {
+function DeliveryList({ routes, drivers, ...props }) {
   console.log("rendering deliveries..");
   const [routeData, setRouteData] = useState(Object.entries(routes));
-  const [driversList, setDriversList] = useState(props.driversList);
+  const [driversList, setDriversList] = useState(Array.from(
+    Object.entries(drivers), 
+    entry => ([
+      entry[0], 
+      `${entry[1].first_name} ${entry[1].last_name}`
+    ])
+  ));
   const [driversToRoutes, setDriversToRoutes] = useState({}); // { [route_id]: [driver_id], ... }
   // console.log(Object.values(driversToRoutes).length, Object.values(routes).length);
 

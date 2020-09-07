@@ -144,10 +144,6 @@ function DashboardPage() {
       createOrders(),
     ])
     .then((result) => {
-      // console.log("API responses:", result);
-      // createRoutes(result[1].value)
-      // .then(response => {
-        // console.log("route resp:", response);
       const data = {
         isLoading: false,
         ...result[0].value && { routes: result[0].value },
@@ -161,7 +157,6 @@ function DashboardPage() {
         constraints: testObj, // FIXME: CALL API
       };
       dispatch({ type: "load", payload: { data } });
-      // });
     });
   }, []);
 
@@ -195,20 +190,10 @@ function DashboardPage() {
         return (
           <DeliveryList
             routes={data.routes}
+            drivers={data.drivers}
+            filter={data.filter}
             selectedLocation={selectedLocation}
             setSelectedLocation={setSelectedLocation}
-            driversList={() => {
-              return (
-                Array.from(
-                  Object.entries(data.drivers), 
-                  entry => ([
-                    entry[0], 
-                    `${entry[1].first_name} ${entry[1].last_name}`
-                  ])
-                )
-              );
-            }}
-            filter={data.filter}
             dispatch={dispatch}
           />
         );
@@ -435,6 +420,7 @@ function RouteTimes(props) {
 function FilterDropdown({ data, header, ...props }) {
   const [open, setOpen] = useState(false);
   const [dataType, setDataType] = useState();
+  // const [filterItems, setFilterItems] = useState();
 
   useEffect(() => {
     let type;
@@ -454,7 +440,21 @@ function FilterDropdown({ data, header, ...props }) {
     // if (data.filter) props.dispatch({ type: "filter", payload: { filter: undefined } });
     if (document.getElementById("filter-value").value) document.getElementById("filter-value").value = "";
     setDataType(type);
+    // handleHeaderChange();
   }, [header]);
+
+  // const handleHeaderChange = () => {
+  //   let filterItems;
+  //   switch (header) {
+  //     case 0: 
+  //       filterItems = [
+  //         'Business Name'
+  //       ]; break;
+  //     // other cases
+  //     default: filterItems = []; break;
+  //   }
+  //   setFilterItems(filterItems);
+  // }
 
   const handleFilter = (option) => {
     // console.log(option);
@@ -503,6 +503,9 @@ function FilterDropdown({ data, header, ...props }) {
               {dataType && Object.keys(Object.values(dataType)[0]).map((option, index) => (
                 <button key={index} className="button is-small is-white dropdown-item" onClick={() => handleFilter(option)}>{option}</button>
               ))}
+              {/* {filterItems && filterItems.map((item, index) => (
+                <button key={index} className="button is-small is-white dropdown-item" onClick={() => handleFilter(item)}>{item}</button>
+              ))} */}
             </div>
           </div>
         </div>
