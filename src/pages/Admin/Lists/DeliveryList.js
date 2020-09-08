@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Icons from "utils/Icons/Icons";
-import { faSave } from "@fortawesome/free-solid-svg-icons";
 
 function DeliveryList({ routes, drivers, ...props }) {
   console.log("rendering deliveries..");
@@ -13,18 +12,19 @@ function DeliveryList({ routes, drivers, ...props }) {
       `${entry[1].first_name} ${entry[1].last_name}`
     ])
   ));
-  const [driversToRoutes, setDriversToRoutes] = useState({}); // { [route_id]: [driver_id], ... }
+  const [driversToRoutes, setDriversToRoutes] = useState({}); // { route_id: [driver_id, driver_name], ... }
   // console.log(Object.values(driversToRoutes).length, Object.values(routes).length);
 
   useEffect(() => {
     const routeData = Object.entries(routes);
     if (props.filter) {
       setRouteData(() => {
-        return routeData.filter(route => {
+        let filteredRouteData = routeData.filter(route => {
           // console.log(route[1][props.filter.option], props.filter.value);
           // eslint-disable-next-line
           return route[1][props.filter.option] == props.filter.value
         });
+        return filteredRouteData;
       });
     }
     else setRouteData(routeData);
@@ -58,8 +58,10 @@ function DeliveryList({ routes, drivers, ...props }) {
           id={route[0]}
           selectedLocation={props.selectedLocation}
           setSelectedLocation={props.setSelectedLocation}
+          drivers={drivers}
           driversList={driversList}
           setDriversList={setDriversList}
+          driversToRoutes={driversToRoutes}
           setDriversToRoutes={setDriversToRoutes}
           dispatch={props.dispatch}
         />
@@ -70,6 +72,16 @@ function DeliveryList({ routes, drivers, ...props }) {
 
 function RouteItem({ route, id, ...props }) {
   const [hidden, setHidden] = useState(true);
+  const [driver, setDriver] = useState(() => {
+    let driver = props.driversList.find(entry => entry[0] === route.driver_id);
+    if (driver) return driver;
+    const driver_route_id = Object.keys(props.driversToRoutes).find(route_id => route_id === id);
+    // console.log("ID", driver_route_id);
+    return (driver_route_id ? 
+      [props.driversToRoutes[driver_route_id].id, props.driversToRoutes[driver_route_id].name] : 
+      undefined
+    );
+  });
   const route_values = Object.values(route.route_data);
   // console.log(route_values);
   const route_id = Number(id.substring(id.indexOf("-") + 1, id.length));
@@ -163,7 +175,8 @@ function RouteItem({ route, id, ...props }) {
               <div style={{ width: "300%", maxWidth: "225px" }}>
                 <DriversDropdown 
                   route_id={id}
-                  driver={props.driversList.find(entry => entry[0] === route.driver_id)} 
+                  driver={driver} 
+                  setDriver={setDriver}
                   list={props.driversList} 
                   setList={props.setDriversList} 
                   setDriversToRoutes={props.setDriversToRoutes}
@@ -261,13 +274,14 @@ function RouteItem({ route, id, ...props }) {
   );
 }
 
-function DriversDropdown({ list, setList, ...props }) {
+function DriversDropdown({ driver, setDriver, list, setList, ...props }) {
   const [open, setOpen] = useState(false);
-  const [driver, setDriver] = useState(props.driver);
+  // console.log(driver);
   const route_driver_id = driver ? 
     Number(driver[0].substring(driver[0].indexOf("-") + 1, driver[0].length)) : 
     undefined;
 
+  // I WANT THIS TO RUN WHENEVER LIST IS CHANGED BY THE PARENT
   useEffect(() => {
     // if route already has a driver selected, remove the driver as an option from the dropdown
     if (driver) {
@@ -277,13 +291,13 @@ function DriversDropdown({ list, setList, ...props }) {
       props.setDriversToRoutes(prevDriversToRoutes => {
         return ({
           ...prevDriversToRoutes,
-          [props.route_id]: driver[0],
+          [props.route_id]: { id: driver[0], name: driver[1] },
         });
       });
     }
   }, []);
 
-  const handleDriverSelect = (driver_id) => {
+  const handleDriverSelect = (driver_id, driver_name) => {
     setList(prevList => {
       let newList = [...prevList].filter(entry => entry[0] !== driver_id);
       if (driver) newList.push(driver);
@@ -291,7 +305,8 @@ function DriversDropdown({ list, setList, ...props }) {
     });
     props.setDriversToRoutes(prevDriversToRoutes => {
       let newDriversToRoutes = { ...prevDriversToRoutes };
-      if (driver_id) newDriversToRoutes[props.route_id] = driver_id;
+      // checking if user selected or deselected a driver
+      if (driver_id) newDriversToRoutes[props.route_id] = { id: driver_id, name: driver_name };
       else delete newDriversToRoutes[props.route_id];
       return newDriversToRoutes;
     });
@@ -313,8 +328,9 @@ function DriversDropdown({ list, setList, ...props }) {
             onClick={() => setOpen(prevOpen => !prevOpen)} 
             aria-haspopup="true" 
             aria-controls="dropdown-menu"
+            {...driver && { title: `Driver ID: ${route_driver_id}` }}
           >
-            {driver ? (driver[1]) : ('Choose Driver')}
+            {driver ? driver[1] : 'Choose Driver'}
             <FontAwesomeIcon icon={Icons.faCaretDown} className= "ml-2" />
           </button>
         </div>
@@ -332,7 +348,8 @@ function DriversDropdown({ list, setList, ...props }) {
               <button 
                 key={index} 
                 className="button is-small is-white dropdown-item" 
-                onClick={() => handleDriverSelect(item[0])}
+                onClick={() => handleDriverSelect(item[0], item[1])}
+                title={`Driver ID: ${Number(item[0].substring(item[0].indexOf("-") + 1, item[0].length))}`}
               >
                 {item[1]}
               </button>

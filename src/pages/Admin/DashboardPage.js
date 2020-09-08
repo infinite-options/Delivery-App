@@ -43,6 +43,11 @@ const initState = {
 function reducer(state, action) {
   switch(action.type) {
     case 'load':
+      for (let route of Object.values(action.payload.data.routes)) {
+        route["Business Name"] = action.payload.data.businesses[route.business_id] ? action.payload.data.businesses[route.business_id].name : null;
+        route["Driver Name"] = action.payload.data.drivers[route.driver_id] ? action.payload.data.drivers[route.driver_id].first_name + ' ' + action.payload.data.drivers[route.driver_id].last_name : null;
+      }
+      // more loops needed for future situations where object x requires object y's data
       return {
         ...state, 
         ...action.payload.data 
@@ -76,7 +81,7 @@ function reducer(state, action) {
       let newRoutes = { ...state.routes };
       const routeDrivers = Object.entries(action.payload.route_drivers);
       routeDrivers.forEach(entry => {
-        newRoutes[entry[0]] = { ...state.routes[entry[0]], driver_id: entry[1] }
+        newRoutes[entry[0]] = { ...state.routes[entry[0]], driver_id: entry[1].id, "Driver Name": entry[1].name }
       });
       console.log(newRoutes);
       return {
@@ -108,21 +113,25 @@ function DashboardPage() {
   // possibly use this with useContext, figure out how to reduce rerenders upon data change
   const [data, dispatch] = useReducer(reducer, initState);
   console.log(data);
-  // const [times, setTimes] = useState([
-  //   { value: "00 am - 00 pm" },
-  //   { value: "01 am - 01 pm" },
-  //   { value: "02 am - 02 pm" },
-  //   { value: "03 am - 03 pm" },
-  //   { value: "04 am - 04 pm" },
-  // ]); // useState(GET_ROUTE_TIMES)
-  // NOTE: create dropdown for route dates & for route times
-  const times = [
-    { value: data.routes['920-000001'] ? data.routes['920-000001'].date : "" },
+  const [times, setTimes] = useState([
+    { value: "00 am - 00 pm" },
     { value: "01 am - 01 pm" },
     { value: "02 am - 02 pm" },
     { value: "03 am - 03 pm" },
     { value: "04 am - 04 pm" },
-  ];
+  ]); // useState(GET_ROUTE_TIMES)
+  const [dates, setDates] = useState([]);
+  
+  // useEffect(() => {
+  //   if (Object.values(data.routes).length) setDates(() => {
+  //     let datesArray = [];
+  //     for (let route of Object.values(data.routes)) {
+  //       if (!datesArray.includes(route.date)) datesArray.push(route.date);
+  //     }
+  //     return datesArray;
+  //   });
+  // }, [data.routes])
+
   const [timeSlot, setTimeSlot] = useState(Number(window.localStorage.getItem("timeSlot")) || 0); 
   const [headerTab, setHeaderTab] = useState(Number(window.localStorage.getItem("headerTab")) || 0); 
   const [selectedLocation, setSelectedLocation] = useState({});
@@ -290,6 +299,7 @@ function DashboardPage() {
               <div className="column is-half" style={{ padding: "0" }}>
                 <RouteTimes
                   times={times}
+                  dates={dates}
                   timeSlot={timeSlot}
                   setTimeSlot={setTimeSlot}
                 />
@@ -391,28 +401,74 @@ function Header(props) {
 
 function RouteTimes(props) {
   console.log("rendering times..");
+
+  const [dateOpen, setDateOpen] = useState(false);
+  const [timeOpen, setTimeOpen] = useState(false);
+
   const handleTimeChange = (index) => {
     // console.log(index);
     if (props.timeSlot !== index) props.setTimeSlot(index);
+    setTimeOpen(false);
   };
 
+  // return (
+  //   <div className="columns routes" style={{ margin: "0" }}>
+  //     {props.times.map((time, index) => (
+  //       <div
+  //         key={index}
+  //         className="column"
+  //         style={{ maxWidth: `${100 / props.times.length}%` }}
+  //       >
+  //         <button
+  //           className="button is-fullwidth is-small"
+  //           onClick={() => handleTimeChange(index)}
+  //           style={{ backgroundColor: props.timeSlot === index && "yellow" }}
+  //         >
+  //           {time.value}
+  //         </button>
+  //       </div>
+  //     ))}
+  //   </div>
+  // );
+
   return (
-    <div className="columns routes" style={{ margin: "0" }}>
-      {props.times.map((time, index) => (
-        <div
-          key={index}
-          className="column"
-          style={{ maxWidth: `${100 / props.times.length}%` }}
-        >
-          <button
-            className="button is-fullwidth is-small"
-            onClick={() => handleTimeChange(index)}
-            style={{ backgroundColor: props.timeSlot === index && "yellow" }}
-          >
-            {time.value}
-          </button>
+    <div className="columns routes" style={{ margin: 0 }}>
+      <div className="column">
+        {/* <span style={{ verticalAlign: "middle" }}>Selected Date:</span> */}
+        <div className={"dropdown ml-2" + (dateOpen ? " is-active" : "")}>
+          <div className="dropdown-trigger">
+            <button className="button is-small is-fullwidth" onClick={() => setDateOpen(prevOpen => !prevOpen)} aria-haspopup="true" aria-controls="dropdown-menu">
+              Date: {props.dates.length ? props.dates[0] : "NULL"}
+              <FontAwesomeIcon icon={Icons.faCaretDown} className= "ml-2" />
+            </button>
+          </div>
+          <div className="dropdown-menu" style={{ paddingTop: 0 }} id="dropdown-menu" role="menu">
+            <div className="dropdown-content">
+              {props.dates.map((date, index) => (
+                <button key={index} className="button is-small is-white dropdown-item">{date}</button>
+              ))}
+            </div>
+          </div>
         </div>
-      ))}
+      </div>
+      <div className="column">
+        {/* <span style={{ verticalAlign: "middle" }}>Selected Time:</span> */}
+        <div className={"dropdown ml-2" + (timeOpen ? " is-active" : "")}>
+          <div className="dropdown-trigger">
+            <button className="button is-small" onClick={() => setTimeOpen(prevOpen => !prevOpen)} aria-haspopup="true" aria-controls="dropdown-menu">
+              Time: {props.times[props.timeSlot].value}
+              <FontAwesomeIcon icon={Icons.faCaretDown} className= "ml-2" />
+            </button>
+          </div>
+          <div className="dropdown-menu" style={{ paddingTop: 0 }} id="dropdown-menu" role="menu">
+            <div className="dropdown-content">
+              {props.times.map((time, index) => (
+                <button key={index} className="button is-small is-white dropdown-item" onClick={() => handleTimeChange(index)}>{time.value}</button>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
@@ -420,20 +476,30 @@ function RouteTimes(props) {
 function FilterDropdown({ data, header, ...props }) {
   const [open, setOpen] = useState(false);
   const [dataType, setDataType] = useState();
-  // const [filterItems, setFilterItems] = useState();
+  const [filterItems, setFilterItems] = useState([]);
 
   useEffect(() => {
     let type;
     switch(header) {
-      case 0: type = data.routes; break;
-      case 1: type = data.drivers; break;
-      case 2: type = data.businesses; break;
-      case 3: type = data.customers; break;
-      case 4: type = data.vehicles; break;
-      case 5: type = data.orders; break;
-      case 6: type = data.payments; break;
-      case 7: type = data.coupons; break;
-      case 8: type = data.constraints; break;
+      case 0: 
+        setFilterItems(['Business Name'/*, 'Driver Name'*/]); // add other filter values for each header
+        type = data.routes; break;
+      case 1: 
+        type = data.drivers; break;
+      case 2: 
+        type = data.businesses; break;
+      case 3: 
+        type = data.customers; break;
+      case 4: 
+        type = data.vehicles; break;
+      case 5: 
+        type = data.orders; break;
+      case 6: 
+        type = data.payments; break;
+      case 7: 
+        type = data.coupons; break;
+      case 8: 
+        type = data.constraints; break;
       default: break;
     }
     // console.log(type);
@@ -498,10 +564,14 @@ function FilterDropdown({ data, header, ...props }) {
           </div>
           <div className="dropdown-menu" style={{ paddingTop: 0 }} id="dropdown-menu" role="menu">
             <div className="dropdown-content">
-              <button className="button is-small is-white dropdown-item" onClick={() => handleFilter()}>NONE</button>
+              <button className="button is-small is-white dropdown-item" disabled={!data.filter} onClick={() => handleFilter()}>NONE</button>
               <hr className="dropdown-divider" />
               {dataType && Object.keys(Object.values(dataType)[0]).map((option, index) => (
-                <button key={index} className="button is-small is-white dropdown-item" onClick={() => handleFilter(option)}>{option}</button>
+                <React.Fragment key={index}>
+                  {filterItems.includes(option) && (
+                    <button className="button is-small is-white dropdown-item" disabled={data.filter && data.filter.option === option} onClick={() => handleFilter(option)}>{option}</button>
+                  )}
+                </React.Fragment>
               ))}
               {/* {filterItems && filterItems.map((item, index) => (
                 <button key={index} className="button is-small is-white dropdown-item" onClick={() => handleFilter(item)}>{item}</button>
