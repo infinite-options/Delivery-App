@@ -27,38 +27,44 @@ function BusinessList({ businesses, ...props }) {
     else setBusinessData(businessData);
   }, [businesses, props.filter]);
   
-  const editBusiness = (action, id) => {
+  const editBusiness = (action, id, data) => {
     console.log("adding business.........");
     if (action === 'edit') setDataEdit(id);
     else if (action === 'add') setDataEdit('add');
     else {
-      if (action === 'save') { console.log("SAVED"); }
+      if (action === 'save') { console.log("SAVED:", data); }
       setDataEdit();
     }
   };
 
   return (
     <React.Fragment>
-      <button
-        className="button mx-1" 
-        style={{ width: "24px", height: "24px", marginBottom: "1.5rem" }}
-        onClick={() => editBusiness(dataEdit !== 'add' ? 'add' : 'cancel')}
-        // disabled={dataEdit && dataEdit !== 'add'}
-      >
-        <FontAwesomeIcon 
-          icon={Icons[dataEdit !== 'add' ? 'faPlus' : 'faTimes']} 
-          size="xs" 
-          color={dataEdit !== 'add' ? 'blue' : 'red'} 
-        />
-      </button>
+      {dataEdit !== 'add' && (
+        <button
+          className="button is-small mx-1 is-success is-outlined is-rounded" 
+          style={{ marginBottom: "1rem" }}
+          onClick={() => editBusiness('add')}
+        >
+          <FontAwesomeIcon icon={Icons.faPlus} className="mr-2" />
+          Add Business
+        </button>
+      )}
       {dataEdit === 'add' && (
         <React.Fragment>
           <button
-            className="button mx-1" 
-            style={{ width: "24px", height: "24px", marginBottom: "1.5rem" }}
-            onClick={() => editBusiness('save')}
+            className="button is-small mx-1 is-danger is-outlined is-rounded" 
+            style={{ marginBottom: "1rem" }}
+            onClick={() => editBusiness('cancel')}
           >
-            <FontAwesomeIcon icon={Icons.faCheck} size="xs" color="green" />
+            <FontAwesomeIcon icon={Icons.faTimes} className="mr-2" />
+            Cancel
+          </button>
+          <button
+            className="button is-small mx-1 is-success is-outlined is-rounded" 
+            onClick={() => editBusiness('save', undefined, {})}
+          >
+            <FontAwesomeIcon icon={Icons.faCheck} className="mr-2" />
+            Save
           </button>
           <EditItem business={{}} id={dataEdit} handleEdit={setDataEdit} />
         </React.Fragment>
@@ -335,7 +341,7 @@ function EditItem({ business, id, ...props }) {
                 <input 
                   className="input is-super-small ml-1" 
                   style={{ width: "auto" }} 
-                  value={businessData.name} 
+                  value={businessData.name || ''} 
                   onChange={(e) => handleChange(e, 'name')}
                 />
               </div>
@@ -348,7 +354,7 @@ function EditItem({ business, id, ...props }) {
                 <React.Fragment>
                   <button
                     className="button is-super-small is-pulled-right"
-                    onClick={() => props.handleEdit('save', exists ? id : undefined)}
+                    onClick={() => props.handleEdit('save', id, businessData)}
                   >
                     <FontAwesomeIcon
                       icon={Icons.faCheck}
@@ -356,7 +362,7 @@ function EditItem({ business, id, ...props }) {
                   </button>
                   <button
                     className="button is-super-small is-pulled-right mr-1"
-                    onClick={() => props.handleEdit('cancel', exists ? id : undefined)}
+                    onClick={() => props.handleEdit('cancel')}
                   >
                     <FontAwesomeIcon
                       icon={Icons.faTimes}
