@@ -47,7 +47,7 @@ function reducer(state, action) {
 function DeliveryView(props) {
   console.log("rendering view..");
 
-  const times = props.times && Object.keys(props.times).map((index) => [props.times[index].value]);
+  const times = props.times && Object.keys(props.times).map((index) => [props.times[index]]);
   const columns = props.type === "day" ? times : weekdays;
 
   // reason I call this inside of the component instead of outside is because

@@ -30,6 +30,8 @@ const initState = {
   isLoading: true,
   filter: undefined, // { type: "routes", option: "business_id", value: "200-00001" }
   routes: {},
+  routes_dates: [],
+  routes_times: [],
   drivers: {},
   businesses: {},
   customers: {},
@@ -43,14 +45,23 @@ const initState = {
 function reducer(state, action) {
   switch(action.type) {
     case 'load':
+      let routes_dates = [];
+      let routes_times = ['1', '2', '3', '4', '5']; // NOTE: TEMP
+
       for (let route of Object.values(action.payload.data.routes)) {
         route["Business Name"] = action.payload.data.businesses[route.business_id] ? action.payload.data.businesses[route.business_id].name : null;
         route["Driver Name"] = action.payload.data.drivers[route.driver_id] ? action.payload.data.drivers[route.driver_id].first_name + ' ' + action.payload.data.drivers[route.driver_id].last_name : null;
+        
+        if (!routes_dates.includes(route.date)) routes_dates.push(route.date);
+        // SAME THING BUT FOR TIMES
       }
+
       // more loops needed for future situations where object x requires object y's data
       return {
         ...state, 
-        ...action.payload.data 
+        ...action.payload.data,
+        routes_dates,
+        routes_times,
       };
     case 'filter':
       return {
@@ -113,14 +124,14 @@ function DashboardPage() {
   // possibly use this with useContext, figure out how to reduce rerenders upon data change
   const [data, dispatch] = useReducer(reducer, initState);
   console.log(data);
-  const [times, setTimes] = useState([
-    { value: "00 am - 00 pm" },
-    { value: "01 am - 01 pm" },
-    { value: "02 am - 02 pm" },
-    { value: "03 am - 03 pm" },
-    { value: "04 am - 04 pm" },
-  ]); // useState(GET_ROUTE_TIMES)
-  const [dates, setDates] = useState([]);
+  // const [times, setTimes] = useState([
+  //   { value: "00 am - 00 pm" },
+  //   { value: "01 am - 01 pm" },
+  //   { value: "02 am - 02 pm" },
+  //   { value: "03 am - 03 pm" },
+  //   { value: "04 am - 04 pm" },
+  // ]); // useState(GET_ROUTE_TIMES)
+  // const [dates, setDates] = useState([]);
   
   // useEffect(() => {
   //   if (Object.values(data.routes).length) setDates(() => {
@@ -133,6 +144,7 @@ function DashboardPage() {
   // }, [data.routes])
 
   const [timeSlot, setTimeSlot] = useState(Number(window.localStorage.getItem("timeSlot")) || 0); 
+  const [dateSlot, setDateSlot] = useState(Number(window.localStorage.getItem("dateSlot")) || 0);
   const [headerTab, setHeaderTab] = useState(Number(window.localStorage.getItem("headerTab")) || 0); 
   const [selectedLocation, setSelectedLocation] = useState({});
 
@@ -143,6 +155,10 @@ function DashboardPage() {
   useEffect(() => {
     window.localStorage.setItem("timeSlot", timeSlot);
   }, [timeSlot]);
+
+  useEffect(() => {
+    window.localStorage.setItem("dateSlot", dateSlot);
+  }, [dateSlot]);
 
   useEffect(() => {
     Promise.allSettled([
@@ -191,8 +207,19 @@ function DashboardPage() {
   };
 
   const handleHeaderTab = () => {
-    // might as well also handle time slots here!
-    if (Math.floor(timeSlot) !== timeSlot || timeSlot < 0 || timeSlot > times.length - 1) setTimeSlot(0);
+    // might as well also handle time/date slots here!
+    if (timeSlot && (
+        Math.floor(timeSlot) !== timeSlot || 
+        timeSlot < 0 || 
+        timeSlot > data.routes_times.length - 1)) {
+      setTimeSlot(0);
+    }
+    if (dateSlot && (
+      Math.floor(dateSlot) !== dateSlot || 
+      dateSlot < 0 || 
+      dateSlot > data.routes_dates.length - 1)) {
+    setDateSlot(0);
+  }
 
     switch (headerTab) {
       case 0:
@@ -279,7 +306,7 @@ function DashboardPage() {
       {/* Views */}
       <DeliveryView
         type="day"
-        times={times}
+        times={data.routes_times}
         timeSlot={timeSlot}
         visible={onView === "day"}
         onClick={() => handleView("day")}
@@ -298,10 +325,12 @@ function DashboardPage() {
             {headerTab < 4 && (
               <div className="column is-half" style={{ padding: "0" }}>
                 <RouteTimes
-                  times={times}
-                  dates={dates}
+                  times={data.routes_times}
+                  dates={data.routes_dates}
                   timeSlot={timeSlot}
                   setTimeSlot={setTimeSlot}
+                  dateSlot={dateSlot}
+                  setDateSlot={setDateSlot}
                 />
                 <div className="sticky">
                   <LeafletMap
@@ -402,50 +431,35 @@ function Header(props) {
 function RouteTimes(props) {
   console.log("rendering times..");
 
-  const [dateOpen, setDateOpen] = useState(false);
-  const [timeOpen, setTimeOpen] = useState(false);
+  const [open, setOpen] = useState({ date: false, time: false });
 
   const handleTimeChange = (index) => {
     // console.log(index);
     if (props.timeSlot !== index) props.setTimeSlot(index);
-    setTimeOpen(false);
+    setOpen(prevOpen => ({ ...prevOpen, time: false }));
   };
 
-  // return (
-  //   <div className="columns routes" style={{ margin: "0" }}>
-  //     {props.times.map((time, index) => (
-  //       <div
-  //         key={index}
-  //         className="column"
-  //         style={{ maxWidth: `${100 / props.times.length}%` }}
-  //       >
-  //         <button
-  //           className="button is-fullwidth is-small"
-  //           onClick={() => handleTimeChange(index)}
-  //           style={{ backgroundColor: props.timeSlot === index && "yellow" }}
-  //         >
-  //           {time.value}
-  //         </button>
-  //       </div>
-  //     ))}
-  //   </div>
-  // );
+  const handleDateChange = (index) => {
+    // console.log(index);
+    if (props.dateSlot !== index) props.setDateSlot(index);
+    setOpen(prevOpen => ({ ...prevOpen, date: false }));
+  };
 
   return (
     <div className="columns routes" style={{ margin: 0 }}>
       <div className="column">
         {/* <span style={{ verticalAlign: "middle" }}>Selected Date:</span> */}
-        <div className={"dropdown ml-2" + (dateOpen ? " is-active" : "")}>
+        <div className={"dropdown ml-2" + (open.date ? " is-active" : "")}>
           <div className="dropdown-trigger">
-            <button className="button is-small is-fullwidth" onClick={() => setDateOpen(prevOpen => !prevOpen)} aria-haspopup="true" aria-controls="dropdown-menu">
-              Date: {props.dates.length ? props.dates[0] : "NULL"}
+            <button className="button is-small is-fullwidth" onClick={() => setOpen(prevOpen => ({ ...prevOpen, date: !prevOpen.date }))} aria-haspopup="true" aria-controls="dropdown-menu">
+              Date: {props.dates.length ? props.dates[0] : 'NONE'}
               <FontAwesomeIcon icon={Icons.faCaretDown} className= "ml-2" />
             </button>
           </div>
           <div className="dropdown-menu" style={{ paddingTop: 0 }} id="dropdown-menu" role="menu">
             <div className="dropdown-content">
               {props.dates.map((date, index) => (
-                <button key={index} className="button is-small is-white dropdown-item">{date}</button>
+                <button key={index} className="button is-small is-white dropdown-item" onClick={() => handleDateChange(index)}>{date}</button>
               ))}
             </div>
           </div>
@@ -453,17 +467,17 @@ function RouteTimes(props) {
       </div>
       <div className="column">
         {/* <span style={{ verticalAlign: "middle" }}>Selected Time:</span> */}
-        <div className={"dropdown ml-2" + (timeOpen ? " is-active" : "")}>
+        <div className={"dropdown ml-2" + (open.time ? " is-active" : "")}>
           <div className="dropdown-trigger">
-            <button className="button is-small" onClick={() => setTimeOpen(prevOpen => !prevOpen)} aria-haspopup="true" aria-controls="dropdown-menu">
-              Time: {props.times[props.timeSlot].value}
+            <button className="button is-small" onClick={() => setOpen(prevOpen => ({ ...prevOpen, time: !prevOpen.time }))} aria-haspopup="true" aria-controls="dropdown-menu">
+              Time: {props.times.length ? props.times[props.timeSlot]: 'NONE'}
               <FontAwesomeIcon icon={Icons.faCaretDown} className= "ml-2" />
             </button>
           </div>
           <div className="dropdown-menu" style={{ paddingTop: 0 }} id="dropdown-menu" role="menu">
             <div className="dropdown-content">
               {props.times.map((time, index) => (
-                <button key={index} className="button is-small is-white dropdown-item" onClick={() => handleTimeChange(index)}>{time.value}</button>
+                <button key={index} className="button is-small is-white dropdown-item" onClick={() => handleTimeChange(index)}>{time}</button>
               ))}
             </div>
           </div>
