@@ -74,12 +74,14 @@ function DriverList({ drivers, routes, ...props }) {
               id={driver[0]}
               routes={routes}
               handleEdit={editDriver}
+              dispatch={props.dispatch}
             />
           ) : (
             <DriverEdit 
               driver={driver[1]} 
               id={driver[0]} 
               handleEdit={editDriver} 
+              dispatch={props.dispatch}
             />
           )}
         </React.Fragment>
@@ -341,7 +343,7 @@ function DriverEdit({ driver, id, ...props }) {
 
   return (
     <React.Fragment>
-      {!Object.values(driver).length && (
+      {!exists && (
         <React.Fragment>
           <button
             className="button is-small mx-1 is-danger is-outlined is-rounded" 
@@ -450,26 +452,21 @@ function DriverEdit({ driver, id, ...props }) {
                     </div>
                   </div>
                   <div className="level">
-                    <div className="level-item" style={{ maxWidth: "35%" }}>
                     <EditItemField 
-                      className="mr-1" 
                       type={'drivers_license'} value={driverData.drivers_license} 
+                      className="level-item mr-1" style={{ maxWidth: "35%" }}
                       handleChange={handleChange} 
                     />
-                    </div>
-                    <div className="level-item" style={{ maxWidth: "36%" }}>
                     <EditItemField 
-                      className="mr-1" 
                       type={'drivers_license_exp'} value={driverData.drivers_license_exp} 
+                      className="level-item mr-1" style={{ maxWidth: "36%" }}
                       handleChange={handleChange} 
                     />
-                    </div>
-                    <div className="level-item" style={{ maxWidth: "29%" }}>
                     <EditItemField 
                       type={'vehicle_types'} value={driverData.vehicle_types} 
+                      className="level-item" style={{ maxWidth: "29%" }}
                       handleChange={handleChange} 
                     />
-                    </div>
                   </div>
                 </div>
               </td>
@@ -535,7 +532,7 @@ function DriverEdit({ driver, id, ...props }) {
             </tr>
             <FillerRow numColumns={4} />
             {/* {showMore && (  */}
-              <React.Fragment>
+              {/* <React.Fragment> */}
                 <tr>
                   <td style={{ textAlign: "left" }}>
                     Address:<br />
@@ -686,7 +683,7 @@ function DriverEdit({ driver, id, ...props }) {
                     />
                   </td>
                 </tr>
-              </React.Fragment>
+              {/* </React.Fragment> */}
             {/* )} */}
           </tbody>
         </table>

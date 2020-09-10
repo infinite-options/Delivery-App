@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Icons from "utils/Icons/Icons";
 import FillerRow from "utils/Components/FillerRow";
+import EditItemField from "utils/Components/EditItemField";
 import moment from "moment";
 // import axios from "axios";
 
@@ -32,7 +33,19 @@ function BusinessList({ businesses, ...props }) {
     if (action === 'edit') setDataEdit(id);
     else if (action === 'add') setDataEdit('add');
     else {
-      if (action === 'save') { console.log("SAVED:", data); }
+      if (action === 'save') { 
+        console.log("SAVED:", data);
+        // driver's table currently does not have all the needed data, 
+        // sending this temporary object for now
+        const dataForNow = {
+          // Add keyword items
+        }; 
+        // axios.post(ENDPOINT_URL, dataForNow)
+        // .then(response => {
+        //   const dataResponse = response.data.result.result;
+        //   props.dispatch({ type: 'update-list', payload: { dataType: 'businesses', value: dataResponse } });
+        // });
+      }
       setDataEdit();
     }
   };
@@ -50,24 +63,7 @@ function BusinessList({ businesses, ...props }) {
         </button>
       )}
       {dataEdit === 'add' && (
-        <React.Fragment>
-          <button
-            className="button is-small mx-1 is-danger is-outlined is-rounded" 
-            style={{ marginBottom: "1rem" }}
-            onClick={() => editBusiness('cancel')}
-          >
-            <FontAwesomeIcon icon={Icons.faTimes} className="mr-2" />
-            Cancel
-          </button>
-          <button
-            className="button is-small mx-1 is-success is-outlined is-rounded" 
-            onClick={() => editBusiness('save', undefined, {})}
-          >
-            <FontAwesomeIcon icon={Icons.faCheck} className="mr-2" />
-            Save
-          </button>
-          <EditItem business={{}} id={dataEdit} handleEdit={setDataEdit} />
-        </React.Fragment>
+        <BusinessEdit business={{}} id={dataEdit} handleEdit={editBusiness} />
       )}
       {businessData.map((business, index) => (
         <React.Fragment key={index}>
@@ -80,7 +76,7 @@ function BusinessList({ businesses, ...props }) {
               handleEdit={editBusiness}
             />
           ) : (
-            <EditItem 
+            <BusinessEdit 
               business={business[1]} 
               id={business[0]} 
               handleEdit={editBusiness} 
@@ -92,6 +88,28 @@ function BusinessList({ businesses, ...props }) {
   );
 }
 
+const displayDayHours = (type) => {
+  if (type) {const days = JSON.parse(type);
+  // console.log(days);
+  return (
+    <React.Fragment>
+      {weekdays.map((day, index) => (
+        <p key={index}>{day}: {days[day]}</p>
+      ))}
+    </React.Fragment>
+  );}
+};
+// console.log(weekdays);
+
+const handleDateTime = (input) => {
+  if (input) {
+    const split = input.split(/-|T/);
+    const date_time = `${split[0]} ${moment.monthsShort(Number(split[1]))} ${split[2]}, ${split[3]}`;
+    // for (let section of split) date_time += `${section} `;
+    return date_time;
+  }
+};
+
 function BusinessItem({ business, id, ...props }) {
   const [hidden, setHidden] = useState(true);
   const [showMore, setShowMore] = useState(false);
@@ -101,28 +119,6 @@ function BusinessItem({ business, id, ...props }) {
   const address = `${business.street}${(business.unit ? ` ${business.unit}` : "")} 
                    ${business.city} ${business.state} ${business.zip}`;
   const business_id = Number(id.substring(id.indexOf("-") + 1, id.length));
-  
-  const displayDayHours = (type) => {
-    if (type) {const days = JSON.parse(type);
-    // console.log(days);
-    return (
-      <React.Fragment>
-        {weekdays.map((day, index) => (
-          <p key={index}>{day}: {days[day]}</p>
-        ))}
-      </React.Fragment>
-    );}
-  };
-  // console.log(weekdays);
-
-  const handleDateTime = (input) => {
-    if (input) {
-      const split = input.split(/-|T/);
-      const date_time = `${split[0]} ${moment.monthsShort(Number(split[1]))} ${split[2]}, ${split[3]}`;
-      // for (let section of split) date_time += `${section} `;
-      return date_time;
-    }
-  };
 
   const sendBusinessText = (businessNumber) => {
     console.log(`Sending Business ${businessNumber} a text..`);
@@ -310,7 +306,7 @@ function BusinessItem({ business, id, ...props }) {
   );
 }
 
-function EditItem({ business, id, ...props }) {
+function BusinessEdit({ business, id, ...props }) {
   const [businessData, setBusinessData] = useState(business);
   const exists = Boolean(Object.values(business).length);
 
@@ -323,58 +319,313 @@ function EditItem({ business, id, ...props }) {
   };
 
   return (
-    <div className="box list-item">
-      <table
-        className="table is-hoverable is-fullwidth is-size-7"
-        style={{ backgroundColor: "#f8f7fa" }}
-      >
-        <thead>
-          <tr className="list-item-head">
-            <th style={{ width: "20%" }}>
-              <div style={{ width: "300%", maxWidth: "325px" }}>
-                <span>
-                  {exists ? 
-                    `Business ${Number(id.substring(id.indexOf("-") + 1, id.length))}: ` : 
-                    'New Business: '
-                  }
-                </span>
-                <input 
-                  className="input is-super-small ml-1" 
-                  style={{ width: "auto" }} 
-                  value={businessData.name || ''} 
-                  onChange={(e) => handleChange(e, 'name')}
+    <React.Fragment>
+      {!exists && (
+        <React.Fragment>
+          <button
+            className="button is-small mx-1 is-danger is-outlined is-rounded" 
+            style={{ marginBottom: "1rem" }}
+            onClick={() => props.handleEdit('cancel')}
+          >
+            <FontAwesomeIcon icon={Icons.faTimes} className="mr-2" />
+            Cancel
+          </button>
+          <button
+            className="button is-small mx-1 is-success is-outlined is-rounded" 
+            onClick={() => props.handleEdit('save', undefined, businessData)}
+          >
+            <FontAwesomeIcon icon={Icons.faCheck} className="mr-2" />
+            Save
+          </button>
+        </React.Fragment>
+      )}
+      <div className="box list-item">
+        <table
+          className="table is-hoverable is-fullwidth is-size-7"
+          style={{ backgroundColor: "#f8f7fa" }}
+        >
+          <thead>
+            <tr className="list-item-head">
+              <th style={{ width: "20%" }}>
+                <div style={{ width: "300%", maxWidth: "325px" }}>
+                  <span>
+                    {exists ? 
+                      `Business ${Number(id.substring(id.indexOf("-") + 1, id.length))}: ` : 
+                      'New Business: '
+                    }
+                  </span>
+                  <EditItemField 
+                    type={'name'} value={businessData.name}
+                    className="ml-1" style={{ width: "50%" }}
+                    handleChange={handleChange}
+                  />
+                </div>
+              </th>
+              <th style={{ width: "20%" }} />
+              <th style={{ width: "20%" }} />
+              <th style={{ width: "20%" }} />
+              <th style={{ width: "20%" }}>
+                {exists && (
+                  <React.Fragment>
+                    <button
+                      className="button is-super-small is-pulled-right"
+                      onClick={() => props.handleEdit('save', id, businessData)}
+                    >
+                      <FontAwesomeIcon
+                        icon={Icons.faCheck}
+                      />
+                    </button>
+                    <button
+                      className="button is-super-small is-pulled-right mr-1"
+                      onClick={() => props.handleEdit('cancel')}
+                    >
+                      <FontAwesomeIcon
+                        icon={Icons.faTimes}
+                      />
+                    </button>
+                  </React.Fragment>
+                )}
+              </th>
+            </tr>
+          </thead>
+          <tbody className="is-bordered has-text-centered">
+            <tr>
+              <td>
+                Business Image<br />
+                <EditItemField 
+                  type={'image'} value={businessData.image} 
+                  placeholder='Image URL'
+                  handleChange={handleChange} 
                 />
-              </div>
-            </th>
-            <th style={{ width: "20%" }} />
-            <th style={{ width: "20%" }} />
-            <th style={{ width: "20%" }} />
-            <th style={{ width: "20%" }}>
-              {exists && (
-                <React.Fragment>
-                  <button
-                    className="button is-super-small is-pulled-right"
-                    onClick={() => props.handleEdit('save', id, businessData)}
-                  >
-                    <FontAwesomeIcon
-                      icon={Icons.faCheck}
+              </td>
+              <td>
+                Registered At<br />
+                <EditItemField 
+                  type={'registered'} value={businessData.registered} 
+                  handleChange={handleChange} 
+                />
+              </td>
+              <td>
+                Type<br />
+                <EditItemField 
+                  type={'type'} value={businessData.type} 
+                  handleChange={handleChange} 
+                />
+              </td>
+              <td>
+                <div style={{ width: "215%" }}>
+                  Description<br />
+                  <EditItemField 
+                    type={'description'} value={businessData.description} 
+                    handleChange={handleChange} 
+                    textarea
+                  />
+                </div>
+              </td>
+              <td style={{ borderLeft: "hidden" }} />
+            </tr>
+            <tr>
+              <td>
+                <div style={{ width: "215%" }}>
+                  Address<br />
+                  <div style={{ display: "flex", flexWrap: "wrap" }}>
+                    <EditItemField 
+                      type={'street'} value={businessData.street}
+                      className="mr-1 mb-1" style={{ width: "65%" }} 
+                      placeholder='Street'
+                      handleChange={handleChange} 
                     />
-                  </button>
-                  <button
-                    className="button is-super-small is-pulled-right mr-1"
-                    onClick={() => props.handleEdit('cancel')}
-                  >
-                    <FontAwesomeIcon
-                      icon={Icons.faTimes}
+                    <EditItemField 
+                      type={'unit'} value={businessData.unit} 
+                      className="mr-1 mb-1" style={{ width: "30%" }} 
+                      placeholder='Unit (optional)'
+                      handleChange={handleChange} 
                     />
-                  </button>
-                </React.Fragment>
-              )}
-            </th>
-          </tr>
-        </thead>
-      </table>
-    </div>
+                    <EditItemField 
+                      type={'city'} value={businessData.city} 
+                      className="mr-1 mb-1" style={{ width: "43.5%" }} 
+                      placeholder='City'
+                      handleChange={handleChange} 
+                    />
+                    <EditItemField 
+                      type={'state'} value={businessData.state} 
+                      className="mr-1 mb-1" style={{ width: "20%" }} 
+                      placeholder='State'
+                      handleChange={handleChange} 
+                    />
+                    <EditItemField 
+                      type={'zip'} value={businessData.zip} 
+                      style={{ width: "30.25%" }} 
+                      placeholder='ZIP Code'
+                      handleChange={handleChange} 
+                    />
+                  </div>
+                </div>
+              </td>
+              <td style={{ borderLeft: "hidden" }} />
+              <td>
+                Business Hours<br />{/*displayDayHours(business.hours)*/}
+                <EditItemField 
+                  type={'hours'} value={businessData.hours} 
+                  handleChange={handleChange} 
+                />
+              </td>
+              <td>
+                Delivery Hours<br />{/*displayDayHours(business.delivery_hours)*/}
+                <EditItemField 
+                  type={'delivery_hours'} value={businessData.delivery_hours} 
+                  handleChange={handleChange} 
+                />
+              </td>
+              <td>
+                Accepting Hours<br />{/*displayDayHours(business.accepting_hours)*/}
+                <EditItemField 
+                  type={'accepting_hours'} value={businessData.accepting_hours} 
+                  handleChange={handleChange} 
+                />
+              </td>
+            </tr>
+            <tr>
+              <td>
+                Contact Person<br />
+                <div className="level">
+                  <EditItemField 
+                    type={'contact_first_name'} value={businessData.contact_first_name} 
+                    className="level-item mr-1" style={{ maxWidth: "65%" }}
+                    placeholder='First &amp; Middle'
+                    handleChange={handleChange} 
+                  />
+                  <EditItemField 
+                    type={'contact_last_name'} value={businessData.contact_last_name} 
+                    className="level-item" style={{ maxWidth: "30%" }}
+                    placeholder='Last'
+                    handleChange={handleChange} 
+                  />
+                </div>
+              </td>
+              <td>
+                Phone #1:
+                <EditItemField 
+                  type={'phone'} value={businessData.phone} 
+                  className="ml-1 mb-1" style={{ maxWidth: "60%" }}
+                  handleChange={handleChange} 
+                />
+                <br />
+                Phone #2: 
+                <EditItemField 
+                  type={'phone2'} value={businessData.phone2} 
+                  className="ml-1" style={{ maxWidth: "60%" }}
+                  handleChange={handleChange} 
+                />
+              </td>
+              <td>
+                Email<br />
+                <EditItemField 
+                  type={'email'} value={businessData.email} 
+                  handleChange={handleChange} 
+                />
+              </td>
+              <td>
+                Notification Approval<br />
+                <EditItemField 
+                  type={'notification_approval'} value={businessData.notification_approval} 
+                  handleChange={handleChange} 
+                />
+              </td>
+              <td>
+                Notification Device<br />
+                <EditItemField 
+                  type={'notification_device_id'} value={businessData.notification_device_id} 
+                  handleChange={handleChange} 
+                />
+              </td>
+            </tr>
+            <FillerRow numColumns={5} />
+            {/* {showMore && (
+              <React.Fragment> */}
+                <tr>
+                  <td>
+                    Business License #<br />{business.license}
+                    <EditItemField 
+                      type={'license'} value={businessData.license} 
+                      handleChange={handleChange} 
+                    />
+                  </td>
+                  <td>
+                    Business License Expiration<br />
+                  </td>
+                  <td>
+                    Business Password<br />
+                    <EditItemField 
+                      type={'password'} value={businessData.password} 
+                      handleChange={handleChange} 
+                      textarea
+                    />
+                  </td>
+                  <td></td>
+                  <td>
+                    Available Zones<br />
+                    <EditItemField 
+                      type={'available_zones'} value={businessData.available_zones} 
+                      handleChange={handleChange} 
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    EIN #<br />
+                    <EditItemField 
+                      type={'EIN'} value={businessData.EIN} 
+                      handleChange={handleChange} 
+                    />
+                  </td>
+                  <td>
+                    US DOT #<br />
+                    <EditItemField 
+                      type={'USDOT'} value={businessData.USDOT} 
+                      handleChange={handleChange} 
+                    />
+                  </td>
+                  <td>
+                    WA UBI #<br />
+                    <EditItemField 
+                      type={'WAUBI'} value={businessData.WAUBI} 
+                      handleChange={handleChange} 
+                    />
+                  </td>
+                  <td></td>
+                  <td>
+                    Can Deliver:
+                    <FontAwesomeIcon 
+                      icon={business.delivery ? Icons.faCheck : Icons.faTimes}
+                      color={business.delivery ? "green" : "red"} 
+                      className="ml-2" 
+                      style={{ position: "relative", top: "0.05rem" }} 
+                    />
+                    <br />
+                    Can Cancel:
+                    <FontAwesomeIcon 
+                      icon={business.can_cancel ? Icons.faCheck : Icons.faTimes}
+                      color={business.can_cancel ? "green" : "red"}
+                      className="ml-2" 
+                      style={{ position: "relative", top: "0.05rem" }} 
+                    />
+                    <br />
+                    Is Reusable:
+                    <FontAwesomeIcon 
+                      icon={business.reusable ? Icons.faCheck : Icons.faTimes}
+                      color={business.reusable ? "green" : "red"}
+                      className="ml-2" 
+                      style={{ position: "relative", top: "0.05rem" }} 
+                    />
+                  </td>
+                </tr>
+              {/* </React.Fragment>
+            )} */}
+          </tbody>
+        </table>
+      </div>
+    </React.Fragment>
   );
 }
 
