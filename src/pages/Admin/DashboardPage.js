@@ -68,15 +68,11 @@ function reducer(state, action) {
         ...state,
         filter: action.payload.filter,
       };
-    // case 'filter-routes':
-    //   let routes = { ...state.routes };
-    //   for (let key of Object.keys(routes)) {
-    //     routes[key].visible = action.payload.keys.includes(key) ? true : false; 
-    //   }
-    //   return {
-    //     ...state,
-    //     routes,
-    //   };
+    case 'update-list':
+      return {
+        ...state,
+        [action.payload.dataType]: action.payload.value,
+      };
     case 'toggle-visibility':
       return { 
         ...state,
