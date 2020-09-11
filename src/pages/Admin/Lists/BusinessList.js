@@ -312,9 +312,11 @@ function BusinessEdit({ business, id, ...props }) {
 
   const handleChange = (e, type) => {
     e.persist();
+    console.log(e.target, e.target.checked, e.target.value);
+    
     setBusinessData(prevBusinessData => ({
       ...prevBusinessData,
-      [type]: e.target.value,
+      [type]: e.target.type !== "checkbox" ? e.target.value : Number(e.target.checked),
     }));
   };
 
@@ -596,27 +598,27 @@ function BusinessEdit({ business, id, ...props }) {
                   <td></td>
                   <td>
                     Can Deliver:
-                    <FontAwesomeIcon 
-                      icon={business.delivery ? Icons.faCheck : Icons.faTimes}
-                      color={business.delivery ? "green" : "red"} 
-                      className="ml-2" 
-                      style={{ position: "relative", top: "0.05rem" }} 
+                    <EditItemField 
+                      type={'delivery'} value={Boolean(businessData.delivery)} 
+                      className="ml-1"
+                      handleChange={handleChange} 
+                      checkbox
                     />
                     <br />
                     Can Cancel:
-                    <FontAwesomeIcon 
-                      icon={business.can_cancel ? Icons.faCheck : Icons.faTimes}
-                      color={business.can_cancel ? "green" : "red"}
-                      className="ml-2" 
-                      style={{ position: "relative", top: "0.05rem" }} 
+                    <EditItemField 
+                      type={'can_cancel'} value={Boolean(businessData.can_cancel)} 
+                      className="ml-1"
+                      handleChange={handleChange} 
+                      checkbox
                     />
                     <br />
                     Is Reusable:
-                    <FontAwesomeIcon 
-                      icon={business.reusable ? Icons.faCheck : Icons.faTimes}
-                      color={business.reusable ? "green" : "red"}
-                      className="ml-2" 
-                      style={{ position: "relative", top: "0.05rem" }} 
+                    <EditItemField 
+                      type={'reusable'} value={Boolean(businessData.reusable)} 
+                      className="ml-1"
+                      handleChange={handleChange} 
+                      checkbox
                     />
                   </td>
                 </tr>
