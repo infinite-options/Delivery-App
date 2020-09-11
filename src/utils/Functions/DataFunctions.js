@@ -212,8 +212,8 @@ const createDrivers = () => {
 
         preferred_routes: "N/A",
 
-        days: driver.driver_days,
-        hours: driver.driver_hours,
+        available_hours: driver.driver_available_hours,
+        scheduled_hours: driver.driver_scheduled_hours,
 
         street: driver.driver_street,
         unit: driver.driver_unit,

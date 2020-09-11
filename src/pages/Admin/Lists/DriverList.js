@@ -3,8 +3,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Icons from "utils/Icons/Icons";
 import FillerRow from "utils/Components/FillerRow";
 import EditItemField from "utils/Components/EditItemField";
+import DayHoursDropdown from "utils/Components/DayHoursDropdown";
 import Rating from '@material-ui/lab/Rating';
+import moment from "moment";
 import axios from "axios";
+
+const weekdays = moment.weekdays();
 
 const BASE_URL = "https://uqu7qejuee.execute-api.us-west-1.amazonaws.com/dev/api/v2/";
 
@@ -41,13 +45,16 @@ function DriverList({ drivers, routes, ...props }) {
         const dataForNow = {
           // Add keyword items
         }; 
-        // if (id) // Update driver data with driver_uid === id
-        // else // Insert new driver data
-        // axios.post(BASE_URL + "END", dataForNow)
-        // .then(response => {
-          // const dataResponse = response.data.result.result;
-          // props.dispatch({ type: 'update-list', payload: { dataType: 'drivers', value: dataResponse } });
-        // });
+        if (id) {
+
+        }
+        else {
+          // axios.post(BASE_URL + /* ENDPT */, dataForNow)
+          // .then(response => {
+          //   const dataResponse = response.data.result.result;
+          //   props.dispatch({ type: 'update-list', payload: { dataType: 'drivers', value: dataResponse } });
+          // });
+        }
       }
       setDataEdit();
     }
@@ -249,10 +256,12 @@ function DriverItem({ driver, id, ...props }) {
               ))} */}
             </td>
             <td>
-              Days Available<br />{driver.days}
+              Available Times<br />
+              <DayHoursDropdown type={driver.available_hours} />
             </td>
             <td>
-              Times Available<br />{driver.hours}
+              Scheduled Times<br />
+              <DayHoursDropdown type={driver.scheduled_hours} />
             </td>
           </tr>
           <FillerRow numColumns={4} showMore={showMore} setShowMore={setShowMore} />

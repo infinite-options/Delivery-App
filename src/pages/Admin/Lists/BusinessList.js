@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Icons from "utils/Icons/Icons";
 import FillerRow from "utils/Components/FillerRow";
 import EditItemField from "utils/Components/EditItemField";
+import DayHoursDropdown from "utils/Components/DayHoursDropdown";
 import moment from "moment";
 import axios from "axios";
 
@@ -73,11 +74,20 @@ function BusinessList({ businesses, ...props }) {
           business_password: data.password,
         }; 
         console.log(dataForNow);
-        axios.post(BASE_URL + "insertNewBusiness", dataForNow)
-        .then(response => {
-          // const dataResponse = response.data.result.result;
-          // props.dispatch({ type: 'update-list', payload: { dataType: 'businesses', value: dataResponse } });
-        });
+        if (id) {
+
+        }
+        else {
+          axios.post(BASE_URL + "insertNewBusiness", dataForNow)
+          .then(response => {
+            console.log(response);
+            // const dataResponse = response.data.result.result;
+            // props.dispatch({ type: 'update-list', payload: { dataType: 'businesses', value: dataResponse } });
+          })
+          .catch(err => {
+            console.log(err);
+          });
+        }
       }
       setDataEdit();
     }
@@ -120,19 +130,6 @@ function BusinessList({ businesses, ...props }) {
     </React.Fragment>
   );
 }
-
-const displayDayHours = (type) => {
-  if (type) {const days = JSON.parse(type);
-  // console.log(days);
-  return (
-    <React.Fragment>
-      {weekdays.map((day, index) => (
-        <p key={index}>{day}: {days[day]}</p>
-      ))}
-    </React.Fragment>
-  );}
-};
-// console.log(weekdays);
 
 const handleDateTime = (input) => {
   if (input) {
@@ -247,13 +244,16 @@ function BusinessItem({ business, id, ...props }) {
             </td>
             <td style={{ borderLeft: "hidden" }} />
             <td>
-              Business Hours<br />{displayDayHours(business.hours)}
+              Business Hours<br />
+              <DayHoursDropdown type={business.hours} />
             </td>
             <td>
-              Delivery Hours<br />{displayDayHours(business.delivery_hours)}
+              Delivery Hours<br />
+              <DayHoursDropdown type={business.delivery_hours} />
             </td>
             <td>
-              Accepting Hours<br />{displayDayHours(business.accepting_hours)}
+              Accepting Hours<br />
+              <DayHoursDropdown type={business.accepting_hours} />
             </td>
           </tr>
           <tr>
@@ -499,21 +499,21 @@ function BusinessEdit({ business, id, ...props }) {
               </td>
               <td style={{ borderLeft: "hidden" }} />
               <td>
-                Business Hours<br />{/*displayDayHours(business.hours)*/}
+                Business Hours<br />
                 <EditItemField 
                   type={'hours'} value={businessData.hours} 
                   handleChange={handleChange} 
                 />
               </td>
               <td>
-                Delivery Hours<br />{/*displayDayHours(business.delivery_hours)*/}
+                Delivery Hours<br />
                 <EditItemField 
                   type={'delivery_hours'} value={businessData.delivery_hours} 
                   handleChange={handleChange} 
                 />
               </td>
               <td>
-                Accepting Hours<br />{/*displayDayHours(business.accepting_hours)*/}
+                Accepting Hours<br />
                 <EditItemField 
                   type={'accepting_hours'} value={businessData.accepting_hours} 
                   handleChange={handleChange} 
