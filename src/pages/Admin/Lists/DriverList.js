@@ -6,6 +6,8 @@ import EditItemField from "utils/Components/EditItemField";
 import Rating from '@material-ui/lab/Rating';
 import axios from "axios";
 
+const BASE_URL = "https://uqu7qejuee.execute-api.us-west-1.amazonaws.com/dev/api/v2/";
+
 function DriverList({ drivers, routes, ...props }) {
   console.log("rendering drivers..");
   const [driverData, setDriverData] = useState(Object.entries(drivers));
@@ -39,10 +41,12 @@ function DriverList({ drivers, routes, ...props }) {
         const dataForNow = {
           // Add keyword items
         }; 
-        // axios.post(ENDPOINT_URL, dataForNow)
+        // if (id) // Update driver data with driver_uid === id
+        // else // Insert new driver data
+        // axios.post(BASE_URL + "END", dataForNow)
         // .then(response => {
-        //   const dataResponse = response.data.result.result;
-        //   props.dispatch({ type: 'update-list', payload: { dataType: 'drivers', value: dataResponse } });
+          // const dataResponse = response.data.result.result;
+          // props.dispatch({ type: 'update-list', payload: { dataType: 'drivers', value: dataResponse } });
         // });
       }
       setDataEdit();
@@ -128,7 +132,7 @@ function DriverItem({ driver, id, ...props }) {
           <tr className="list-item-head">
             <th style={{ width: "40%" }}>
               <div style={{ width: "240px" }}>
-                <span>Driver {driver_id}: {`${driver.first_name} ${driver.last_name[0]}.`}</span>
+                <span>Driver {driver_id}: {`${driver.first_name} ${driver.last_name ? driver.last_name[0] : ''}.`}</span>
                 <button
                   className="button is-rounded is-pulled-right is-super-small ml-1"
                   // onClick={() => sendEmail(index + 1)}

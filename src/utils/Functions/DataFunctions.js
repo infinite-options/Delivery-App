@@ -57,7 +57,7 @@ const rainbow = (numOfSteps, step) => {
  * }
  */
 const createRoutes = () => {
-  return axios.get("https://uqu7qejuee.execute-api.us-west-1.amazonaws.com/dev/api/v2/getTestRoutes")
+  return axios.get("https://uqu7qejuee.execute-api.us-west-1.amazonaws.com/dev/api/v2/getRoutes")
   .then((response) => {
     // console.log("temprouteS:", response);
     const result = response.data.result.result;
@@ -187,7 +187,7 @@ const createRoutes = () => {
 };
 
 const createDrivers = () => {
-  return axios.get(NEW_NEW_BASE_URL + "getDrivers")
+  return axios.get(NEW_NEW_BASE_URL + "Drivers")
   .then((response) => {
     // console.log("response_drivers:", response);
     const result = response.data.result.result;
@@ -291,8 +291,8 @@ const createBusinesses = () => {
         city: business.business_city,
         state: business.business_state,
         zip: business.business_zip,
-        latitude: business.business_latitude,
-        longitude: business.business_longitude,
+        latitude: Number(business.business_latitude),
+        longitude: Number(business.business_longitude),
 
         contact_first_name: business.business_contact_first_name,
         contact_last_name: business.business_contact_last_name,

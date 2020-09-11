@@ -4,9 +4,11 @@ import Icons from "utils/Icons/Icons";
 import FillerRow from "utils/Components/FillerRow";
 import EditItemField from "utils/Components/EditItemField";
 import moment from "moment";
-// import axios from "axios";
+import axios from "axios";
 
 const weekdays = moment.weekdays();
+
+const BASE_URL = "https://uqu7qejuee.execute-api.us-west-1.amazonaws.com/dev/api/v2/"
 
 function BusinessList({ businesses, ...props }) {
   console.log("rendering businesses..");
@@ -39,12 +41,43 @@ function BusinessList({ businesses, ...props }) {
         // sending this temporary object for now
         const dataForNow = {
           // Add keyword items
+          business_created_at: data.registered,
+          business_name: data.name,
+          business_type: data.type,
+          business_desc: data.description,
+          business_contact_first_name: data.contact_first_name,
+          business_contact_last_name: data.contact_last_name,
+          business_phone_num: data.phone,
+          business_phone_num2: data.phone2,
+          business_email: data.email,
+          business_hours: "{\"Friday\": [\"09:00:00\", \"23:59:59\"], \"Monday\": [\"09:00:00\", \"23:59:59\"], \"Sunday\": [\"09:00:00\", \"23:59:59\"], \"Tuesday\": [\"09:00:00\", \"23:59:59\"], \"Saturday\": [\"09:00:00\", \"21:00:00\"], \"Thursday\": [\"09:00:00\", \"23:59:59\"], \"Wednesday\": [\"09:00:00\", \"23:00:00\"]}",
+          business_accepting_hours: "{\"Friday\": [\"09:00:00\", \"23:59:59\"], \"Monday\": [\"09:00:00\", \"23:59:59\"], \"Sunday\": [\"09:00:00\", \"23:59:59\"], \"Tuesday\": [\"09:00:00\", \"23:59:59\"], \"Saturday\": [\"09:00:00\", \"21:00:00\"], \"Thursday\": [\"09:00:00\", \"23:59:59\"], \"Wednesday\": [\"09:00:00\", \"23:00:00\"]}",
+          business_delivery_hours: "{\"Friday\": [\"09:00:00\", \"23:59:59\"], \"Monday\": [\"09:00:00\", \"23:59:59\"], \"Sunday\": [\"09:00:00\", \"23:59:59\"], \"Tuesday\": [\"09:00:00\", \"23:59:59\"], \"Saturday\": [\"09:00:00\", \"21:00:00\"], \"Thursday\": [\"09:00:00\", \"23:59:59\"], \"Wednesday\": [\"09:00:00\", \"23:00:00\"]}",
+          business_address: data.street,
+          business_unit: data.unit,
+          business_city: data.city,
+          business_state: data.state,
+          business_zip: data.zip,
+          business_latitude: data.latitude || '',
+          business_longitude: data.longitude || '',
+          business_EIN: data.EIN,
+          business_WAUBI: data.WAUBI,
+          business_license: data.license,
+          business_USDOT: data.USDOT,
+          notification_approval: data.notification_approval,
+          notification_device_id: data.notification_device_id,
+          can_cancel: `${data.can_cancel}` || "0",
+          delivery: `${data.delivery}` || "0",
+          reusable: `${data.reusable}` || "0",
+          business_image: "https://servingnow.s3-us-west-1.amazonaws.com/kitchen_imgs/landing-logo.png",
+          business_password: data.password,
         }; 
-        // axios.post(ENDPOINT_URL, dataForNow)
-        // .then(response => {
-        //   const dataResponse = response.data.result.result;
-        //   props.dispatch({ type: 'update-list', payload: { dataType: 'businesses', value: dataResponse } });
-        // });
+        console.log(dataForNow);
+        axios.post(BASE_URL + "insertNewBusiness", dataForNow)
+        .then(response => {
+          // const dataResponse = response.data.result.result;
+          // props.dispatch({ type: 'update-list', payload: { dataType: 'businesses', value: dataResponse } });
+        });
       }
       setDataEdit();
     }
