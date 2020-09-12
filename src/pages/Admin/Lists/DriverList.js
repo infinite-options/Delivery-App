@@ -7,10 +7,9 @@ import DayHoursDropdown from "utils/Components/DayHoursDropdown";
 import Rating from '@material-ui/lab/Rating';
 import moment from "moment";
 import axios from "axios";
+import { BASE_URL } from "utils/Functions/DataFunctions";
 
 const weekdays = moment.weekdays();
-
-const BASE_URL = "https://uqu7qejuee.execute-api.us-west-1.amazonaws.com/dev/api/v2/";
 
 function DriverList({ drivers, routes, ...props }) {
   console.log("rendering drivers..");
@@ -40,21 +39,46 @@ function DriverList({ drivers, routes, ...props }) {
     else {
       if (action === 'save') { 
         console.log("SAVED:", data);
-        // driver's table currently does not have all the needed data, 
+        // business table currently does not have all the needed data, 
         // sending this temporary object for now
         const dataForNow = {
-          // Add keyword items
+          driver_first_name: data.first_name,
+          driver_last_name: data.last_name,
+          business_id: data.business_id,
+          driver_available_hours: data.available_hours,
+          driver_scheduled_hours: data.scheduled_hours,
+          driver_street: data.street,
+          driver_city: data.city,
+          driver_state: data.state,
+          driver_zip: data.zip,
+          driver_phone_num: data.phone,
+          driver_email: data.email,
+          driver_phone_num2: data.phone2,
+          driver_ssn: data.ssn,
+          driver_license: data.drivers_license,
+          driver_license_exp: data.drivers_license_exp,
+          driver_insurance_num: data.insurance_number,
+          driver_password: data.password,
+          emergency_contact_name: data.emergency_contact_name,
+          emergency_contact_phone: data.emergency_contact_phone,
+          emergency_contact_relationship: data.emergency_contact_relationship,
+          bank_routing_info: data.bank_routing_info,
+          bank_account_info: data.bank_account_info,
         }; 
-        if (id) {
+        console.log(dataForNow);
 
-        }
-        else {
-          // axios.post(BASE_URL + /* ENDPT */, dataForNow)
-          // .then(response => {
-          //   const dataResponse = response.data.result.result;
-          //   props.dispatch({ type: 'update-list', payload: { dataType: 'drivers', value: dataResponse } });
-          // });
-        }
+        const ENDPOINT_URL = BASE_URL + (id ? "Drivers" : "insertNewDriver");
+        const postData = id ? { driver_uid: id, new_data: dataForNow } : dataForNow;
+        console.log(ENDPOINT_URL, postData);
+        axios.post(ENDPOINT_URL, postData)
+        .then(response => {
+          console.log(response);
+          // const dataResponse = response.data.result.result;
+          // props.dispatch({ type: 'update-list', payload: { dataType: 'drivers', value: dataResponse } });
+        })
+        .catch(err => {
+          console.log(err);
+        });
       }
       setDataEdit();
     }
@@ -529,16 +553,16 @@ function DriverEdit({ driver, id, ...props }) {
                 ))} */}
               </td>
               <td>
-                Days Available<br />
+                Available Times<br />
                 <EditItemField 
-                  type={'days'} value={driverData.days} 
+                  type={'available_hours'} value={driverData.available_hours} 
                   handleChange={handleChange} 
                 />
               </td>
               <td>
-                Times Available<br />
+                Scheduled Times<br />
                 <EditItemField 
-                  type={'hours'} value={driverData.hours} 
+                  type={'scheduled_hours'} value={driverData.scheduled_hours} 
                   handleChange={handleChange} 
                 />
               </td>

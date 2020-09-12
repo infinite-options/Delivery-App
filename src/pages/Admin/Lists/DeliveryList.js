@@ -164,7 +164,7 @@ function RouteItem({ route, id, ...props }) {
                     backgroundColor: `${route.visible ? route.route_color : "lightgrey"}`,
                     borderBottom: `3px solid ${route.visible ? route.route_color : "lightgrey"}`, 
                     // Adding conditional margin since icon sizes vary, accounting for text shift
-                    ...(!route.visible ? {marginLeft: "1.32px"} : {}) 
+                    ...(!route.visible ? { marginLeft: "1.32px" } : {}) 
                   }}
                 >
                   <span>Route {route_id}</span></div>

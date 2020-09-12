@@ -6,10 +6,9 @@ import EditItemField from "utils/Components/EditItemField";
 import DayHoursDropdown from "utils/Components/DayHoursDropdown";
 import moment from "moment";
 import axios from "axios";
+import { BASE_URL } from "utils/Functions/DataFunctions";
 
 const weekdays = moment.weekdays();
-
-const BASE_URL = "https://uqu7qejuee.execute-api.us-west-1.amazonaws.com/dev/api/v2/"
 
 function BusinessList({ businesses, ...props }) {
   console.log("rendering businesses..");
@@ -38,10 +37,9 @@ function BusinessList({ businesses, ...props }) {
     else {
       if (action === 'save') { 
         console.log("SAVED:", data);
-        // driver's table currently does not have all the needed data, 
+        // business table currently does not have all the needed data, 
         // sending this temporary object for now
         const dataForNow = {
-          // Add keyword items
           business_created_at: data.registered,
           business_name: data.name,
           business_type: data.type,
@@ -51,11 +49,11 @@ function BusinessList({ businesses, ...props }) {
           business_phone_num: data.phone,
           business_phone_num2: data.phone2,
           business_email: data.email,
-          business_hours: "{\"Friday\": [\"09:00:00\", \"23:59:59\"], \"Monday\": [\"09:00:00\", \"23:59:59\"], \"Sunday\": [\"09:00:00\", \"23:59:59\"], \"Tuesday\": [\"09:00:00\", \"23:59:59\"], \"Saturday\": [\"09:00:00\", \"21:00:00\"], \"Thursday\": [\"09:00:00\", \"23:59:59\"], \"Wednesday\": [\"09:00:00\", \"23:00:00\"]}",
-          business_accepting_hours: "{\"Friday\": [\"09:00:00\", \"23:59:59\"], \"Monday\": [\"09:00:00\", \"23:59:59\"], \"Sunday\": [\"09:00:00\", \"23:59:59\"], \"Tuesday\": [\"09:00:00\", \"23:59:59\"], \"Saturday\": [\"09:00:00\", \"21:00:00\"], \"Thursday\": [\"09:00:00\", \"23:59:59\"], \"Wednesday\": [\"09:00:00\", \"23:00:00\"]}",
-          business_delivery_hours: "{\"Friday\": [\"09:00:00\", \"23:59:59\"], \"Monday\": [\"09:00:00\", \"23:59:59\"], \"Sunday\": [\"09:00:00\", \"23:59:59\"], \"Tuesday\": [\"09:00:00\", \"23:59:59\"], \"Saturday\": [\"09:00:00\", \"21:00:00\"], \"Thursday\": [\"09:00:00\", \"23:59:59\"], \"Wednesday\": [\"09:00:00\", \"23:00:00\"]}",
+          business_hours: data.hours,
+          business_accepting_hours: data.accepting_hours,
+          business_delivery_hours: data.delivery_hours,
           business_address: data.street,
-          business_unit: data.unit,
+          business_unit: data.unit || '',
           business_city: data.city,
           business_state: data.state,
           business_zip: data.zip,
@@ -70,24 +68,23 @@ function BusinessList({ businesses, ...props }) {
           can_cancel: `${data.can_cancel}` || "0",
           delivery: `${data.delivery}` || "0",
           reusable: `${data.reusable}` || "0",
-          business_image: "https://servingnow.s3-us-west-1.amazonaws.com/kitchen_imgs/landing-logo.png",
+          business_image: data.image,
           business_password: data.password,
         }; 
         console.log(dataForNow);
-        if (id) {
 
-        }
-        else {
-          axios.post(BASE_URL + "insertNewBusiness", dataForNow)
-          .then(response => {
-            console.log(response);
-            // const dataResponse = response.data.result.result;
-            // props.dispatch({ type: 'update-list', payload: { dataType: 'businesses', value: dataResponse } });
-          })
-          .catch(err => {
-            console.log(err);
-          });
-        }
+        const ENDPOINT_URL = BASE_URL + (id ? "Businesses" : "insertNewBusiness");
+        const postData = id ? { business_uid: id, new_data: dataForNow } : dataForNow;
+        // console.log(ENDPOINT_URL, postData);
+        axios.post(ENDPOINT_URL, postData)
+        .then(response => {
+          console.log(response);
+          // const dataResponse = response.data.result.result;
+          // props.dispatch({ type: 'update-list', payload: { dataType: 'businesses', value: dataResponse } });
+        })
+        .catch(err => {
+          console.log(err.response ? err.response : err);
+        });
       }
       setDataEdit();
     }
@@ -176,7 +173,9 @@ function BusinessItem({ business, id, ...props }) {
                 >
                   <FontAwesomeIcon icon={business.visible ? Icons.faEyeSlash : Icons.faEye} />
                 </button>
-                <span>Business {business_id}: {business.name}</span>
+                <span style={{ ...(!business.visible ? { marginLeft: "1.32px" } : {}) }}>
+                  Business {business_id}: {business.name}
+                </span>
                 <button
                   className="button is-rounded is-super-small is-pulled-right ml-1"
                   onClick={() => console.log("Not sure what this does atm")}
