@@ -8,8 +8,6 @@ import moment from "moment";
 import axios from "axios";
 import { BASE_URL } from "utils/Functions/DataFunctions";
 
-const weekdays = moment.weekdays();
-
 function BusinessList({ businesses, ...props }) {
   console.log("rendering businesses..");
   const [businessData, setBusinessData] = useState(Object.entries(businesses));
@@ -30,7 +28,7 @@ function BusinessList({ businesses, ...props }) {
     else setBusinessData(businessData);
   }, [businesses, props.filter]);
   
-  const editBusiness = (action, id, data) => {
+  const editBusiness = (action, id, data, originalData) => {
     console.log("adding business.........");
     if (action === 'edit') setDataEdit(id);
     else if (action === 'add') setDataEdit('add');
@@ -39,43 +37,44 @@ function BusinessList({ businesses, ...props }) {
         console.log("SAVED:", data);
         // business table currently does not have all the needed data, 
         // sending this temporary object for now
+        // console.log(data.registered, originalData.registered, data.registered === originalData.registered);
         const dataForNow = {
-          business_created_at: data.registered,
-          business_name: data.name,
-          business_type: data.type,
-          business_desc: data.description,
-          business_contact_first_name: data.contact_first_name,
-          business_contact_last_name: data.contact_last_name,
-          business_phone_num: data.phone,
-          business_phone_num2: data.phone2,
-          business_email: data.email,
-          business_hours: data.hours,
-          business_accepting_hours: data.accepting_hours,
-          business_delivery_hours: data.delivery_hours,
-          business_address: data.street,
-          business_unit: data.unit || '',
-          business_city: data.city,
-          business_state: data.state,
-          business_zip: data.zip,
-          business_latitude: data.latitude || '',
-          business_longitude: data.longitude || '',
-          business_EIN: data.EIN,
-          business_WAUBI: data.WAUBI,
-          business_license: data.license,
-          business_USDOT: data.USDOT,
-          notification_approval: data.notification_approval,
-          notification_device_id: data.notification_device_id,
-          can_cancel: `${data.can_cancel}` || "0",
-          delivery: `${data.delivery}` || "0",
-          reusable: `${data.reusable}` || "0",
-          business_image: data.image,
-          business_password: data.password,
+          ...data.registered !== originalData.registered && { business_created_at: data.registered },
+          ...data.name !== originalData.name && { business_name: data.name },
+          ...data.type !== originalData.type && { business_type: data.type },
+          ...data.description !== originalData.description && { business_desc: data.description },
+          ...data.contact_first_name !== originalData.contact_first_name && { business_contact_first_name: data.contact_first_name },
+          ...data.contact_last_name !== originalData.contact_last_name && { business_contact_last_name: data.contact_last_name },
+          ...data.phone !== originalData.phone && { business_phone_num: data.phone },
+          ...data.phone2 !== originalData.phone2 && { business_phone_num2: data.phone2 },
+          ...data.email !== originalData.email && { business_email: data.email },
+          ...data.hours !== originalData.hours && { business_hours: data.hours },
+          ...data.accepting_hours !== originalData.accepting_hours && { business_accepting_hours: data.accepting_hours },
+          ...data.delivery_hours !== originalData.delivery_hours && { business_delivery_hours: data.delivery_hours },
+          ...data.street !== originalData.street && { business_address: data.street },
+          ...data.unit !== originalData.unit && { business_unit: data.unit },
+          ...data.city !== originalData.city && { business_city: data.city },
+          ...data.state !== originalData.state && { business_state: data.state },
+          ...data.zip !== originalData.zip && { business_zip: data.zip },
+          ...data.latitude !== originalData.latitude && { business_latitude: data.latitude || '' },
+          ...data.longitude !== originalData.longitude && { business_longitude: data.longitude || '' },
+          ...data.EIN !== originalData.EIN && { business_EIN: data.EIN },
+          ...data.WAUBI !== originalData.WAUBI && { business_WAUBI: data.WAUBI },
+          ...data.license !== originalData.license && { business_license: data.license },
+          ...data.USDOT !== originalData.USDOT && { business_USDOT: data.USDOT },
+          ...data.notification_approval !== originalData.notification_approval && { notification_approval: data.notification_approval },
+          ...data.notification_device_id !== originalData.notification_device_id && { notification_device_id: data.notification_device_id },
+          ...data.can_cancel !== originalData.can_cancel && { can_cancel: `${data.can_cancel}` },
+          ...data.delivery !== originalData.delivery && { delivery: `${data.delivery}` },
+          ...data.reusable !== originalData.reusable && { reusable: `${data.reusable}` },
+          ...data.image !== originalData.image && { business_image: data.image },
+          ...data.password !== originalData.password && { business_password: data.password },
         }; 
-        console.log(dataForNow);
+        // console.log(dataForNow);
 
         const ENDPOINT_URL = BASE_URL + (id ? "Businesses" : "insertNewBusiness");
         const postData = id ? { business_uid: id, new_data: dataForNow } : dataForNow;
-        // console.log(ENDPOINT_URL, postData);
+        console.log(ENDPOINT_URL, postData, JSON.stringify(postData));
         axios.post(ENDPOINT_URL, postData)
         .then(response => {
           console.log(response);
@@ -140,9 +139,9 @@ const handleDateTime = (input) => {
 function BusinessItem({ business, id, ...props }) {
   const [hidden, setHidden] = useState(true);
   const [showMore, setShowMore] = useState(false);
-  const [businessDay, setBusinessDay] = useState(0);
-  const [deliveryDay, setDeliveryDay] = useState(0);
-  const [acceptingDay, setAcceptingDay] = useState(0);
+  // const [businessDay, setBusinessDay] = useState(0);
+  // const [deliveryDay, setDeliveryDay] = useState(0);
+  // const [acceptingDay, setAcceptingDay] = useState(0);
   const address = `${business.street}${(business.unit ? ` ${business.unit}` : "")} 
                    ${business.city} ${business.state} ${business.zip}`;
   const business_id = Number(id.substring(id.indexOf("-") + 1, id.length));
@@ -223,7 +222,7 @@ function BusinessItem({ business, id, ...props }) {
               Business Image<br /><img src={business.image} alt={`${business.name}`} width="48" height="48" />
             </td>
             <td>
-              Registered At<br />{handleDateTime(business.registered)}
+              Registered At<br />{business.registered}
             </td>
             <td>
               Type<br />{business.type}
@@ -366,7 +365,7 @@ function BusinessEdit({ business, id, ...props }) {
           </button>
           <button
             className="button is-small mx-1 is-success is-outlined is-rounded" 
-            onClick={() => props.handleEdit('save', undefined, businessData)}
+            onClick={() => props.handleEdit('save', undefined, businessData, business)}
           >
             <FontAwesomeIcon icon={Icons.faCheck} className="mr-2" />
             Save
@@ -403,7 +402,7 @@ function BusinessEdit({ business, id, ...props }) {
                   <React.Fragment>
                     <button
                       className="button is-super-small is-pulled-right"
-                      onClick={() => props.handleEdit('save', id, businessData)}
+                      onClick={() => props.handleEdit('save', id, businessData, business)}
                     >
                       <FontAwesomeIcon
                         icon={Icons.faCheck}

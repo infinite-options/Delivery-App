@@ -69,7 +69,7 @@ function DriverList({ drivers, routes, ...props }) {
 
         const ENDPOINT_URL = BASE_URL + (id ? "Drivers" : "insertNewDriver");
         const postData = id ? { driver_uid: id, new_data: dataForNow } : dataForNow;
-        console.log(ENDPOINT_URL, postData);
+        console.log(ENDPOINT_URL, postData, JSON.stringify(postData));
         axios.post(ENDPOINT_URL, postData)
         .then(response => {
           console.log(response);
