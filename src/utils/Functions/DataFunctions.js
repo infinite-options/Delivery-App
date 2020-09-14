@@ -428,6 +428,60 @@ const createOrders = () => {
   });
 };
 
+const createConstraints = (businesses) => {
+  return new Promise((resolve, reject) => {
+    let constraints = {};
+    // console.log(Object.keys(businesses).length);
+    for (let business_id of Object.keys(businesses)) {
+      axios.get(NEW_NEW_BASE_URL + "getBusinessConstraints/" + business_id)
+      .then(response => {
+        // console.log(response);
+        const result = response.data.result.result.length ? response.data.result.result[0] : undefined;
+        if (result) constraints[result.constraint_uid] = {
+          business_id: result.business_uid,
+          business_name: businesses[business_id].name,
+          business_street: businesses[business_id].street,
+          business_unit: businesses[business_id].unit,
+          business_city: businesses[business_id].city,
+          business_state: businesses[business_id].state,
+          business_zip: businesses[business_id].zip,
+          business_phone: businesses[business_id].phone,
+          num_drivers: result.num_drivers,
+          max_distance: result.max_distance,
+          max_time: result.max_time,
+          min_time: result.min_time,
+          max_deliveries: result.max_deliveries,
+          min_deliveries: result.min_deliveries,
+        };
+      })
+      .catch(err => {
+        console.log(err);
+      });
+      // console.log("endloop");
+    }
+    // console.log("HELLO");
+    setTimeout(() => resolve(constraints), 1000);
+  });
+};
+
+// NOTE: Other functions, not sure how to organize these functions.
+//       Should they have their own files? Should we keep all these
+//       functions in a single file?
+const validToUpdate = (type, data) => {
+  // console.log(data);
+  if (!data[`${type}_uid`]) {
+    // console.log("INSERT");
+    const dataEntries = Object.entries(data);
+    if (!dataEntries.length) return false;
+    for (let entry of dataEntries) {
+      // console.log(entry[1]);
+      if (/*required.includes(entry[0]) && */entry[1] === "") return false;
+    }
+  }
+  else if (!Object.values(data.new_data).length) return false;
+  return true;
+};
+
 export {
   NEW_NEW_BASE_URL as BASE_URL,
   createRoutes,
@@ -435,4 +489,7 @@ export {
   createBusinesses,
   createCustomers,
   createOrders,
+  createConstraints,
+
+  validToUpdate,
 };

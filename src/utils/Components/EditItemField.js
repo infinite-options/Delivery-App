@@ -13,7 +13,7 @@ function EditItemField({ className, style, value, placeholder, handleChange, typ
                  (className ? " " + className : "")}
       style={(!props.checkbox ? style : { verticalAlign: "middle", ...style })}
       {...(!props.checkbox ? 
-        { value: value !== undefined ? value : '' } : 
+        { value: value } : 
         { type: "checkbox", checked: value }
       )}
       placeholder={placeholder}
@@ -24,7 +24,7 @@ function EditItemField({ className, style, value, placeholder, handleChange, typ
     <textarea 
       className={"textarea is-small" + (className ? " " + className : "")}
       style={{ minHeight: "5em", ...style }}
-      value={value !== undefined ? value : ''}
+      value={value}
       placeholder={placeholder}
       onFocus={(e) => handleTextareaSize(e, true)}
       onBlur={(e) => handleTextareaSize(e, false)}

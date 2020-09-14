@@ -19,7 +19,7 @@ function ConstraintList({ constraints, ...props }) {
       <thead>
         <tr>
           <th>
-            Business ID
+            Constraint ID
             <FontAwesomeIcon icon={Icons.faSort} className="ml-1" onClick={() => toggleSort("id")} />
           </th>
           <th>Business Name</th>
@@ -56,7 +56,7 @@ function ConstraintList({ constraints, ...props }) {
 
 function MinMax() {
   return (
-    <div className={"level has-text-light-weight has-text-weight-light"}>
+    <div className="level has-text-light-weight has-text-weight-light">
       <div
         className="level-left is-split">
         <div className="level-item">Min</div>
@@ -70,53 +70,73 @@ function MinMax() {
 
 function VehicleItem({ constraint, business_id, ...props }) {
   // const [hidden, setHidden] = useState(true);
-  const address = `N/A`;
+  const address = `${constraint.business_street}${(constraint.business_unit ? ` ${constraint.business_unit}` : "")} 
+                   ${constraint.business_city} ${constraint.business_state} ${constraint.business_zip}`;;
   // console.log(constraint);
   
   return (
     <tr>
       <td>{business_id}</td>
-      <td>{constraint.business_name} N/A</td>
+      <td>{constraint.business_name}</td>
       <td>{address}</td>
-      <td>{constraint.business_phone} N/A</td>
-      <td><InputValue /></td>
+      <td>{constraint.business_phone}</td>
+      <td>{constraint.num_drivers}</td>
+      <td>
+        <div className="level">
+          <span className="level-item is-split left">{constraint.min_distance || "N/A"}</span>
+          <span className="level-item is-split">{constraint.max_distance || "N/A"}</span>  
+        </div>  
+      </td>
+      <td>
+        <div className="level">
+          <span className="level-item is-split left">{constraint.min_time || "N/A"}</span>
+          <span className="level-item is-split">{constraint.max_time || "N/A"}</span>  
+        </div>  
+      </td>
+      <td>
+        <div className="level">
+          <span className="level-item is-split left">{constraint.min_deliveries || "N/A"}</span>
+          <span className="level-item is-split">{constraint.max_deliveries || "N/A"}</span>  
+        </div>  
+      </td>
+      {/* <td><InputValue /></td>
       <td><InputValue value={constraint.driver_count} hasRange /></td>
       <td><InputValue value={constraint.time_per_driver} hasRange /></td>
-      <td><InputValue value={constraint.delivery_count} hasRange /></td>
+      <td><InputValue value={constraint.delivery_count} hasRange /></td> */}
     </tr>
   );
 }
 
-function InputValue(props) {
-  return (
-    <React.Fragment>
-      {props.hasRange ? (
-        <InputRange min={props.value} max={props.value} />
-      ) : (
-        <input className="input is-small has-text-centered" style={{ width: "50px" }} value={props.value} onChange={(e) => console.log(e)} />
-      )}
-    </React.Fragment>
-  );
-}
+// function InputValue(props) {
+//   return (
+//     <React.Fragment>
+//       {props.hasRange ? (
+//         <InputRange min={props.value} max={props.value} />
+//       ) : (
+//         <input className="input is-small has-text-centered" style={{ width: "50px" }} value={props.value} onChange={(e) => console.log(e)} />
+//       )}
+//     </React.Fragment>
+//   );
+// }
 
-function InputRange(props) {
-  // console.log("rendering ranges..");
-  return (
-    <div className={"level has-text-light-weight" + (props.isHeader ? " has-text-weight-light" : "")}>
-      <div
-        className="level-left is-split">
-        <div className="level-item">
-          <input className="input is-small has-text-centered" style={{ width: "50px" }} value={props.min} onChange={(e) => console.log(e)} />
-        </div>
-      </div>
-      <div className="level-right is-split">
-        <div className="level-item">
-          <input className="input is-small has-text-centered" style={{ width: "50px" }} value={props.max} onChange={(e) => console.log(e)} />
-        </div>
-      </div>
-    </div>
-  );
-}
+// function InputRange(props) {
+//   // console.log("rendering ranges..");
+//   return (
+//     <div className={"level has-text-light-weight" + (props.isHeader ? " has-text-weight-light" : "")}>
+//       <div
+//         className="level-left is-split">
+//         <div className="level-item">
+//           <input className="input is-small has-text-centered" style={{ width: "50px" }} value={props.min} onChange={(e) => console.log(e)} />
+//         </div>
+//       </div>
+//       <div className="level-right is-split">
+//         <div className="level-item">
+//           <input className="input is-small has-text-centered" style={{ width: "50px" }} value={props.max} onChange={(e) => console.log(e)} />
+//         </div>
+//       </div>
+//     </div>
+//   );
+// }
 
 export default ConstraintList;
   

@@ -237,12 +237,14 @@ table.is-view td.is-today-end {
 
 /* Level classes */
 .level .level-left.is-split,
-.level .level-right.is-split {
+.level .level-right.is-split,
+.level .level-item.is-split {
   width: 50%;
   display: inline-block;
 }
 
-.level .level-left.is-split {
+.level .level-left.is-split,
+.level .level-item.is-split.left {
   border-right: 1px solid lightgrey;
 }
 

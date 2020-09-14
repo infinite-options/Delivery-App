@@ -5,11 +5,44 @@ import FillerRow from "utils/Components/FillerRow";
 import EditItemField from "utils/Components/EditItemField";
 import DayHoursDropdown from "utils/Components/DayHoursDropdown";
 import Rating from '@material-ui/lab/Rating';
-import moment from "moment";
 import axios from "axios";
-import { BASE_URL } from "utils/Functions/DataFunctions";
+import { BASE_URL, validToUpdate } from "utils/Functions/DataFunctions";
 
-const weekdays = moment.weekdays();
+const emptyDriver = {
+  available_hours: "",
+  bank_account_info: "",
+  bank_routing_info: "", 
+  business_id: "",
+  city: "",
+  delivery_fee: "", 
+  drivers_license: "", 
+  drivers_license_exp: "", 
+  email: "",
+  emergency_contact_name: "", 
+  emergency_contact_phone: "", 
+  emergency_contact_relationship: "", 
+  first_name: "",
+  hourly_rate: "", 
+  insurance_carrier: "", 
+  insurance_expiration: "", 
+  insurance_number: "", 
+  last_name: "",
+  latitude: 0, 
+  longitude: 0, 
+  password: "", 
+  phone: "", 
+  phone2: "", 
+  preferred_routes: "",
+  rating: "", 
+  scheduled_hours: "",
+  ssn: "", 
+  state: "",
+  street: "",
+  unit: "", 
+  vehicle_types: "", 
+  weekly_workload: "",
+  zip: "",
+};
 
 function DriverList({ drivers, routes, ...props }) {
   console.log("rendering drivers..");
@@ -32,8 +65,8 @@ function DriverList({ drivers, routes, ...props }) {
     else setDriverData(driverData);
   }, [drivers, props.filter]);
 
-  const editDriver = (action, id, data) => {
-    // console.log("editing business.........");
+  const editDriver = (action, id, data, originalData) => {
+    // console.log("editing driver.........");
     if (action === 'edit') setDataEdit(id);
     else if (action === 'add') setDataEdit('add');
     else {
@@ -42,43 +75,47 @@ function DriverList({ drivers, routes, ...props }) {
         // business table currently does not have all the needed data, 
         // sending this temporary object for now
         const dataForNow = {
-          driver_first_name: data.first_name,
-          driver_last_name: data.last_name,
-          business_id: data.business_id,
-          driver_available_hours: data.available_hours,
-          driver_scheduled_hours: data.scheduled_hours,
-          driver_street: data.street,
-          driver_city: data.city,
-          driver_state: data.state,
-          driver_zip: data.zip,
-          driver_phone_num: data.phone,
-          driver_email: data.email,
-          driver_phone_num2: data.phone2,
-          driver_ssn: data.ssn,
-          driver_license: data.drivers_license,
-          driver_license_exp: data.drivers_license_exp,
-          driver_insurance_num: data.insurance_number,
-          driver_password: data.password,
-          emergency_contact_name: data.emergency_contact_name,
-          emergency_contact_phone: data.emergency_contact_phone,
-          emergency_contact_relationship: data.emergency_contact_relationship,
-          bank_routing_info: data.bank_routing_info,
-          bank_account_info: data.bank_account_info,
+          ...(!id || data.first_name !== originalData.first_name) && { driver_first_name: data.first_name }, 
+          ...(!id || data.last_name !== originalData.last_name) && { driver_last_name: data.last_name }, 
+          ...(!id || data.business_id !== originalData.business_id) && { business_id: data.business_id }, 
+          ...(!id || data.available_hours !== originalData.available_hours) && { driver_available_hours: data.available_hours }, 
+          ...(!id || data.scheduled_hours !== originalData.scheduled_hours) && { driver_scheduled_hours: data.scheduled_hours }, 
+          ...(!id || data.street !== originalData.street) && { driver_street: data.street }, 
+          ...(!id || data.city !== originalData.city) && { driver_city: data.city }, 
+          ...(!id || data.state !== originalData.state) && { driver_state: data.state }, 
+          ...(!id || data.zip !== originalData.zip) && { driver_zip: data.zip }, 
+          ...(!id || data.phone !== originalData.phone) && { driver_phone_num: data.phone }, 
+          ...(!id || data.email !== originalData.email) && { driver_email: data.email }, 
+          ...(!id || data.phone2 !== originalData.phone2) && { driver_phone_num2: data.phone2 }, 
+          ...(!id || data.ssn !== originalData.ssn) && { driver_ssn: data.ssn }, 
+          ...(!id || data.drivers_license !== originalData.drivers_license) && { driver_license: data.drivers_license }, 
+          ...(!id || data.drivers_license_exp !== originalData.drivers_license_exp) && { driver_license_exp: data.drivers_license_exp }, 
+          ...(!id || data.insurance_number !== originalData.insurance_number) && { driver_insurance_num: data.insurance_number }, 
+          ...(!id || data.password !== originalData.password) && { driver_password: data.password }, 
+          ...(!id || data.emergency_contact_name !== originalData.emergency_contact_name) && { emergency_contact_name: data.emergency_contact_name }, 
+          ...(!id || data.emergency_contact_phone !== originalData.emergency_contact_phone) && { emergency_contact_phone: data.emergency_contact_phone }, 
+          ...(!id || data.emergency_contact_relationship !== originalData.emergency_contact_relationship) && { emergency_contact_relationship: data.emergency_contact_relationship }, 
+          ...(!id || data.bank_routing_info !== originalData.bank_routing_info) && { bank_routing_info: data.bank_routing_info }, 
+          ...(!id || data.bank_account_info !== originalData.bank_account_info) && { bank_account_info: data.bank_account_info }, 
         }; 
         console.log(dataForNow);
 
         const ENDPOINT_URL = BASE_URL + (id ? "Drivers" : "insertNewDriver");
         const postData = id ? { driver_uid: id, new_data: dataForNow } : dataForNow;
-        console.log(ENDPOINT_URL, postData, JSON.stringify(postData));
-        axios.post(ENDPOINT_URL, postData)
-        .then(response => {
-          console.log(response);
-          // const dataResponse = response.data.result.result;
-          // props.dispatch({ type: 'update-list', payload: { dataType: 'drivers', value: dataResponse } });
-        })
-        .catch(err => {
-          console.log(err);
-        });
+        console.log(ENDPOINT_URL, postData/*, JSON.stringify(postData)*/);
+        console.log(validToUpdate('driver', postData));
+        
+        if (validToUpdate('driver', postData)) {
+          axios.post(ENDPOINT_URL, postData)
+          .then(response => {
+            console.log(response);
+            // const dataResponse = response.data.result.result;
+            // props.dispatch({ type: 'update-list', payload: { dataType: 'drivers', value: dataResponse } });
+          })
+          .catch(err => {
+            console.log(err);
+          });
+        }
       }
       setDataEdit();
     }
@@ -97,7 +134,7 @@ function DriverList({ drivers, routes, ...props }) {
         </button>
       )}
       {dataEdit === 'add' && (
-        <DriverEdit driver={{}} id={dataEdit} handleEdit={editDriver} />
+        <DriverEdit driver={emptyDriver} id={dataEdit} handleEdit={editDriver} />
       )}
       {driverData.map((driver, index) => (
         <React.Fragment key={index}>
@@ -366,7 +403,7 @@ function DriverItem({ driver, id, ...props }) {
 
 function DriverEdit({ driver, id, ...props }) {
   const [driverData, setDriverData] = useState(driver);
-  const exists = Boolean(Object.values(driver).length);
+  const exists = driver !== emptyDriver;
   const driver_id = Number(id.substring(id.indexOf("-") + 1, id.length));
 
   const handleChange = (e, type) => {
@@ -392,7 +429,7 @@ function DriverEdit({ driver, id, ...props }) {
           </button>
           <button
             className="button is-small mx-1 is-success is-outlined is-rounded" 
-            onClick={() => props.handleEdit('save', undefined, driverData)}
+            onClick={() => props.handleEdit('save', undefined, driverData, driver)}
           >
             <FontAwesomeIcon icon={Icons.faCheck} className="mr-2" />
             Save
@@ -423,7 +460,7 @@ function DriverEdit({ driver, id, ...props }) {
                   <React.Fragment>
                     <button
                       className="button is-super-small is-pulled-right"
-                      onClick={() => props.handleEdit('save', id, driverData)}
+                      onClick={() => props.handleEdit('save', id, driverData, driver)}
                     >
                       <FontAwesomeIcon
                         icon={Icons.faCheck}

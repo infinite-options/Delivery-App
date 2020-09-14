@@ -15,7 +15,6 @@ import CouponList from "./Lists/CouponList";
 import ConstraintList from "./Lists/ConstraintList";
 import DeliveryView from "./DeliveryView";
 import AppIcon from "utils/Icons/app_icon.png";
-// import axios from "axios";
 // created another file for functions that load data from server, since this file was getting too large for my liking,
 // should I stick to this or revert this change?
 import { 
@@ -23,7 +22,8 @@ import {
   createDrivers, 
   createBusinesses, 
   createCustomers, 
-  createOrders 
+  createOrders,
+  createConstraints,
 } from "utils/Functions/DataFunctions";
 
 const initState = {
@@ -164,7 +164,9 @@ function DashboardPage() {
       createCustomers(),
       createOrders(),
     ])
-    .then((result) => {
+    .then(async (result) => {
+      let constraints = await createConstraints(result[2].value);
+      // console.log("CONSTRAINT", constraints);
       const data = {
         isLoading: false,
         ...result[0].value && { routes: result[0].value },
@@ -175,7 +177,7 @@ function DashboardPage() {
         ...result[4].value && { orders: result[4].value },
         payments: testObj,
         coupons: testObj,
-        constraints: testObj, // FIXME: CALL API
+        constraints,
       };
       dispatch({ type: "load", payload: { data } });
     });
@@ -576,7 +578,7 @@ function FilterDropdown({ data, header, ...props }) {
             <div className="dropdown-content">
               <button className="button is-small is-white dropdown-item" disabled={!data.filter} onClick={() => handleFilter()}>NONE</button>
               <hr className="dropdown-divider" />
-              {dataType && Object.keys(Object.values(dataType)[0]).map((option, index) => (
+              {(dataType && dataType.length) && Object.keys(Object.values(dataType)[0]).map((option, index) => (
                 <React.Fragment key={index}>
                   {filterItems.includes(option) && (
                     <button className="button is-small is-white dropdown-item" disabled={data.filter && data.filter.option === option} onClick={() => handleFilter(option)}>{option}</button>
