@@ -23,7 +23,9 @@ import {
   createBusinesses, 
   createCustomers, 
   createOrders,
+  createCoupons,
   createConstraints,
+  setBusinessesCustomers,
 } from "utils/Functions/DataFunctions";
 
 const initState = {
@@ -163,8 +165,10 @@ function DashboardPage() {
       createBusinesses(),
       createCustomers(),
       createOrders(),
+      createCoupons(),
     ])
     .then(async (result) => {
+      await setBusinessesCustomers(result[2].value);
       let constraints = await createConstraints(result[2].value);
       // console.log("CONSTRAINT", constraints);
       const data = {
@@ -176,7 +180,7 @@ function DashboardPage() {
         vehicles: testObj, // FIXME: CALL API
         ...result[4].value && { orders: result[4].value },
         payments: testObj,
-        coupons: testObj,
+        ...result[5].value && { coupons: result[5].value },
         constraints,
       };
       dispatch({ type: "load", payload: { data } });

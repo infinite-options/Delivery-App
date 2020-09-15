@@ -74,17 +74,30 @@ function CouponItem({ coupon, id, ...props }) {
   return (
     <tr>
       <td>{id}</td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
+      <td>
+        <FontAwesomeIcon 
+          icon={coupon.valid === "TRUE" ? Icons.faCheck : Icons.faTimes}
+          color={coupon.valid === "TRUE" ? "green" : "red"}
+        />
+      </td>
+      <td>
+        {coupon.discount_amount}<br />
+        {coupon.discount_percent}%
+      </td>
+      <td>{coupon.discount_shipping}</td>
+      <td>N/A</td>
+      <td>{coupon.expire_date}</td>
+      <td>{coupon.limits}</td>
+      <td>{coupon.notes}</td>
+      <td>{coupon.num_used}</td>
+      <td>
+        <FontAwesomeIcon 
+          icon={coupon.recurring === "T" ? Icons.faCheck : Icons.faTimes}
+          color={coupon.recurring === "T" ? "green" : "red"}
+        />
+      </td>
+      <td>{coupon.email}</td>
+      <td>{coupon.business_id}</td>
     </tr>
   );
 }

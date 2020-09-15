@@ -113,7 +113,7 @@ const createRoutes = () => {
         tempRoutes[route_id] = {
           route_option: location.route_option,
           business_id: location.route_business_id,
-          driver_id: location.driver_id, //* location.driver_id,
+          driver_id: location.route_driver_id, //* location.driver_id,
           // driver_first_name: "Bob", //* location.driver_first_name,
           // driver_last_name: "Jones", //* location.driver_last_name, 
           distance: location.route_distance,
@@ -428,11 +428,40 @@ const createOrders = () => {
   });
 };
 
+const createCoupons = () => {
+  return axios.get(NEW_NEW_BASE_URL + "getCoupons")
+  .then(response => {
+    // console.log("coupons:", response);
+    const result = response.data.result.result;
+    let tempCoupons = {};
+    for (let coupon of result) {
+      const coupon_id = coupon.coupon_uid;
+      const coupon_data = {
+        code: coupon.coupon_id,
+        valid: coupon.valid,
+        discount_percent: coupon.discount_percent,
+        discount_amount: coupon.discount_amount,
+        discount_shipping: coupon.discount_shipping,
+        expire_date: coupon.expire_date,
+        limits: coupon.limits,
+        notes: coupon.notes,
+        num_used: coupon.num_used,
+        recurring: coupon.recurring,
+        email: coupon.email_id,
+        business_id: coupon.cup_business_uid,
+      };
+      tempCoupons[coupon_id] = coupon_data;
+    }
+    return tempCoupons;
+  });
+};
+
 const createConstraints = (businesses) => {
   return new Promise((resolve, reject) => {
     let constraints = {};
+    const businessKeys = Object.keys(businesses);
     // console.log(Object.keys(businesses).length);
-    for (let business_id of Object.keys(businesses)) {
+    for (let business_id of businessKeys) {
       axios.get(NEW_NEW_BASE_URL + "getBusinessConstraints/" + business_id)
       .then(response => {
         // console.log(response);
@@ -453,16 +482,41 @@ const createConstraints = (businesses) => {
           max_deliveries: result.max_deliveries,
           min_deliveries: result.min_deliveries,
         };
+        if (business_id === businessKeys[businessKeys.length - 1]) resolve(constraints);
       })
       .catch(err => {
         console.log(err);
+        reject(err);
       });
       // console.log("endloop");
     }
     // console.log("HELLO");
-    setTimeout(() => resolve(constraints), 1000);
+    // setTimeout(() => resolve(constraints), 1000);
   });
 };
+
+
+const setBusinessesCustomers = (businesses) => {
+  return new Promise((resolve, reject) => {
+    const businessKeys = Object.keys(businesses);
+    // console.log(Object.keys(businesses).length);
+    for (let business_id of businessKeys) {
+      axios.get(NEW_NEW_BASE_URL + "getCustomersByBusiness/" + business_id)
+      .then(response => {
+        // console.log(response);
+        const result = response.data.result.result;
+        businesses[business_id].customers = result; // array of customer objects: [{ ... }, { ... }, ...]
+        if (business_id === businessKeys[businessKeys.length - 1]) resolve('success');
+      })
+      .catch(err => {
+        console.log(err);
+        reject(err);
+      });
+    }
+  });
+};
+
+
 
 // NOTE: Other functions, not sure how to organize these functions.
 //       Should they have their own files? Should we keep all these
@@ -489,7 +543,10 @@ export {
   createBusinesses,
   createCustomers,
   createOrders,
+  createCoupons,
   createConstraints,
+
+  setBusinessesCustomers,
 
   validToUpdate,
 };

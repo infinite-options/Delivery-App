@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Icons from "utils/Icons/Icons";
+import axios from "axios";
+import { BASE_URL } from "utils/Functions/DataFunctions";
 
 function DeliveryList({ routes, drivers, ...props }) {
   console.log("rendering deliveries..");
@@ -13,6 +15,7 @@ function DeliveryList({ routes, drivers, ...props }) {
     ])
   ));
   const [driversToRoutes, setDriversToRoutes] = useState({}); // { route_id: [driver_id, driver_name], ... }
+  console.log(driversToRoutes);
   // console.log(Object.values(driversToRoutes).length, Object.values(routes).length);
 
   useEffect(() => {
@@ -30,12 +33,26 @@ function DeliveryList({ routes, drivers, ...props }) {
     else setRouteData(routeData);
   }, [routes, props.filter]);
   
-  const saveRoutesDrivers = () => {
+  const saveRoutesDrivers = async () => {
     console.log("SAVING DRIVERS TO THEIR ROUTES");
-    // axios.put(ENDPOINT_URL, ROUTES_OBJECT)
-    // .then(response => {
-    //   props.dispatch({ type: 'update-route-drivers', payload: { route_drivers: driversToRoutes } })
-    // });
+    await (() => {
+      const routeDriverEntries = Object.entries(driversToRoutes);
+      return new Promise((resolve, reject) => {
+        for (let routeDriver of routeDriverEntries) {
+          axios.get(BASE_URL + `updateDriverID/${routeDriver[1].id}/${routeDriver[0]}`)
+          .then(response => {
+            console.log(response);
+            if (routeDriver[1] === driversToRoutes[routeDriverEntries.length - 1]) resolve('success');
+          })
+          .catch(err => {
+            console.log(err);
+            reject(err);
+          });
+        }
+      });
+    })();
+    // props.dispatch({ type: 'update-route-drivers', payload: { route_drivers: driversToRoutes } })
+
   };
 
   return (
@@ -44,7 +61,7 @@ function DeliveryList({ routes, drivers, ...props }) {
       <button
         className="button is-small mx-1 is-success is-outlined is-rounded" 
         style={{ marginBottom: "1rem" }}
-        disabled={Object.values(driversToRoutes).length !== Object.values(routes).length}
+        // disabled={Object.values(driversToRoutes).length !== Object.values(routes).length}
         onClick={saveRoutesDrivers}
       >
         <FontAwesomeIcon icon={Icons.faCheck} className="mr-2" />
