@@ -11,10 +11,11 @@ function VehicleList({ vehicles, ...props }) {
     <table className="table is-fullwidth is-size-7 is-bordered has-text-centered vcenter-items">
       <thead>
         <tr>
-          <th>Business ID</th>
+          <th>Vehicle ID</th>
           <th>Business Name</th>
           <th>Vehicle Make<br /><span style={{ fontSize: "0.65rem" }}>Model, Year</span></th>
           <th>Vehicle Registration</th>
+          <th>Vehicle Registration Expiration</th>
           <th>Insurance Carrier</th>
           <th>Insurance Policy</th>
           <th>Insurance Policy Expiration</th>
@@ -37,12 +38,13 @@ function VehicleList({ vehicles, ...props }) {
               }, ...
           }
         */}
-        {vehicleList.map((business_vehicles, index) => (
-          <VehiclesItem
+        {vehicleList.map((vehicle, index) => (
+          <VehicleItem
             key={index}
             index={index}
-            vehicles={business_vehicles[1]}
-            business_id={business_vehicles[0]}
+            vehicle={vehicle[1]}
+            id={vehicle[0]}
+            // business_id={business_vehicles[0]}
           />
         ))}
       </tbody>
@@ -50,58 +52,35 @@ function VehicleList({ vehicles, ...props }) {
   );
 }
 
-function VehiclesItem({ vehicles, business_id, ...props }) {
+function VehicleItem({ vehicle, id, ...props }) {
   // const [hidden, setHidden] = useState(true);
   // console.log(vehicles);
 
+  // vehicle_make: vehicle.vehicle_make,
+  // vehicle_model: vehicle.vehicle_model,
+  // vehicle_year: vehicle.vehicle_year,
+  // insurance_carrier: vehicle.vehicle_ins_carrier,
+  // insurance_number: vehicle.vehicle_ins_policy_num,
+  // insurance_expiration: vehicle.vehicle_ins_exp_date,
+  // registration: vehicle.vehicle_registration,
+  // registration_expiration: vehicle.vehicle_registration_exp,
+  // drivers: vehicle.drivers,
+
   return (
     <tr>
-      <td>{business_id}</td>
-      <td>{vehicles.business_name} N/A</td>
-      <td>N/A
-        {/* {vehicles.map((vehicle, index) => (
-          <p key={index}>
-            {vehicle.name}<br />
-            {`${vehicle.model}, ${vehicle.year}`}
-          </p>
-        ))} */}
+      <td>{id}</td>
+      <td>N/A</td>
+      <td>
+        {vehicle.vehicle_make}<br />
+        {vehicle.vehicle_model}, {vehicle.vehicle_year}
       </td>
-      <td>N/A
-        {/* {vehicles.map((vehicle, index) => (
-          <p key={index}>
-            {vehicle.registration}
-          </p>
-        ))} */}
-      </td>
-      <td>N/A
-        {/* {vehicles.map((vehicle, index) => (
-          <p key={index}>
-            {vehicle.insurance_carrier}
-          </p>
-        ))} */}
-      </td>
-      <td>N/A
-        {/* {vehicles.map((vehicle, index) => (
-          <p key={index}>
-            {vehicle.insurance_policy}
-          </p>
-        ))} */}
-      </td>
-      <td>N/A
-        {/* {vehicles.map((vehicle, index) => (
-          <p key={index}>
-            {vehicle.insurance_policy_expiration}
-          </p>
-        ))} */}
-      </td>
-      <td>N/A
-        {/* {vehicles.map((vehicle, index) => (
-          <React.Fragment>
-            {vehicle.drivers.map((driver, index) => (
-              <p>{driver.first_name} {driver.last_name}</p>
-            ))}
-          </React.Fragment>
-        ))} */}
+      <td>{vehicle.registration}</td>
+      <td>{vehicle.registration_expiration}</td>
+      <td>{vehicle.insurance_carrier}</td>
+      <td>{vehicle.insurance_number}</td>
+      <td>{vehicle.insurance_expiration}</td>
+      <td>
+        {vehicle.drivers && (true /* List out drivers */)}
       </td>
     </tr>
   );

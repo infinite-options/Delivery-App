@@ -419,7 +419,7 @@ const createVehicles = () => {
   })
   .catch(err => {
     console.log(err);
-  })
+  });
 };
 
 const createOrders = () => {
@@ -595,6 +595,7 @@ export {
   createDrivers,
   createBusinesses,
   createCustomers,
+  createVehicles,
   createOrders,
   createCoupons,
   createRefunds,

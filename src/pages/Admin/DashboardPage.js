@@ -18,15 +18,9 @@ import AppIcon from "utils/Icons/app_icon.png";
 // created another file for functions that load data from server, since this file was getting too large for my liking,
 // should I stick to this or revert this change?
 import { 
-  createRoutes, 
-  createDrivers, 
-  createBusinesses, 
-  createCustomers, 
-  createOrders,
-  createCoupons,
-  createRefunds,
-  createConstraints,
-  setBusinessesCustomers,
+  createRoutes, createDrivers, createBusinesses, createCustomers, 
+  createVehicles, createOrders, createCoupons, createRefunds, 
+  createConstraints, setBusinessesCustomers,
 } from "utils/Functions/DataFunctions";
 
 const initState = {
@@ -166,6 +160,7 @@ function DashboardPage() {
       createDrivers(),
       createBusinesses(),
       createCustomers(),
+      createVehicles(),
       createOrders(),
       createCoupons(),
       createRefunds(),
@@ -180,11 +175,11 @@ function DashboardPage() {
         ...result[1].value && { drivers: result[1].value },
         ...result[2].value && { businesses: result[2].value },
         ...result[3].value && { customers: result[3].value },
-        vehicles: testObj, // FIXME: CALL API
-        ...result[4].value && { orders: result[4].value },
+        ...result[4].value && { vehicles: result[4].value },
+        ...result[5].value && { orders: result[5].value },
         payments: testObj,
-        ...result[5].value && { coupons: result[5].value },
-        ...result[6].value && { refunds: result[6].value },
+        ...result[6].value && { coupons: result[6].value },
+        ...result[7].value && { refunds: result[7].value },
         constraints,
       };
       dispatch({ type: "load", payload: { data } });
@@ -498,6 +493,7 @@ function FilterDropdown({ data, header, ...props }) {
   const [open, setOpen] = useState(false);
   const [dataType, setDataType] = useState();
   const [filterItems, setFilterItems] = useState([]);
+  console.log(filterItems, dataType);
 
   useEffect(() => {
     let type;
@@ -574,7 +570,7 @@ function FilterDropdown({ data, header, ...props }) {
   };
 
   return (
-    <div className="level" style={{ height: "5vh", margin: 0, justifyContent: "end" }}>
+    <div className="level is-mobile" style={{ height: "5vh", margin: 0, justifyContent: "end" }}>
       <div className="level-item" style={{ flexGrow: 0 }}>
         <div className={"dropdown" + (open ? " is-active" : "")}>
           <div className="dropdown-trigger">
@@ -587,7 +583,7 @@ function FilterDropdown({ data, header, ...props }) {
             <div className="dropdown-content">
               <button className="button is-small is-white dropdown-item" disabled={!data.filter} onClick={() => handleFilter()}>NONE</button>
               <hr className="dropdown-divider" />
-              {(dataType && dataType.length) && Object.keys(Object.values(dataType)[0]).map((option, index) => (
+              {dataType && Object.keys(Object.values(dataType)[0] || {/* if list empty */}).map((option, index) => (
                 <React.Fragment key={index}>
                   {filterItems.includes(option) && (
                     <button className="button is-small is-white dropdown-item" disabled={data.filter && data.filter.option === option} onClick={() => handleFilter(option)}>{option}</button>
@@ -603,7 +599,7 @@ function FilterDropdown({ data, header, ...props }) {
       </div>
       <div className="level-item" style={{ flexGrow: 0 }}>
         <form onSubmit={handleSubmit}>
-          <div className="level">
+          <div className="level is-mobile">
             <div className="level-item px-2">
               <input className="input is-small" id="filter-value" type="text" disabled={!data.filter} />
             </div>
