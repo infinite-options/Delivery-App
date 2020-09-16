@@ -1,15 +1,31 @@
 import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Icons from "utils/Icons/Icons";
+import EditItemField from "utils/Components/EditItemField";
 // import axios from "axios";
 
-function CouponList({ coupons, ...props }) {
+function CouponList({ coupons, refunds, ...props }) {
   console.log("rendering coupons..");
   const [couponList, setCouponList] = useState(Object.entries(coupons));
-  
+  const [refundList, setRefundList] = useState(Object.entries(refunds));
+  const [couponForm, setCouponForm] = useState(false);
+  const [refundForm, setRefundForm] = useState(false);
+
   return (
     <React.Fragment>
-      <h2 className="has-text-weight-bold ml-2">Coupons</h2>
+      <h2 className="has-text-weight-bold ml-2 mb-1">Coupons</h2>
+      {!couponForm ? (
+        <button
+          className="button is-small mx-1 is-success is-outlined is-rounded" 
+          style={{ marginBottom: "1rem" }}
+          onClick={() => setCouponForm(true)}
+        >
+          <FontAwesomeIcon icon={Icons.faPlus} className="mr-2" />
+          Add Coupon
+        </button>
+      ) : (
+        <CouponForm setCouponForm={setCouponForm} />
+      )}
       <table className="table is-fullwidth is-size-7 is-bordered has-text-centered vcenter-items my-4">
         <thead>
           <tr>
@@ -54,7 +70,7 @@ function CouponList({ coupons, ...props }) {
           </tr>
         </thead>
         <tbody>
-          {couponList.map((refund, index) => ( // NOTE: create refindList array
+          {refundList.map((refund, index) => ( // NOTE: create refindList array
             <RefundItem
               key={index}
               index={index}
@@ -108,16 +124,134 @@ function RefundItem({ refund, id, ...props }) {
   return (
     <tr>
       <td>{id}</td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
+      <td>{refund.created_at}</td>
+      <td>{refund.email}</td>
+      <td>{refund.phone}</td>
+      <td>
+        <img src={refund.image} alt="coupon" width="48" height="48" />
+      </td>
+      <td>{refund.customer_notes}</td>
+      <td>{refund.refund_amount}</td>
+      <td>{refund.coupon_id}</td>
+      <td>{refund.admin_notes}</td>
     </tr>
   );
+}
+
+function CouponForm(props) {
+  const [couponData, setCouponData] = useState({});
+
+  const handleChange = (e, type) => {
+    e.persist();
+    console.log(e.target, e.target.checked, e.target.value);
+    
+    setCouponData(prevCouponData => ({
+      ...prevCouponData,
+      [type]: e.target.type !== "checkbox" ? e.target.value : Number(e.target.checked),
+    }));
+  };
+
+  const handleCouponSubmit = () => {
+    console.log(couponData);
+  };
+
+  return (
+    <React.Fragment>
+      <button
+        className="button is-small mx-1 is-danger is-outlined is-rounded" 
+        style={{ marginBottom: "1rem" }}
+        onClick={() => props.setCouponForm(false)}
+      >
+        <FontAwesomeIcon icon={Icons.faTimes} className="mr-2" />
+        Cancel
+      </button>
+      <button
+        className="button is-small mx-1 is-success is-outlined is-rounded" 
+        onClick={() => handleCouponSubmit()}
+      >
+        <FontAwesomeIcon icon={Icons.faCheck} className="mr-2" />
+        Save
+      </button>
+      <div className="box form-item">
+        <EditItemField 
+          type={'coupon_id'} value={couponData.coupon_id || ""}
+          placeholder="Coupon Code"
+          handleChange={handleChange}
+        />
+        <div className="mb-5">
+          <EditItemField 
+            type={'valid'} value={couponData.valid || 0}
+            handleChange={handleChange}
+            checkbox
+          />
+          <span className="is-size-7 ml-1 mr-5">Valid</span>
+          <EditItemField 
+            type={'recurring'} value={couponData.recurring || 0}
+            handleChange={handleChange}
+            checkbox
+          />
+          <span className="is-size-7 mx-1">Recurring</span>
+        </div>
+        <EditItemField 
+          type={'discount_percent'} value={couponData.discount_percent || ""}
+          placeholder="Discount Percentage"
+          handleChange={handleChange}
+        />
+        <EditItemField 
+          type={'discount_amount'} value={couponData.discount_amount || ""}
+          placeholder="Discount Amount"
+          handleChange={handleChange}
+        />
+        <EditItemField 
+          type={'discount_shipping'} value={couponData.discount_shipping || ""}
+          className="mb-5"
+          placeholder="Discount Shipping"
+          handleChange={handleChange}
+        />
+        <EditItemField 
+          type={'expire_date'} value={couponData.expire_date || ""}
+          placeholder="Expiration Date"
+          handleChange={handleChange}
+        />
+        <EditItemField 
+          type={'limits'} value={couponData.limits || ""}
+          placeholder="Limits"
+          handleChange={handleChange}
+        />
+        <EditItemField 
+          type={'notes'} value={couponData.notes || ""}
+          className="mb-5"
+          placeholder="Notes"
+          handleChange={handleChange}
+          textarea
+        />
+        <EditItemField 
+          type={'num_used'} value={couponData.num_used || ""}
+          className="mb-5"
+          placeholder="Times Used"
+          handleChange={handleChange}
+        />
+        {/* <div>
+          <span style={{ fontSize: "0.75rem" }}>Recurring </span>
+          <EditItemField 
+            type={'recurring'} value={couponData.recurring || 0}
+            handleChange={handleChange}
+            checkbox
+          />
+        </div> */}
+        <EditItemField 
+          type={'email_id'} value={couponData.email_id || ""}
+          placeholder="Email"
+          handleChange={handleChange}
+        />
+        <EditItemField 
+          type={'cup_business_uid'} value={couponData.cup_business_uid || ""}
+          placeholder="Business ID"
+          handleChange={handleChange}
+        />
+      </div>
+    </React.Fragment>
+  )
 }
   
 export default CouponList;

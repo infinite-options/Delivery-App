@@ -456,6 +456,30 @@ const createCoupons = () => {
   });
 };
 
+const createRefunds = () => {
+  return axios.get(NEW_NEW_BASE_URL + "getRefunds")
+  .then(response => {
+    console.log("refunds resp:", response)
+    const result = response.data.result.result;
+    let tempRefunds = {};
+    for (let refund of result) {
+      const refund_id = refund.refund_uid;
+      const refund_data = {
+        created_at: refund.created_at,
+        email: refund.email_id,
+        phone: refund.phone_num,
+        image: refund.image_url,
+        customer_note: refund.customer_note,
+        admin_note: refund.admin_note,
+        refund_amount: refund.refund_amount,
+        coupon_id: refund.coupon_id,
+      };
+      tempRefunds[refund_id] = refund_data;
+    }
+    return tempRefunds;
+  })
+};
+
 const createConstraints = (businesses) => {
   return new Promise((resolve, reject) => {
     let constraints = {};
@@ -544,6 +568,7 @@ export {
   createCustomers,
   createOrders,
   createCoupons,
+  createRefunds,
   createConstraints,
 
   setBusinessesCustomers,

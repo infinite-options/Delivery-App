@@ -61,7 +61,7 @@ function DeliveryList({ routes, drivers, ...props }) {
       <button
         className="button is-small mx-1 is-success is-outlined is-rounded" 
         style={{ marginBottom: "1rem" }}
-        // disabled={Object.values(driversToRoutes).length !== Object.values(routes).length}
+        disabled={Object.values(driversToRoutes).length !== Object.values(routes).length}
         onClick={saveRoutesDrivers}
       >
         <FontAwesomeIcon icon={Icons.faCheck} className="mr-2" />

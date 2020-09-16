@@ -24,6 +24,7 @@ import {
   createCustomers, 
   createOrders,
   createCoupons,
+  createRefunds,
   createConstraints,
   setBusinessesCustomers,
 } from "utils/Functions/DataFunctions";
@@ -41,6 +42,7 @@ const initState = {
   orders: {},
   payments: {},
   coupons: {},
+  refunds: {},
   constraints: {},
 };
 
@@ -166,6 +168,7 @@ function DashboardPage() {
       createCustomers(),
       createOrders(),
       createCoupons(),
+      createRefunds(),
     ])
     .then(async (result) => {
       await setBusinessesCustomers(result[2].value);
@@ -181,6 +184,7 @@ function DashboardPage() {
         ...result[4].value && { orders: result[4].value },
         payments: testObj,
         ...result[5].value && { coupons: result[5].value },
+        ...result[6].value && { refunds: result[6].value },
         constraints,
       };
       dispatch({ type: "load", payload: { data } });
@@ -282,6 +286,7 @@ function DashboardPage() {
         return (
           <CouponList
             coupons={data.coupons}
+            refunds={data.refunds}
           />
         )
       case 8:

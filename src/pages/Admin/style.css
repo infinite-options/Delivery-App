@@ -125,7 +125,7 @@
 }
 
 .box.no-map {
-  max-height: 93vh; 
+  max-height: 89vh; 
   -webkit-box-shadow: none;
 	-moz-box-shadow: none;
   box-shadow: none;
@@ -138,6 +138,11 @@
   display: inline-block !important; 
   min-width: max(800px, 100%);
   /* width: 120%; */
+}
+
+.form-item {
+  background-color: #f8f7fa !important; 
+  /* display: inline-block !important;  */
 }
 
 /* For some reason when button has text around it, the vertical
