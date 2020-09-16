@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Icons from "utils/Icons/Icons";
 import EditItemField from "utils/Components/EditItemField";
-// import axios from "axios";
+import { BASE_URL } from "utils/Functions/DataFunctions";
+import axios from "axios";
 
 function CouponList({ coupons, refunds, ...props }) {
   console.log("rendering coupons..");
@@ -32,12 +33,13 @@ function CouponList({ coupons, refunds, ...props }) {
             <th>Coupon #</th>
             <th>Active</th>
             <th>Discount Amount</th>
+            <th>Discount Percentage</th>
             <th>Discount Shipping</th>
             <th>Delivery Start Date</th>
             <th>Expiration Date</th>
             <th>Limits</th>
             <th>Notes</th>
-            <th>Number Used</th>
+            <th>Times Used</th>
             <th>Recurring</th>
             <th>Email ID</th>
             <th>Business ID</th>
@@ -96,10 +98,8 @@ function CouponItem({ coupon, id, ...props }) {
           color={coupon.valid === "TRUE" ? "green" : "red"}
         />
       </td>
-      <td>
-        {coupon.discount_amount}<br />
-        {coupon.discount_percent}%
-      </td>
+      <td>${coupon.discount_amount}</td>
+      <td>{coupon.discount_percent}%</td>
       <td>{coupon.discount_shipping}</td>
       <td>N/A</td>
       <td>{coupon.expire_date}</td>
@@ -152,7 +152,21 @@ function CouponForm(props) {
   };
 
   const handleCouponSubmit = () => {
-    console.log(couponData);
+    // console.log(couponData);
+    let newCoupon = { ...couponData };
+    newCoupon.valid = couponData.valid ? "TRUE" : "FALSE";
+    newCoupon.recurring = couponData.recurring ? "T" : "F";
+    // newCoupon.valid = `${couponData.valid}`;
+    // newCoupon.recurring = `${couponData.recurring}`;
+    console.log(newCoupon);
+
+    axios.post(BASE_URL + "insertNewCoupon", newCoupon)
+    .then(response => {
+      console.log(response);
+    })
+    .catch(err => {
+      console.log(err);
+    });
   };
 
   return (

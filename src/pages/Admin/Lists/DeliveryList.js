@@ -39,15 +39,17 @@ function DeliveryList({ routes, drivers, ...props }) {
       const routeDriverEntries = Object.entries(driversToRoutes);
       return new Promise((resolve, reject) => {
         for (let routeDriver of routeDriverEntries) {
-          axios.get(BASE_URL + `updateDriverID/${routeDriver[1].id}/${routeDriver[0]}`)
-          .then(response => {
-            console.log(response);
-            if (routeDriver[1] === driversToRoutes[routeDriverEntries.length - 1]) resolve('success');
-          })
-          .catch(err => {
-            console.log(err);
-            reject(err);
-          });
+          if(routes[routeDriver[0]].driver_id !== routeDriver[1].id) {
+            axios.get(BASE_URL + `updateDriverID/${routeDriver[1].id}/${routeDriver[0]}`)
+            .then(response => {
+              console.log(response);
+              if (routeDriver[1] === driversToRoutes[routeDriverEntries.length - 1]) resolve('success');
+            })
+            .catch(err => {
+              console.log(err);
+              reject(err);
+            });
+          }
         }
       });
     })();
@@ -61,7 +63,7 @@ function DeliveryList({ routes, drivers, ...props }) {
       <button
         className="button is-small mx-1 is-success is-outlined is-rounded" 
         style={{ marginBottom: "1rem" }}
-        disabled={Object.values(driversToRoutes).length !== Object.values(routes).length}
+        // disabled={Object.values(driversToRoutes).length !== Object.values(routes).length}
         onClick={saveRoutesDrivers}
       >
         <FontAwesomeIcon icon={Icons.faCheck} className="mr-2" />
@@ -192,6 +194,7 @@ function RouteItem({ route, id, ...props }) {
               <div style={{ width: "300%", maxWidth: "225px" }}>
                 <DriversDropdown 
                   route_id={id}
+                  driver_num={route.driver_num}
                   driver={driver} 
                   setDriver={setDriver}
                   list={props.driversList} 
@@ -298,7 +301,6 @@ function DriversDropdown({ driver, setDriver, list, setList, ...props }) {
     Number(driver[0].substring(driver[0].indexOf("-") + 1, driver[0].length)) : 
     undefined;
 
-  // I WANT THIS TO RUN WHENEVER LIST IS CHANGED BY THE PARENT
   useEffect(() => {
     // if route already has a driver selected, remove the driver as an option from the dropdown
     if (driver) {
@@ -335,7 +337,7 @@ function DriversDropdown({ driver, setDriver, list, setList, ...props }) {
     <React.Fragment>
       <span className="mr-1">
         {/* {driver ? (`Driver ${route_driver_id}:`) : (`Driver:`)} */}
-        Driver:
+        {`Driver ${props.driver_num}:`}
       </span>
       <div className={"dropdown" + (open ? " is-active" : "")}>
         <div className="dropdown-trigger">

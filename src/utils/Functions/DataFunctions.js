@@ -114,6 +114,7 @@ const createRoutes = () => {
           route_option: location.route_option,
           business_id: location.route_business_id,
           driver_id: location.route_driver_id, //* location.driver_id,
+          driver_num: location.route_driver_num,
           // driver_first_name: "Bob", //* location.driver_first_name,
           // driver_last_name: "Jones", //* location.driver_last_name, 
           distance: location.route_distance,
@@ -391,6 +392,34 @@ const createCustomers = () => {
     // setCustomers(tempCustomers);
     return tempCustomers;
   });
+};
+
+const createVehicles = () => {
+  return axios.get(NEW_NEW_BASE_URL + "getVehicles")
+  .then(response => {
+    console.log("vehicles resp:", response);
+    const result = response.data.result.result;
+    let tempVehicles = {}
+    for (let vehicle of result) {
+      const vehicle_id = vehicle.vehicle_uid;
+      const vehicle_data = {
+        vehicle_make: vehicle.vehicle_make,
+        vehicle_model: vehicle.vehicle_model,
+        vehicle_year: vehicle.vehicle_year,
+        insurance_carrier: vehicle.vehicle_ins_carrier,
+        insurance_number: vehicle.vehicle_ins_policy_num,
+        insurance_expiration: vehicle.vehicle_ins_exp_date,
+        registration: vehicle.vehicle_registration,
+        registration_expiration: vehicle.vehicle_registration_exp,
+        drivers: vehicle.drivers,
+      };
+      tempVehicles[vehicle_id] = vehicle_data;
+    };
+    return tempVehicles;
+  })
+  .catch(err => {
+    console.log(err);
+  })
 };
 
 const createOrders = () => {
