@@ -150,7 +150,7 @@ function CustomerItem({ customer, id, ...props }) {
                       <div className="level-item">
                         Password Salt<br />{customer.password_salt}
                       </div>
-                      <div className="level-item">
+                      <div className="level-item" style={{ display: "inline-block", width: "33%" }}>
                         Password Hash<br />{customer.password_hash}
                       </div>
                       <div className="level-item">

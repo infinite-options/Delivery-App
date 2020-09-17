@@ -196,6 +196,7 @@ const createDrivers = () => {
     for (let driver of result) {
       const driver_id = driver.driver_uid;
       const driver_data = {
+        visible: true,
         rating: driver.driver_rating,
 
         first_name: driver.driver_first_name,
@@ -354,6 +355,8 @@ const createCustomers = () => {
     for (let customer of result) {
       const customer_id = customer.customer_uid;
       const customer_data = {
+        visible: true,
+
         first_name: customer.customer_first_name || " ",
         last_name: customer.customer_last_name || " ",
         

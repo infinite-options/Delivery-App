@@ -324,7 +324,7 @@ function BusinessItem({ business, id, ...props }) {
                 </td>
                 <td>
                   Business Password<br />
-                  <div className="wrap-text">{business.password}</div>
+                  {business.password}
                 </td>
                 <td></td>
                 <td>

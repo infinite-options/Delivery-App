@@ -158,6 +158,8 @@ table.vcenter-items span,
   vertical-align: middle;
 }
 
+/* NOTE: FOR LONG TEXT INSIDE LEVEL CLASS, { display: inline-block, width: [parent-width / num-children]% } 
+(unrelated - not using this class atm) */
 .list-item div.wrap-text {
   width: 50px; 
   min-width: 100%; 
@@ -208,7 +210,7 @@ table.table:not(.is-bordered) {
 }
 
 table.table:not(.is-bordered) td {
-  word-wrap: break-word;
+  word-wrap: break-word !important;
 }
 
 /* Route color display classes */

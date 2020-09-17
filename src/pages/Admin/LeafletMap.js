@@ -181,9 +181,10 @@ function LeafletMap({ header, routes, drivers, businesses, customers, ...props }
   
   // console.log(businessLocations);
   // console.log(mapRoutes);
+  const routes_array = Object.entries(mapData.routes);
+  const drivers_array = Object.entries(mapData.drivers);
   const businesses_array = Object.entries(mapData.businesses);
   const customers_array = Object.entries(mapData.customers);
-  const routes_array = Object.entries(mapData.routes);
   // console.log(businesses_array);
 
   const mapLatlng = calculateLatlng(routes_array);
@@ -236,15 +237,29 @@ function LeafletMap({ header, routes, drivers, businesses, customers, ...props }
 
   const checkVisibility = (marker) => {
     switch (header) {
-      case 0: case 1:
+      case 0:
         // console.log(businessLocations[marker.options.business]);
         return (
           mapData.routes[marker.options.route] ? mapData.routes[marker.options.route].visible : (
-          mapData.businesses[marker.options.business] ? mapData.businesses[marker.options.business].visible : false)
+          marker.options.customer ? false : (
+          mapData.businesses[marker.options.business] ? mapData.businesses[marker.options.business].visible : false
+          ))
+        );
+      case 1:
+        return (
+          mapData.routes[marker.options.route] ? mapData.routes[marker.options.route].visible : (
+          mapData.drivers[marker.options.driver] ? mapData.drivers[marker.options.driver].visible : false
+          )
         );
       case 2:
         return (
           mapData.businesses[marker.options.business] ? mapData.businesses[marker.options.business].visible : false
+        );
+      case 3:
+        return (
+          marker.options.business ? false : (
+          mapData.customers[marker.options.customer] ? mapData.customers[marker.options.customer].visible : false
+          )
         );
       default:
         return false;
@@ -273,15 +288,31 @@ function LeafletMap({ header, routes, drivers, businesses, customers, ...props }
         // updateWhenIdle={true}
         // onload={}
       />
-      {businesses_array.map((location, index) => (
-        <Marker 
-          key={index} 
+      {drivers_array.map((driver, index) => (
+        <DriverMarkers 
+          key={index}
           index={index}
-          business={location[0]}
-          position={[location[1].latitude || Math.random(), location[1].longitude || Math.random()]} 
-          icon={Icons.Headquarters} 
-          onClick={() => console.log(`Hi this is Business ${location[0]}`)} 
-          onDblClick={() => false} // disabling zoom on marker double click
+          id={driver[0]}
+          driver={driver[1]}
+          header={header}
+        />
+      ))}
+      {businesses_array.map((business, index) => (
+        <BusinessMarkers 
+          key={index}
+          index={index}
+          id={business[0]}
+          business={business[1]}
+          header={header}
+        />
+      ))}
+      {customers_array.map((customer, index) => (
+        <CustomerMarkers 
+          key={index}
+          index={index}
+          id={customer[0]}
+          customer={customer[1]}
+          header={header}
         />
       ))}
       {routes_array.map((route, index) => (
@@ -292,7 +323,7 @@ function LeafletMap({ header, routes, drivers, businesses, customers, ...props }
           route={route[1]}
           selectedLocation={props.selectedLocation}
           setSelectedLocation={props.setSelectedLocation}
-          manageMarkers={manageMarkers}
+          // manageMarkers={manageMarkers}
           header={header}
           // visible={routes[route[0]].visible}
         />
@@ -470,6 +501,58 @@ const RouteMarkers = ({ route, id, ...props }) => {
       })}
       <button onClick={handleDriverLocation}>HI</button>
     </React.Fragment>
+  );
+};
+
+function DriverMarkers({ driver, id, ...props }) {
+
+  return (
+    <Marker 
+      driver={id}
+      position={[driver.latitude || Math.random(), driver.longitude || Math.random()]}
+      icon={Icons.DefaultIcon("#FFFFFF")}
+      onClick={() => console.log(`Hi this is Driver ${id}`)}
+      onDblClick={() => false} // disabling zoom on marker double click
+    />
+  );
+};
+
+function BusinessMarkers({ business, id, ...props }) {
+
+  return (
+    <React.Fragment>
+      <Marker 
+        business={id}
+        position={[business.latitude || Math.random(), business.longitude || Math.random()]} 
+        icon={Icons.Headquarters} 
+        onClick={() => console.log(`Hi this is Business ${id}`)} 
+        onDblClick={() => false} // disabling zoom on marker double click
+      />
+      {business.customers && business.customers.map((customer, index) => (
+        <Marker 
+          key={index}
+          customer={customer.customer_uid}
+          business={id}
+          position={[customer.customer_lat || Math.random(), customer.customer_long || Math.random()]}
+          icon={Icons.DefaultIcon("#696969")}
+          onClick={() => console.log(`Hi this is Business ${id}: Customer ${customer.customer_uid}`)}
+          onDblClick={() => false} // disabling zoom on marker double click
+        />
+      ))}
+    </React.Fragment>
+  );
+};
+
+function CustomerMarkers({ customer, id, ...props }) {
+
+  return (
+    <Marker 
+      customer={id}
+      position={[customer.latitude || Math.random(), customer.longitude || Math.random()]}
+      icon={Icons.DefaultIcon("#000000")}
+      onClick={() => console.log(`Hi this is Customer ${id}`)}
+      onDblClick={() => false} // disabling zoom on marker double click
+    />
   );
 };
 
