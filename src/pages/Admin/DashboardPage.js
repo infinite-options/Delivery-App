@@ -9,7 +9,7 @@ import DriverList from "./Lists/DriverList";
 import BusinessList from "./Lists/BusinessList";
 import CustomerList from "./Lists/CustomerList";
 import VehicleList from "./Lists/VehicleList";
-import OrderList from "./Lists/OrderList";
+import PurchaseList from "./Lists/PurchaseList";
 import PaymentList from "./Lists/PaymentList";
 import CouponList from "./Lists/CouponList";
 import ConstraintList from "./Lists/ConstraintList";
@@ -19,7 +19,7 @@ import AppIcon from "utils/Icons/app_icon.png";
 // should I stick to this or revert this change?
 import { 
   createRoutes, createDrivers, createBusinesses, createCustomers, 
-  createVehicles, createOrders, createCoupons, createRefunds, 
+  createVehicles, createPurchases, createCoupons, createRefunds, 
   createConstraints, setBusinessesCustomers,
 } from "utils/Functions/DataFunctions";
 
@@ -33,7 +33,7 @@ const initState = {
   businesses: {},
   customers: {},
   vehicles: {},
-  orders: {},
+  purchases: {},
   payments: {},
   coupons: {},
   refunds: {},
@@ -46,10 +46,16 @@ function reducer(state, action) {
       let routes_dates = [];
       let routes_times = ['1', '2', '3', '4', '5']; // NOTE: TEMP
 
+      // storing additional data to routes data
       for (let route of Object.values(action.payload.data.routes)) {
         route["Business Name"] = action.payload.data.businesses[route.business_id] ? action.payload.data.businesses[route.business_id].name : null;
         route["Driver Name"] = action.payload.data.drivers[route.driver_id] ? action.payload.data.drivers[route.driver_id].first_name + ' ' + action.payload.data.drivers[route.driver_id].last_name : null;
         
+        for (let location of route.route_data) {
+          location.customer_first_name = action.payload.data.customers[location.customer_id] ? action.payload.data.customers[location.customer_id].first_name : " ";
+          location.customer_last_name  = action.payload.data.customers[location.customer_id] ? action.payload.data.customers[location.customer_id].last_name  : " ";
+        }
+
         if (!routes_dates.includes(route.date)) routes_dates.push(route.date);
         // SAME THING BUT FOR TIMES
       }
@@ -161,7 +167,7 @@ function DashboardPage() {
       createBusinesses(),
       createCustomers(),
       createVehicles(),
-      createOrders(),
+      createPurchases(),
       createCoupons(),
       createRefunds(),
     ])
@@ -176,7 +182,7 @@ function DashboardPage() {
         ...result[2].value && { businesses: result[2].value },
         ...result[3].value && { customers: result[3].value },
         ...result[4].value && { vehicles: result[4].value },
-        ...result[5].value && { orders: result[5].value },
+        ...result[5].value && { purchases: result[5].value },
         payments: testObj,
         ...result[6].value && { coupons: result[6].value },
         ...result[7].value && { refunds: result[7].value },
@@ -267,8 +273,8 @@ function DashboardPage() {
         );
       case 5:
         return (
-          <OrderList 
-            orders={data.orders}
+          <PurchaseList 
+            purchases={data.purchases}
           />
         );
       case 6:
@@ -510,7 +516,7 @@ function FilterDropdown({ data, header, ...props }) {
       case 4: 
         type = data.vehicles; break;
       case 5: 
-        type = data.orders; break;
+        type = data.purchases; break;
       case 6: 
         type = data.payments; break;
       case 7: 

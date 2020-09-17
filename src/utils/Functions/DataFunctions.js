@@ -74,9 +74,9 @@ const createRoutes = () => {
         // to: [latlngs.latitude, latlngs.longitude],
         to: latlngs,
         customer_id: deliveryInfo[0].customer_id,
-        customer_first_name: "Bill",
-        customer_last_name: "Gates",
-        address: deliveryInfo.delivery_street,
+        // customer_first_name: "Bill",
+        // customer_last_name: "Gates",
+        address: deliveryInfo[0].delivery_street,
 
         // customer_id: location.customer_id,
         // customer_first_name: location.delivery_first_name,
@@ -221,8 +221,8 @@ const createDrivers = () => {
         city: driver.driver_city,
         state: driver.driver_state,
         zip: driver.driver_zip,
-        latitude: driver.driver_latitude,
-        longitude: driver.driver_longitude,
+        latitude: Number(driver.driver_latitude),
+        longitude: Number(driver.driver_longitude),
 
         insurance_carrier: driver.driver_insurance_carrier,
         insurance_number: driver.driver_insurance_num,
@@ -346,45 +346,51 @@ const createBusinesses = () => {
 };
 
 const createCustomers = () => {
-  return axios.get(BASE_URL + "getCustomers")
+  return axios.get(NEW_NEW_BASE_URL + "Customers")
   .then((response) => {
     // console.log("tempcust", response);
     const result = response.data.result.result;
     let tempCustomers = {};
     for (let customer of result) {
-      const customer_id = customer.customer_id;
+      const customer_id = customer.customer_uid;
       const customer_data = {
-        first_name: customer.customer_first_name,
-        last_name: customer.customer_last_name,
+        first_name: customer.customer_first_name || " ",
+        last_name: customer.customer_last_name || " ",
         
         phone: customer.customer_phone_num,
         
-        SMS_frequency: customer.customer_SMS_frequency,
-        SMS_last_notification: customer.customer_SMS_last_notification,
+        SMS_frequency: customer.SMS_freq_preference,
+        SMS_last_notification: customer.SMS_last_notification,
 
-        street: customer.customer_street,
+        street: customer.customer_address,
         unit: customer.customer_unit,
         city: customer.customer_city,
         state: customer.customer_state,
         zip: customer.customer_zip,
-        latitude: customer.customer_latitude,
-        longitude: customer.customer_longitude,
+        latitude: Number(customer.customer_lat),
+        longitude: Number(customer.customer_long),
 
         email: customer.customer_email,
         
         notification_approval: customer.notification_approval,
         notification_id: customer.notification_device_id,
 
-        verified: customer.customer_email.verified,
+        created_at: customer.customer_created_at,
+        verified: Number(customer.email_verified),
 
-        password_salt: customer.customer_password_salt,
-        password_hash: customer.customer_password_hash,
-        password_algorithm: customer.customer_password_algorithm,
+        password_salt: customer.password_salt,
+        password_hash: customer.password_hashed,
+        password_algorithm: customer.password_algorithm,
 
-        referrral_source: customer.referral_source,
-        role: customer.customer_role,
+        referral_source: customer.referral_source,
+        role: customer.role,
         last_update: customer.customer_updated_at,
-        customer_rep: customer.customer_representative,
+        customer_rep: customer.customer_rep,
+
+        user_social_media: customer.user_social_media,
+        user_access_token: customer.user_access_token,
+        user_refresh_token: customer.user_refresh_token,
+
         route_id: customer.route_id, // multiple??
       };
       tempCustomers[customer_id] = customer_data;
@@ -422,38 +428,43 @@ const createVehicles = () => {
   });
 };
 
-const createOrders = () => {
-  return axios.get(BASE_URL + "getCustomerOrders")
+const createPurchases = () => {
+  return axios.get(NEW_NEW_BASE_URL + "Purchases")
   .then((response) => {
-    // console.log("temporders", response);
+    // console.log("temppurchases", response);
     const result = response.data.result.result;
-    let tempOrders = {};
-    for (let order of result) {
-      const order_id = order.order_id;
-      const order_data = {
-        customer_id: order.customer_id,
-        customer_first_name: order.customer_first_name,
-        customer_last_name: order.customer_last_name,
-        customer_street: order.customer_street,
-        // unit: order.order_unit,
-        customer_city: order.customer_city,
-        customer_state: order.customer_state,
-        customer_zip: order.customer_zip,
-        customer_phone: order.customer_phone_num,
-        customer_email: order.customer_email,
-        customer_latitude: order.customer_latitude,
-        customer_longitude: order.customer_longitude,
+    let tempPurchases = {};
+    for (let purchase of result) {
+      const purchase_id = purchase.purchase_uid;
+      const purchase_data = {
+        customer_id: purchase.pur_customer_uid,
+        business_id: purchase.pur_business_uid,
 
-        items: order.items,
-        cost: order.amount,
-        order_instructions: order.order_instructions,
-        delivery_instructions: order.delivery_instructions,
-        type: order.order_type,
-        status: order.order_status,
+        delivery_first_name: purchase.delivery_first_name,
+        delivery_last_name: purchase.delivery_last_name,
+        delivery_phone: purchase.delivery_phone_num,
+        delivery_email: purchase.delivery_email,
+
+        delivery_street: purchase.delivery_address,
+        delivery_unit: purchase.delivery_unit,
+        delivery_city: purchase.delivery_city,
+        delivery_state: purchase.delivery_state,
+        delivery_zip: purchase.delivery_zip,
+        delivery_latitude: Number(purchase.delivery_latitude),
+        delivery_longitude: Number(purchase.delivery_longitude),
+
+        items: purchase.items,
+        // cost: purchase.amount,
+        purchase_date: purchase.purchase_date,
+        order_instructions: purchase.order_instructions,
+        purchase_notes: purchase.purchase_notes,
+        delivery_instructions: purchase.delivery_instructions,
+        order_type: purchase.order_type,
+        purchase_status: purchase.purchase_status,
       };
-      tempOrders[order_id] = order_data;
+      tempPurchases[purchase_id] = purchase_data;
     }
-    return tempOrders;
+    return tempPurchases;
   });
 };
 
@@ -501,7 +512,7 @@ const createRefunds = () => {
         customer_note: refund.customer_note,
         admin_note: refund.admin_note,
         refund_amount: refund.refund_amount,
-        coupon_id: refund.coupon_id,
+        coupon_id: refund.ref_coupon_id,
       };
       tempRefunds[refund_id] = refund_data;
     }
@@ -596,7 +607,7 @@ export {
   createBusinesses,
   createCustomers,
   createVehicles,
-  createOrders,
+  createPurchases,
   createCoupons,
   createRefunds,
   createConstraints,

@@ -9,28 +9,28 @@ function CouponList({ coupons, refunds, ...props }) {
   console.log("rendering coupons..");
   const [couponList, setCouponList] = useState(Object.entries(coupons));
   const [refundList, setRefundList] = useState(Object.entries(refunds));
-  const [couponForm, setCouponForm] = useState(false);
-  const [refundForm, setRefundForm] = useState(false);
+  const [form, setForm] = useState();
 
   return (
     <React.Fragment>
       <h2 className="has-text-weight-bold ml-2 mb-1">Coupons</h2>
-      {!couponForm ? (
+      {form !== "coupon" ? (
         <button
           className="button is-small mx-1 is-success is-outlined is-rounded" 
           style={{ marginBottom: "1rem" }}
-          onClick={() => setCouponForm(true)}
+          onClick={() => setForm("coupon")}
         >
           <FontAwesomeIcon icon={Icons.faPlus} className="mr-2" />
           Add Coupon
         </button>
       ) : (
-        <CouponForm setCouponForm={setCouponForm} />
+        <InsertForm dataType="coupon" setForm={setForm} />
       )}
       <table className="table is-fullwidth is-size-7 is-bordered has-text-centered vcenter-items my-4">
         <thead>
           <tr>
-            <th>Coupon #</th>
+            <th>Coupon ID</th>
+            <th>Coupon Code</th>
             <th>Active</th>
             <th>Discount Amount</th>
             <th>Discount Percentage</th>
@@ -57,10 +57,22 @@ function CouponList({ coupons, refunds, ...props }) {
         </tbody>
       </table>
       <h2 className="has-text-weight-bold ml-2 mt-6">Refunds</h2>
+      {form !== "refund" ? (
+        <button
+          className="button is-small mx-1 is-success is-outlined is-rounded" 
+          style={{ marginBottom: "1rem" }}
+          onClick={() => setForm("refund")}
+        >
+          <FontAwesomeIcon icon={Icons.faPlus} className="mr-2" />
+          Add Refund
+        </button>
+      ) : (
+        <InsertForm dataType="refund" setForm={setForm} />
+      )}
       <table className="table is-fullwidth is-size-7 is-bordered has-text-centered vcenter-items my-4">
         <thead>
           <tr>
-            <th>Refund #</th>
+            <th>Refund ID</th>
             <th>Created At</th>
             <th>Email ID</th>
             <th>Phone #</th>
@@ -89,9 +101,29 @@ function CouponList({ coupons, refunds, ...props }) {
 function CouponItem({ coupon, id, ...props }) {
   // const [hidden, setHidden] = useState(true);
 
+  const handleDisableCoupon = (type, id) => {
+    console.log(type, id);
+    axios.post(BASE_URL + `disable${type.charAt(0).toUpperCase() + type.slice(1)}`, { [`${type}_uid`]: id })
+    .then(response => {
+      console.log(response);
+    })
+    .catch(err => {
+      console.log(err);
+    });
+  };
+
   return (
     <tr>
-      <td>{id}</td>
+      <td>
+        <FontAwesomeIcon 
+          icon={Icons.faTrash} color={coupon.valid === "TRUE" ? "red" : "lightgrey"}
+          className="mr-1" style={{ cursor: (coupon.valid === "TRUE" ? "pointer" : "not-allowed") }}
+          title={coupon.valid === "TRUE" ? "Disable Coupon" : "Coupon Disabled"}
+          onClick={() => (coupon.valid === "TRUE" && handleDisableCoupon("coupon", id))}
+        />
+        {id}
+      </td>
+      <td>{coupon.code}</td>
       <td>
         <FontAwesomeIcon 
           icon={coupon.valid === "TRUE" ? Icons.faCheck : Icons.faTimes}
@@ -128,45 +160,48 @@ function RefundItem({ refund, id, ...props }) {
       <td>{refund.email}</td>
       <td>{refund.phone}</td>
       <td>
-        <img src={refund.image} alt="coupon" width="48" height="48" />
+        <img src={refund.image} alt="refund" width="48" height="48" />
       </td>
-      <td>{refund.customer_notes}</td>
+      <td>{refund.customer_note}</td>
       <td>{refund.refund_amount}</td>
       <td>{refund.coupon_id}</td>
-      <td>{refund.admin_notes}</td>
+      <td>{refund.admin_note}</td>
     </tr>
   );
 }
 
-function CouponForm(props) {
-  const [couponData, setCouponData] = useState({});
+function InsertForm({ dataType, ...props }) {
+  const [data, setData] = useState({});
 
   const handleChange = (e, type) => {
     e.persist();
     console.log(e.target, e.target.checked, e.target.value);
     
-    setCouponData(prevCouponData => ({
-      ...prevCouponData,
+    setData(prevData => ({
+      ...prevData,
       [type]: e.target.type !== "checkbox" ? e.target.value : Number(e.target.checked),
     }));
   };
 
-  const handleCouponSubmit = () => {
-    // console.log(couponData);
-    let newCoupon = { ...couponData };
-    newCoupon.valid = couponData.valid ? "TRUE" : "FALSE";
-    newCoupon.recurring = couponData.recurring ? "T" : "F";
-    // newCoupon.valid = `${couponData.valid}`;
-    // newCoupon.recurring = `${couponData.recurring}`;
-    console.log(newCoupon);
+  const handleSubmit = () => {
+    // console.log(data);
+    let newData = { ...data };
+    if (dataType === "coupon") {
+      newData.valid = data.valid ? "TRUE" : "FALSE";
+      newData.recurring = data.recurring ? "T" : "F";
+      // newData.valid = `${data.valid}`;
+      // newData.recurring = `${data.recurring}`;
+    }
+    console.log(newData);
 
-    axios.post(BASE_URL + "insertNewCoupon", newCoupon)
+    axios.post(BASE_URL + `insertNew${dataType.charAt(0).toUpperCase() + dataType.slice(1)}`, newData)
     .then(response => {
       console.log(response);
     })
     .catch(err => {
       console.log(err);
     });
+    props.setForm();
   };
 
   return (
@@ -174,98 +209,143 @@ function CouponForm(props) {
       <button
         className="button is-small mx-1 is-danger is-outlined is-rounded" 
         style={{ marginBottom: "1rem" }}
-        onClick={() => props.setCouponForm(false)}
+        onClick={() => props.setForm()}
       >
         <FontAwesomeIcon icon={Icons.faTimes} className="mr-2" />
         Cancel
       </button>
       <button
         className="button is-small mx-1 is-success is-outlined is-rounded" 
-        onClick={() => handleCouponSubmit()}
+        onClick={() => handleSubmit()}
       >
         <FontAwesomeIcon icon={Icons.faCheck} className="mr-2" />
         Save
       </button>
-      <div className="box form-item">
-        <EditItemField 
-          type={'coupon_id'} value={couponData.coupon_id || ""}
-          placeholder="Coupon Code"
-          handleChange={handleChange}
-        />
-        <div className="mb-5">
-          <EditItemField 
-            type={'valid'} value={couponData.valid || 0}
-            handleChange={handleChange}
-            checkbox
-          />
-          <span className="is-size-7 ml-1 mr-5">Valid</span>
-          <EditItemField 
-            type={'recurring'} value={couponData.recurring || 0}
-            handleChange={handleChange}
-            checkbox
-          />
-          <span className="is-size-7 mx-1">Recurring</span>
-        </div>
-        <EditItemField 
-          type={'discount_percent'} value={couponData.discount_percent || ""}
-          placeholder="Discount Percentage"
-          handleChange={handleChange}
-        />
-        <EditItemField 
-          type={'discount_amount'} value={couponData.discount_amount || ""}
-          placeholder="Discount Amount"
-          handleChange={handleChange}
-        />
-        <EditItemField 
-          type={'discount_shipping'} value={couponData.discount_shipping || ""}
-          className="mb-5"
-          placeholder="Discount Shipping"
-          handleChange={handleChange}
-        />
-        <EditItemField 
-          type={'expire_date'} value={couponData.expire_date || ""}
-          placeholder="Expiration Date"
-          handleChange={handleChange}
-        />
-        <EditItemField 
-          type={'limits'} value={couponData.limits || ""}
-          placeholder="Limits"
-          handleChange={handleChange}
-        />
-        <EditItemField 
-          type={'notes'} value={couponData.notes || ""}
-          className="mb-5"
-          placeholder="Notes"
-          handleChange={handleChange}
-          textarea
-        />
-        <EditItemField 
-          type={'num_used'} value={couponData.num_used || ""}
-          className="mb-5"
-          placeholder="Times Used"
-          handleChange={handleChange}
-        />
-        {/* <div>
-          <span style={{ fontSize: "0.75rem" }}>Recurring </span>
-          <EditItemField 
-            type={'recurring'} value={couponData.recurring || 0}
-            handleChange={handleChange}
-            checkbox
-          />
-        </div> */}
-        <EditItemField 
-          type={'email_id'} value={couponData.email_id || ""}
-          placeholder="Email"
-          handleChange={handleChange}
-        />
-        <EditItemField 
-          type={'cup_business_uid'} value={couponData.cup_business_uid || ""}
-          placeholder="Business ID"
-          handleChange={handleChange}
-        />
+      <div className="box form-item" style={{ width: "480px" }}>
+        {dataType === "coupon" ? (
+          <React.Fragment>
+            <EditItemField 
+              type={'coupon_id'} value={data.coupon_id || ""}
+              placeholder="Coupon Code"
+              handleChange={handleChange}
+            />
+            <div className="mb-5">
+              <EditItemField 
+                type={'valid'} value={data.valid || 0}
+                handleChange={handleChange}
+                checkbox
+              />
+              <span className="is-size-7 ml-1 mr-5">Valid</span>
+              <EditItemField 
+                type={'recurring'} value={data.recurring || 0}
+                handleChange={handleChange}
+                checkbox
+              />
+              <span className="is-size-7 mx-1">Recurring</span>
+            </div>
+            <EditItemField 
+              type={'discount_percent'} value={data.discount_percent || ""}
+              placeholder="Discount Percentage"
+              handleChange={handleChange}
+            />
+            <EditItemField 
+              type={'discount_amount'} value={data.discount_amount || ""}
+              placeholder="Discount Amount"
+              handleChange={handleChange}
+            />
+            <EditItemField 
+              type={'discount_shipping'} value={data.discount_shipping || ""}
+              className="mb-5"
+              placeholder="Discount Shipping"
+              handleChange={handleChange}
+            />
+            <EditItemField 
+              type={'expire_date'} value={data.expire_date || ""}
+              placeholder="Expiration Date"
+              handleChange={handleChange}
+            />
+            <EditItemField 
+              type={'limits'} value={data.limits || ""}
+              placeholder="Limits"
+              handleChange={handleChange}
+            />
+            <EditItemField 
+              type={'notes'} value={data.notes || ""}
+              className="mb-5"
+              placeholder="Notes"
+              handleChange={handleChange}
+              textarea
+            />
+            <EditItemField 
+              type={'num_used'} value={data.num_used || ""}
+              className="mb-5"
+              placeholder="Times Used"
+              handleChange={handleChange}
+            />
+            <EditItemField 
+              type={'email_id'} value={data.email_id || ""}
+              placeholder="Email"
+              handleChange={handleChange}
+            />
+            <EditItemField 
+              type={'cup_business_uid'} value={data.cup_business_uid || ""}
+              placeholder="Business ID"
+              handleChange={handleChange}
+            />
+          </React.Fragment>
+        ) : (
+          <React.Fragment>
+            <EditItemField 
+              type={'created_at'} value={data.created_at || ""}
+              className="mb-5"
+              placeholder="Created At"
+              handleChange={handleChange}
+            />
+            <EditItemField 
+              type={'email_id'} value={data.email_id || ""}
+              placeholder="Email"
+              handleChange={handleChange}
+            />
+            <EditItemField 
+              type={'phone_num'} value={data.phone_num || ""}
+              className="mb-5"
+              placeholder="Phone Number"
+              handleChange={handleChange}
+            />
+            <EditItemField 
+              type={'image_url'} value={data.image_url || ""}
+              className="mb-5"
+              placeholder="Image URL"
+              handleChange={handleChange}
+            />
+            <EditItemField 
+              type={'customer_note'} value={data.customer_note || ""}
+              placeholder="Customer Notes"
+              handleChange={handleChange}
+              textarea
+            />
+            <EditItemField 
+              type={'admin_note'} value={data.admin_note || ""}
+              className="mt-1 mb-5"
+              placeholder="Admin Notes"
+              handleChange={handleChange}
+              textarea
+            />
+            <EditItemField 
+              type={'refund_amount'} value={data.refund_amount || ""}
+              placeholder="Refund Amount"
+              handleChange={handleChange}
+            />
+            <EditItemField 
+              type={'ref_coupon_id'} value={data.ref_coupon_id || ""}
+              placeholder="Coupon ID"
+              handleChange={handleChange}
+            />
+          </React.Fragment>
+        )}
       </div>
     </React.Fragment>
-  )
+  );
 }
   
 export default CouponList;

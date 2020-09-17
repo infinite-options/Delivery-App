@@ -203,6 +203,14 @@ table tr.filler-row td {
   border-left-style: hidden;
 }
 
+table.table:not(.is-bordered) {
+  table-layout: fixed;
+}
+
+table.table:not(.is-bordered) td {
+  word-wrap: break-word;
+}
+
 /* Route color display classes */
 .route {
   display: inline-block; 

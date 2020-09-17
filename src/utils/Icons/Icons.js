@@ -1,7 +1,7 @@
 import { 
   faComment, faEnvelope, faPhone, faCaretDown, faCaretUp, 
   faBars, faChevronLeft, faChevronRight, faEye, faEyeSlash, 
-  faCheck, faTimes, faPlus, faSort, faSortUp, faSortDown 
+  faCheck, faTimes, faPlus, faSort, faSortUp, faSortDown, faTrash 
 } from '@fortawesome/free-solid-svg-icons';
 import { Icon } from "leaflet";
 import AppIcon from "./app_icon.png";
@@ -44,5 +44,5 @@ export default {
   DefaultIcon, App, Truck, Headquarters, 
   faComment, faEnvelope, faPhone, faCaretDown, faCaretUp, 
   faBars, faChevronLeft, faChevronRight, faEye, faEyeSlash, 
-  faCheck, faTimes, faPlus, faSort, faSortUp, faSortDown 
+  faCheck, faTimes, faPlus, faSort, faSortUp, faSortDown, faTrash 
 };

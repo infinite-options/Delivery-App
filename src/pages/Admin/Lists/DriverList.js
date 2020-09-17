@@ -277,13 +277,13 @@ function DriverItem({ driver, id, ...props }) {
             <td>
               <div style={{ width: "215%" }}>
                 <div className="level">
-                  <div className="level-item">
+                  <div className="level-item" style={{ flexShrink: 1 }}>
                     Driver's License #<br />{driver.drivers_license}
                   </div>
-                  <div className="level-item">
+                  <div className="level-item" style={{ flexShrink: 1 }}>
                     License Expiration<br />{driver.drivers_license_exp}
                   </div>
-                  <div className="level-item">
+                  <div className="level-item" style={{ flexShrink: 1 }}>
                     Vehicle Types<br />{driver.vehicle_types}
                   </div>
                 </div>
@@ -528,17 +528,17 @@ function DriverEdit({ driver, id, ...props }) {
                   <div className="level">
                     <EditItemField 
                       type={'drivers_license'} value={driverData.drivers_license} 
-                      className="level-item mr-1" style={{ maxWidth: "35%" }}
+                      className="level-item" style={{ width: "33%" }}
                       handleChange={handleChange} 
                     />
                     <EditItemField 
                       type={'drivers_license_exp'} value={driverData.drivers_license_exp} 
-                      className="level-item mr-1" style={{ maxWidth: "36%" }}
+                      className="level-item mx-1" style={{ width: "33%" }}
                       handleChange={handleChange} 
                     />
                     <EditItemField 
                       type={'vehicle_types'} value={driverData.vehicle_types} 
-                      className="level-item" style={{ maxWidth: "29%" }}
+                      className="level-item" style={{ width: "33%" }}
                       handleChange={handleChange} 
                     />
                   </div>

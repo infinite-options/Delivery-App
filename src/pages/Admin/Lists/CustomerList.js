@@ -40,6 +40,7 @@ function CustomerItem({ customer, id, ...props }) {
   const [hidden, setHidden] = useState(true);
   const [showMore, setShowMore] = useState(false);
   const address = `${customer.street}${customer.unit ? ` ${customer.unit}` : ""} ${customer.city} ${customer.state} ${customer.zip}`;
+  const customer_id = Number(id.substring(id.indexOf("-") + 1, id.length));
 
   return (
     <div className="box list-item">
@@ -52,7 +53,7 @@ function CustomerItem({ customer, id, ...props }) {
             <th style={{ width: "20%" }}>
               {/* <button className="tooltip mx-1" onClick={() => setHidden(prevHidden => !prevHidden)}> */}
               <div style={{ width: "200%", maxWidth: "240px" }}>
-                <span>Customer {id}: {`${customer.first_name} ${customer.last_name[0]}.`}</span>
+                <span>Customer {customer_id}: {`${customer.first_name} ${customer.last_name[0]}.`}</span>
                 <button
                   className="button is-rounded is-pulled-right is-super-small ml-1"
                   // onClick={() => sendEmail(index + 1)}
@@ -137,18 +138,24 @@ function CustomerItem({ customer, id, ...props }) {
             <React.Fragment>
               <tr>
                 <td>
-                  Account Verified<br />{customer.verified}
+                  Account Verified<br />
+                  <FontAwesomeIcon 
+                    icon={customer.verified ? Icons.faCheck : Icons.faTimes}
+                    color={customer.verified ? "green" : "red"}
+                  />
                 </td>
                 <td>
-                  <div className="level" style={{ width: "415%" }}>
-                    <div className="level-item">
-                      Password Salt<br />{customer.password_salt}
-                    </div>
-                    <div className="level-item">
-                      Password Hash<br />{customer.password_hash}
-                    </div>
-                    <div className="level-item">
-                      Password Algorithm<br />{customer.password_algorithm}
+                  <div style={{ width: "415%" }}>
+                    <div className="level">
+                      <div className="level-item">
+                        Password Salt<br />{customer.password_salt}
+                      </div>
+                      <div className="level-item">
+                        Password Hash<br />{customer.password_hash}
+                      </div>
+                      <div className="level-item">
+                        Password Algorithm<br />{customer.password_algorithm}
+                      </div>
                     </div>
                   </div>
                 </td>
