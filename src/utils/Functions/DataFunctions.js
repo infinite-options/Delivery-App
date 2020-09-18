@@ -425,10 +425,10 @@ const createVehicles = () => {
       tempVehicles[vehicle_id] = vehicle_data;
     };
     return tempVehicles;
-  })
-  .catch(err => {
-    console.log(err);
   });
+  // .catch(err => {
+  //   console.log(err);
+  // });
 };
 
 const createPurchases = () => {
@@ -470,6 +470,40 @@ const createPurchases = () => {
     return tempPurchases;
   });
 };
+
+const createPayments = () => {
+  return axios.get(NEW_NEW_BASE_URL + "Payments")
+  .then(response => {
+    console.log("payment resp:", response);
+    const result = response.data.result.result;
+    let tempPayments = {};
+    for (let payment of result) {
+      const payment_id = payment.payment_uid;
+      const payment_data = {
+        // TODO: payment key/values
+        purchase_id: payment.pay_purchase_uid,
+        payment_time_stamp: payment.payment_time_stamp,
+        start_delivery_date: payment.start_delivery_date,
+        coupon_id: payment.pay_coupon_id,
+        amount_due: payment.amount_due,
+        amount_discount: payment.amount_discount,
+        amount_paid: payment.amount_paid,
+        info_is_Addon: payment.info_is_Addon,
+        credit_card_num: payment.cc_num,
+        credit_card_expiration: payment.cc_exp_date,
+        credit_card_cvv: payment.cc_cvv,
+        credit_card_zip: payment.cc_zip,
+        charge_id: payment.charge_id,
+        payment_type: payment.payment_type,
+      };
+      tempPayments[payment_id] = payment_data;
+    }
+    return tempPayments;
+  });
+  // .catch(err => {
+  //   console.log(err);
+  // })
+}
 
 const createCoupons = () => {
   return axios.get(NEW_NEW_BASE_URL + "getCoupons")
@@ -611,6 +645,7 @@ export {
   createCustomers,
   createVehicles,
   createPurchases,
+  createPayments,
   createCoupons,
   createRefunds,
   createConstraints,

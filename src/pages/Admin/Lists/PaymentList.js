@@ -49,21 +49,21 @@ function PaymentItem({ payment, id, ...props }) {
   return (
     <tr>
       <td>{id}</td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
+      <td>{payment.purchase_id}</td>
+      <td>N/A</td>
+      <td>{payment.payment_time_stamp}</td>
+      <td>{payment.start_delivery_date}</td>
+      <td>{payment.coupon_id}</td>
+      <td>{payment.amount_due}</td>
+      <td>{payment.amount_discount}</td>
+      <td>{payment.amount_paid}</td>
+      <td>{payment.charge_id}</td>
+      <td>{payment.payment_type}</td>
+      <td>{payment.info_is_Addon}</td>
+      <td>{payment.credit_card_num}</td>
+      <td>{payment.credit_card_cvv}</td>
+      <td>{payment.credit_card_expiration}</td>
+      <td>{payment.credit_card_zip}</td>
     </tr>
   );
 }

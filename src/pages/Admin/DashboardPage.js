@@ -19,8 +19,8 @@ import AppIcon from "utils/Icons/app_icon.png";
 // should I stick to this or revert this change?
 import { 
   createRoutes, createDrivers, createBusinesses, createCustomers, 
-  createVehicles, createPurchases, createCoupons, createRefunds, 
-  createConstraints, setBusinessesCustomers,
+  createVehicles, createPurchases, createPayments, createCoupons, 
+  createRefunds, createConstraints, setBusinessesCustomers,
 } from "utils/Functions/DataFunctions";
 
 const initState = {
@@ -168,6 +168,7 @@ function DashboardPage() {
       createCustomers(),
       createVehicles(),
       createPurchases(),
+      createPayments(),
       createCoupons(),
       createRefunds(),
     ])
@@ -183,9 +184,9 @@ function DashboardPage() {
         ...result[3].value && { customers: result[3].value },
         ...result[4].value && { vehicles: result[4].value },
         ...result[5].value && { purchases: result[5].value },
-        payments: testObj,
-        ...result[6].value && { coupons: result[6].value },
-        ...result[7].value && { refunds: result[7].value },
+        ...result[6].value && { payments: result[6].value },
+        ...result[7].value && { coupons: result[7].value },
+        ...result[8].value && { refunds: result[8].value },
         constraints,
       };
       dispatch({ type: "load", payload: { data } });
