@@ -20,7 +20,7 @@ function DeliveryList({ routes, drivers, ...props }) {
 
   useEffect(() => {
     const routeData = Object.entries(routes);
-    if (props.filter) {
+    if (props.filter.option) {
       setRouteData(() => {
         let filteredRouteData = routeData.filter(route => {
           // console.log(route[1][props.filter.option], props.filter.value);
@@ -191,7 +191,7 @@ function RouteItem({ route, id, ...props }) {
             </th>
             <th style={{ width: "29%" }} />
             <th style={{ width: "11%" }}>
-              <div style={{ width: "300%", maxWidth: "225px" }}>
+              <div style={{ width: "325%", maxWidth: "250px" }}>
                 <DriversDropdown 
                   route_id={id}
                   driver_num={route.driver_num}

@@ -53,7 +53,7 @@ function DriverList({ drivers, routes, ...props }) {
 
   useEffect(() => {
     const driverData = Object.entries(drivers);
-    if (props.filter) {
+    if (props.filter.option) {
       setDriverData(() => {
         return driverData.filter(driver => {
           // console.log(driver[1][props.filter.option], props.filter.value);

@@ -72,8 +72,8 @@ function LeafletMap({ header, routes, drivers, businesses, customers, ...props }
   //        all routes associated with the business have visibility values = false;
   // FIXME: Upon page reload, markers that should be invisible flicker once on page. Not big deal but looks glitchy and weird
   useEffect(() => {
-    if (leafletMap) handleFilterUpdate(props.filter ? props.filter.type : undefined);
-  }, [header, props.filter]);
+    if (leafletMap) handleFilterUpdate(props.filter.type);
+  }, [props.filter]);
 
   const handleFilterUpdate = (type) => {
     let dataType = type;
@@ -156,7 +156,7 @@ function LeafletMap({ header, routes, drivers, businesses, customers, ...props }
 
   useEffect(() => {
     if (leafletMap) manageMarkers();
-  }, [mapData, header]);
+  }, [mapData]);
 
   /* updating selected marker' size */
   useEffect(() => {

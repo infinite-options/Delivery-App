@@ -25,7 +25,7 @@ import {
 
 const initState = {
   isLoading: true,
-  filter: undefined, // { type: "routes", option: "business_id", value: "200-00001" }
+  filter: {}, // { type: "routes", option: "business_id", value: "200-00001" }
   routes: {},
   routes_dates: [],
   routes_times: [],
@@ -39,6 +39,12 @@ const initState = {
   refunds: {},
   constraints: {},
 };
+
+const tabNames = [
+  "routes", "drivers", "businesses", 
+  "customers", "vehicles", "purchases", 
+  "payments", "coupons", "constraints",
+];
 
 function reducer(state, action) {
   switch(action.type) {
@@ -378,7 +384,10 @@ function Header(props) {
 
   const handleTabChange = (index) => {
     if (props.tab !== index) {
-      props.dispatch({ type: "filter", payload: { filter: undefined } });
+      props.dispatch({ 
+        type: "filter", 
+        payload: { filter: { type: tabNames[props.tab], option: undefined, value: undefined } } 
+      });
       props.changeTab(index);
     }
   }
@@ -460,7 +469,11 @@ function RouteTimes(props) {
         {/* <span style={{ verticalAlign: "middle" }}>Selected Date:</span> */}
         <div className={"dropdown ml-2" + (open.date ? " is-active" : "")}>
           <div className="dropdown-trigger">
-            <button className="button is-small is-fullwidth" onClick={() => setOpen(prevOpen => ({ ...prevOpen, date: !prevOpen.date }))} aria-haspopup="true" aria-controls="dropdown-menu">
+            <button 
+              className="button is-small is-fullwidth" 
+              onClick={() => setOpen(prevOpen => ({ ...prevOpen, date: !prevOpen.date }))} 
+              aria-haspopup="true" aria-controls="dropdown-menu"
+            >
               Date: {props.dates.length ? props.dates[0] : 'NONE'}
               <FontAwesomeIcon icon={Icons.faCaretDown} className= "ml-2" />
             </button>
@@ -478,7 +491,11 @@ function RouteTimes(props) {
         {/* <span style={{ verticalAlign: "middle" }}>Selected Time:</span> */}
         <div className={"dropdown ml-2" + (open.time ? " is-active" : "")}>
           <div className="dropdown-trigger">
-            <button className="button is-small" onClick={() => setOpen(prevOpen => ({ ...prevOpen, time: !prevOpen.time }))} aria-haspopup="true" aria-controls="dropdown-menu">
+            <button 
+              className="button is-small" 
+              onClick={() => setOpen(prevOpen => ({ ...prevOpen, time: !prevOpen.time }))} 
+              aria-haspopup="true" aria-controls="dropdown-menu"
+            >
               Time: {props.times.length ? props.times[props.timeSlot]: 'NONE'}
               <FontAwesomeIcon icon={Icons.faCaretDown} className= "ml-2" />
             </button>
@@ -527,7 +544,7 @@ function FilterDropdown({ data, header, ...props }) {
       default: break;
     }
     // console.log(type);
-    // if (data.filter) props.dispatch({ type: "filter", payload: { filter: undefined } });
+    // if (data.filter) props.dispatch({ type: "filter", payload: { filter: { type: tabNames[header], option: undefined, value: undefined } } });
     if (document.getElementById("filter-value").value) document.getElementById("filter-value").value = "";
     setDataType(type);
     // handleHeaderChange();
@@ -549,8 +566,8 @@ function FilterDropdown({ data, header, ...props }) {
   const handleFilter = (option) => {
     // console.log(option);
     if (option) {
-      console.log(Object.keys(data)[header + 2]); // get name of data type, +2 is for ignoring isLoading and filter keys
-      const type = Object.keys(data)[header + 2];
+      console.log(tabNames[header]); // get name of data type, +2 is for ignoring isLoading and filter keys
+      const type = tabNames[header];
       const filter = {
         type,
         option,
@@ -559,7 +576,12 @@ function FilterDropdown({ data, header, ...props }) {
       console.log(filter);
       props.dispatch({ type: "filter", payload: { filter } });
     }
-    else { props.dispatch({ type: "filter", payload: { filter: undefined } }); }
+    else { 
+      props.dispatch({ 
+        type: "filter", 
+        payload: { filter: { type: tabNames[header], option: undefined, value: undefined } } 
+      }); 
+    }
     if (document.getElementById("filter-value").value) document.getElementById("filter-value").value = "";
     setOpen(false);
   };
@@ -582,7 +604,7 @@ function FilterDropdown({ data, header, ...props }) {
         <div className={"dropdown" + (open ? " is-active" : "")}>
           <div className="dropdown-trigger">
             <button className="button is-small" onClick={() => setOpen(prevOpen => !prevOpen)} aria-haspopup="true" aria-controls="dropdown-menu">
-              <span>Filter: {data.filter ? data.filter.option : "NONE"}</span>
+              <span>Filter: {data.filter.option ? data.filter.option : "NONE"}</span>
               <FontAwesomeIcon icon={Icons.faCaretDown} className= "ml-2" />
             </button>
           </div>
@@ -593,7 +615,7 @@ function FilterDropdown({ data, header, ...props }) {
               {dataType && Object.keys(Object.values(dataType)[0] || {/* if list empty */}).map((option, index) => (
                 <React.Fragment key={index}>
                   {filterItems.includes(option) && (
-                    <button className="button is-small is-white dropdown-item" disabled={data.filter && data.filter.option === option} onClick={() => handleFilter(option)}>{option}</button>
+                    <button className="button is-small is-white dropdown-item" disabled={data.filter.option === option} onClick={() => handleFilter(option)}>{option}</button>
                   )}
                 </React.Fragment>
               ))}

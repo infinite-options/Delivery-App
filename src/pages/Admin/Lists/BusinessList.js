@@ -51,7 +51,7 @@ function BusinessList({ businesses, ...props }) {
 
   useEffect(() => {
     const businessData = Object.entries(businesses);
-    if (props.filter) {
+    if (props.filter.option) {
       setBusinessData(() => {
         return businessData.filter(business => {
           // console.log(business[1][props.filter.option], props.filter.value);

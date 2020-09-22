@@ -10,7 +10,7 @@ function CustomerList({ customers, ...props }) {
 
   useEffect(() => {
     const customerData = Object.entries(customers);
-    if (props.filter) {
+    if (props.filter.option) {
       setCustomerData(() => {
         return customerData.filter(customer => {
           // console.log(customer[1][props.filter.option], props.filter.value);
