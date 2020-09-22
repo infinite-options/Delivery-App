@@ -216,8 +216,7 @@ function RouteItem({ route, id, ...props }) {
               </div>
             </th>
             <th style={{ width: "12.5%" }} />
-            <th style={{ width: "12.5%" }}>
-            </th>
+            <th style={{ width: "12.5%" }} />
             <th style={{ width: "17.5%" }}>
               <button
                 className="button is-super-small is-pulled-right"
@@ -325,8 +324,9 @@ function DriversDropdown({ driver, setDriver, list, setList, ...props }) {
     props.setDriversToRoutes(prevDriversToRoutes => {
       let newDriversToRoutes = { ...prevDriversToRoutes };
       // checking if user selected or deselected a driver
-      if (driver_id) newDriversToRoutes[props.route_id] = { id: driver_id, name: driver_name };
-      else delete newDriversToRoutes[props.route_id];
+      newDriversToRoutes[props.route_id] = { id: driver_id, name: driver_name };
+      // if (driver_id) newDriversToRoutes[props.route_id] = { id: driver_id, name: driver_name };
+      // else delete newDriversToRoutes[props.route_id];
       return newDriversToRoutes;
     });
     setDriver(driver_id ? list.find(entry => entry[0] === driver_id) : undefined);
@@ -335,10 +335,7 @@ function DriversDropdown({ driver, setDriver, list, setList, ...props }) {
 
   return (
     <React.Fragment>
-      <span className="mr-1">
-        {/* {driver ? (`Driver ${route_driver_id}:`) : (`Driver:`)} */}
-        {`Driver ${props.driver_num}:`}
-      </span>
+      <span className="mr-1">Driver {props.driver_num}:</span>
       <div className={"dropdown" + (open ? " is-active" : "")}>
         <div className="dropdown-trigger">
           <button 
