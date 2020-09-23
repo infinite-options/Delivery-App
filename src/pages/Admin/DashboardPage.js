@@ -631,7 +631,7 @@ function FilterDropdown({ data, header, ...props }) {
         <form onSubmit={handleSubmit}>
           <div className="level is-mobile">
             <div className="level-item px-2">
-              <input className="input is-small" id="filter-value" type="text" disabled={!data.filter} />
+              <input className="input is-small" id="filter-value" type="text" disabled={!data.filter.option} />
             </div>
             <div className="level-item">
               <button className="button is-small" type="submit" disabled={!data.filter}>
