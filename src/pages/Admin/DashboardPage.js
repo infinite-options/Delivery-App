@@ -242,6 +242,7 @@ function DashboardPage() {
             routes={data.routes}
             drivers={data.drivers}
             filter={data.filter}
+            date={data.routes_dates[dateSlot]}
             selectedLocation={selectedLocation}
             setSelectedLocation={setSelectedLocation}
             dispatch={dispatch}
@@ -474,7 +475,7 @@ function RouteTimes(props) {
               onClick={() => setOpen(prevOpen => ({ ...prevOpen, date: !prevOpen.date }))} 
               aria-haspopup="true" aria-controls="dropdown-menu"
             >
-              Date: {props.dates.length ? props.dates[0] : 'NONE'}
+              Date: {props.dates.length ? props.dates[props.dateSlot] : 'NONE'}
               <FontAwesomeIcon icon={Icons.faCaretDown} className= "ml-2" />
             </button>
           </div>

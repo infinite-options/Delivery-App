@@ -4,6 +4,7 @@ import Icons from "utils/Icons/Icons";
 import axios from "axios";
 import { BASE_URL } from "utils/Functions/DataFunctions";
 
+// TODO: Add a Sort By [Businesses, Date]
 function DeliveryList({ routes, drivers, ...props }) {
   console.log("rendering deliveries..");
   const [routeData, setRouteData] = useState(Object.entries(routes));
@@ -15,6 +16,26 @@ function DeliveryList({ routes, drivers, ...props }) {
     ])
   ));
   const [driversToRoutes, setDriversToRoutes] = useState({}); // { route_id: [driver_id, driver_name], ... }
+  const [selectedOptions, setSelectedOptions] = useState([]); // [{ business_id, route_option, date }, ... ]
+
+  useEffect(() => {
+    setSelectedOptions(() => {
+      let options = [];
+      for (let route_id of Object.keys(driversToRoutes)) {
+        const route = routes[route_id];
+        const option = {
+          business_id: route.business_id,
+          route_option: route.route_option,
+          date: route.date,
+        };
+        if (!options.length || options[options.length - 1].business_id !== option.business_id) { 
+          options.push(option);
+        }
+      }
+      return options;
+    });
+  }, [driversToRoutes]);
+
   console.log(driversToRoutes);
   // console.log(Object.values(driversToRoutes).length, Object.values(routes).length);
 
@@ -54,12 +75,12 @@ function DeliveryList({ routes, drivers, ...props }) {
       });
     })();
     // props.dispatch({ type: 'update-route-drivers', payload: { route_drivers: driversToRoutes } })
-
   };
+
+  // const [sort, setSort] = useState("businesses");
 
   return (
     <React.Fragment>
-      {/* NOTE: User only able to save once drivers are chosen for ALL routes, is this what we want? */}
       <button
         className="button is-small mx-1 is-success is-outlined is-rounded" 
         style={{ marginBottom: "1rem" }}
@@ -69,25 +90,74 @@ function DeliveryList({ routes, drivers, ...props }) {
         <FontAwesomeIcon icon={Icons.faCheck} className="mr-2" />
         Save Changes
       </button>
-      {routeData.map((route, index) => (
+      {/* <RouteSort sort={sort} setSort={setSort} /> */}
+      {routeData.map((route, index) => (route[1].date === props.date && 
         <RouteItem
           key={index}
           index={index}
           route={route[1]}
           id={route[0]}
+          
           selectedLocation={props.selectedLocation}
           setSelectedLocation={props.setSelectedLocation}
-          drivers={drivers}
+
+          selectedOptions={selectedOptions}
+          setSelectedOptions={setSelectedOptions}
+          // drivers={drivers}
           driversList={driversList}
           setDriversList={setDriversList}
           driversToRoutes={driversToRoutes}
           setDriversToRoutes={setDriversToRoutes}
+          
           dispatch={props.dispatch}
         />
       ))}
     </React.Fragment>
   );
 }
+
+// function RouteSort({ sort, setSort, ...props }) {
+//   const [open, setOpen] = useState(false);
+
+//   const handleSelect = (type) => {
+//     setSort(type);
+//     setOpen(false);
+//   }
+
+//   return (
+//     <div className={"dropdown" + (open ? " is-active" : "")}>
+//       <div className="dropdown-trigger">
+//         <button 
+//           className="button is-small"
+//           onClick={() => setOpen(prevOpen => !prevOpen)} 
+//           aria-haspopup="true" 
+//           aria-controls="dropdown-menu"
+//         >
+//           Sort By: {sort.charAt(0).toUpperCase() + sort.slice(1)}
+//           <FontAwesomeIcon icon={Icons.faCaretDown} className= "ml-2" />
+//         </button>
+//       </div>
+//       <div className="dropdown-menu" style={{ paddingTop: 0 }} id="dropdown-menu" role="menu">
+//         <div className="dropdown-content">
+//           <button 
+//             className="button is-small is-white dropdown-item" 
+//             onClick={() => handleSelect("businesses")}
+//             disabled={sort === "businesses"}
+//           >
+//             Businesses
+//           </button>
+//           {/* <button 
+//             className="button is-small is-white dropdown-item"
+//             onClick={() => handleSelect("date")}
+//             disabled={sort === "date"}
+//           >
+//             Date
+//           </button> */}
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
 
 function RouteItem({ route, id, ...props }) {
   const [hidden, setHidden] = useState(true);
@@ -101,9 +171,29 @@ function RouteItem({ route, id, ...props }) {
       undefined
     );
   });
-  const route_values = Object.values(route.route_data);
-  // console.log(route_values);
+
   const route_id = Number(id.substring(id.indexOf("-") + 1, id.length));
+  
+  const selected = (() => {
+    // console.log(props.selectedOptions);
+    return Boolean(props.selectedOptions.find(option => (
+      option.business_id === route.business_id && 
+      option.route_option === route.route_option && 
+      option.date === route.date
+    )));
+  })();
+
+  const disabled = (() => {
+    const option = 
+      props.selectedOptions.find(option => option.business_id === route.business_id) || 
+      { route_option: route.route_option };
+
+    return (
+      option.route_option !== route.route_option && 
+      option.date === route.date
+    );
+  })();
+  // console.log(selected);
 
   useEffect(() => {
     // console.log(props.selectedLocation);
@@ -141,6 +231,19 @@ function RouteItem({ route, id, ...props }) {
     props.dispatch({ type: "toggle-visibility", payload: { id, type: "routes" } });
   }
 
+  const handleOption = () => {
+    if (!selected) props.setSelectedOptions(prevSelectedOptions => (
+      [ ...prevSelectedOptions, { business_id: route.business_id, route_option: route.route_option, date: route.date } ]
+    ));
+    else props.setSelectedOptions(prevSelectedOptions => (
+      [ ...prevSelectedOptions ].filter(option => (
+        option.business_id !== route.business_id || 
+        option.route_option !== route.route_option || 
+        option.date !== route.date
+      ))
+    ));
+  };
+
   const sendDriverText = (driverNumber) => {
     console.log(`Sending Driver ${driverNumber} a text..`);
   };
@@ -162,134 +265,151 @@ function RouteItem({ route, id, ...props }) {
   };
 
   return (
-    <div className="box list-item">
-      <table
-        className="table is-hoverable is-fullwidth is-size-7"
-        style={{ backgroundColor: "#f8f7fa" }}
-      >
-        <thead>
-          <tr className="list-item-head">
-            <th style={{ width: "17.5%" }}>
-              <div style={{ width: "200%", maxWidth: "225px" }}>
-                <button 
-                  className="button is-super-small is-rounded mr-3" 
-                  onClick={handleVisibilitySelect}
-                >
-                  <FontAwesomeIcon icon={route.visible ? Icons.faEyeSlash : Icons.faEye} />
-                </button>
-                <div
-                  className="route"
-                  style={{ 
-                    backgroundColor: `${route.visible ? route.route_color : "lightgrey"}`,
-                    borderBottom: `3px solid ${route.visible ? route.route_color : "lightgrey"}`, 
-                    // Adding conditional margin since icon sizes vary, accounting for text shift
-                    ...(!route.visible ? { marginLeft: "1.32px" } : {}) 
-                  }}
-                >
-                  <span>Route {route_id}</span></div>
-              </div>
-            </th>
-            <th style={{ width: "29%" }} />
-            <th style={{ width: "11%" }}>
-              <div style={{ width: "325%", maxWidth: "250px" }}>
-                <DriversDropdown 
-                  route_id={id}
-                  driver_num={route.driver_num}
-                  driver={driver} 
-                  setDriver={setDriver}
-                  list={props.driversList} 
-                  setList={props.setDriversList} 
-                  setDriversToRoutes={props.setDriversToRoutes}
-                />
+    <React.Fragment>
+      {route.route_option == 1 && (
+        <React.Fragment>
+          <h2 className="has-text-weight-bold has-text-grey ml-2">{route["Business Name"]}</h2>
+          <hr className="mt-1 has-background-grey-light" style={{ minWidth: "max(800px, 100%)" }} />
+        </React.Fragment>
+      )}
+      <div className="box list-item">
+        <table
+          className="table is-hoverable is-fullwidth is-size-7"
+          style={{ backgroundColor: "#f8f7fa" }}
+        >
+          <thead>
+            <tr className="list-item-head">
+              <th style={{ width: "17.5%" }}>
+                <div style={{ width: "200%", maxWidth: "225px" }}>
+                  <button 
+                    className="button is-super-small is-rounded mr-3" 
+                    onClick={handleVisibilitySelect}
+                  >
+                    <FontAwesomeIcon icon={route.visible ? Icons.faEyeSlash : Icons.faEye} />
+                  </button>
+                  <div
+                    className="route"
+                    style={{ 
+                      backgroundColor: `${route.visible ? route.route_color : "lightgrey"}`,
+                      borderBottom: `3px solid ${route.visible ? route.route_color : "lightgrey"}`, 
+                      // Adding conditional margin since icon sizes vary, accounting for text shift
+                      ...(!route.visible ? { marginLeft: "1.32px" } : {}) 
+                    }}
+                  >
+                    <span>Route {route_id}</span></div>
+                </div>
+              </th>
+              <th style={{ width: "29%" }} />
+              <th style={{ width: "11%" }}>
+                {selected && (
+                  <div style={{ width: "325%", maxWidth: "250px" }}>
+                    <DriversDropdown 
+                      route_id={id}
+                      driver_num={route.driver_num}
+                      driver={driver} 
+                      setDriver={setDriver}
+                      list={props.driversList} 
+                      setList={props.setDriversList} 
+                      setDriversToRoutes={props.setDriversToRoutes}
+                    />
+                    <button
+                      className="button is-rounded is-super-small is-pulled-right ml-1"
+                      onClick={() => console.log("Not sure what this does atm")}
+                    >
+                      <FontAwesomeIcon icon={Icons.faPhone} />
+                    </button>
+                    <button
+                      className="button is-rounded is-super-small is-pulled-right"
+                      onClick={() => sendDriverText(route.driver_id)}
+                    >
+                      <FontAwesomeIcon icon={Icons.faComment} />
+                    </button>
+                  </div>
+                )}
+              </th>
+              <th style={{ width: "12.5%" }} />
+              <th style={{ width: "12.5%" }} />
+              <th style={{ width: "17.5%" }}>
                 <button
-                  className="button is-rounded is-super-small is-pulled-right ml-1"
-                  onClick={() => console.log("Not sure what this does atm")}
+                  className="button is-super-small"
+                  onClick={() => handleOption()}
+                  disabled={disabled}
                 >
-                  <FontAwesomeIcon icon={Icons.faPhone} />
-                </button>
-                <button
-                  className="button is-rounded is-super-small is-pulled-right"
-                  onClick={() => sendDriverText(route.driver_id)}
-                >
-                  <FontAwesomeIcon icon={Icons.faComment} />
-                </button>
-              </div>
-            </th>
-            <th style={{ width: "12.5%" }} />
-            <th style={{ width: "12.5%" }} />
-            <th style={{ width: "17.5%" }}>
-              <button
-                className="button is-super-small is-pulled-right"
-                onClick={() => setHidden((prevHidden) => !prevHidden)}
-              >
-                <FontAwesomeIcon icon={hidden ? Icons.faCaretDown : Icons.faCaretUp} />
-              </button>
-            </th>
-          </tr>
-        </thead>
-        <tbody hidden={hidden}>
-          <tr>
-            <th style={{borderBottomWidth: "2px"}}>
-            </th>
-            <th style={{borderBottomWidth: "2px"}}>Destination</th>
-            <th style={{borderBottomWidth: "2px"}}>Customer</th>
-            <th style={{borderBottomWidth: "2px"}}>ETA</th>
-            <th style={{borderBottomWidth: "2px"}}>Arrival</th>
-            <th style={{borderBottomWidth: "2px"}}><span className="ml-2">Confirm</span></th>
-          </tr>
-          {route_values.map((location, index) => (
-            <tr
-              key={index}
-              className={
-                props.selectedLocation.driver === props.index + 1 &&
-                props.selectedLocation.location === index + 1
-                  ? "is-selected"
-                  : ""
-              }
-            >
-              <td>
-                <button
-                  className={"button is-rounded is-small mx-1"}
-                  disabled={!route.visible}
-                  onClick={() => handleSelect(props.index + 1, index + 1)}
-                  style={{ padding: "0.69rem" }}
-                >
-                  {index + 1}
+                  {selected ? "Des" : "S"}elect Option
                 </button>
                 <button
-                  className="button is-rounded is-small mx-1"
-                  onClick={() => skipLocation(index + 1)}
+                  className="button is-super-small is-pulled-right"
+                  onClick={() => setHidden((prevHidden) => !prevHidden)}
                 >
-                  Skip
+                  <FontAwesomeIcon icon={hidden ? Icons.faCaretDown : Icons.faCaretUp} />
                 </button>
-              </td>
-              <td>{location.address}</td>
-              <td>{`${location.customer_first_name} ${location.customer_last_name[0]}.`}</td>
-              <td>N/A</td>
-              <td>N/A</td>
-              <td>
-                {/* <button className="tooltip button is-rounded is-small mx-1"> */}
-                <button
-                  className="button is-rounded is-small mx-1"
-                  onClick={() => sendConfirmationText(index + 1)}
-                >
-                  <FontAwesomeIcon icon={Icons.faComment} />
-                  {/* <span className="tooltiptext">Message Customer</span> */}
-                </button>
-                {/* <button className="tooltip button is-rounded is-small mx-1"> */}
-                <button
-                  className="button is-rounded is-small mx-1"
-                  onClick={() => sendConfirmationEmail(index + 1)}
-                >
-                  <FontAwesomeIcon icon={Icons.faEnvelope} />
-                  {/* <span className="tooltiptext">Email Customer</span> */}
-                </button>
-              </td>
+              </th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+          </thead>
+          <tbody hidden={hidden}>
+            <tr>
+              <th style={{borderBottomWidth: "2px"}}>
+              </th>
+              <th style={{borderBottomWidth: "2px"}}>Destination</th>
+              <th style={{borderBottomWidth: "2px"}}>Customer</th>
+              <th style={{borderBottomWidth: "2px"}}>ETA</th>
+              <th style={{borderBottomWidth: "2px"}}>Arrival</th>
+              <th style={{borderBottomWidth: "2px"}}><span className="ml-2">Confirm</span></th>
+            </tr>
+            {Object.values(route.route_data).map((location, index) => (
+              <tr
+                key={index}
+                className={
+                  props.selectedLocation.driver === props.index + 1 &&
+                  props.selectedLocation.location === index + 1
+                    ? "is-selected"
+                    : ""
+                }
+              >
+                <td>
+                  <button
+                    className={"button is-rounded is-small mx-1"}
+                    disabled={!route.visible}
+                    onClick={() => handleSelect(props.index + 1, index + 1)}
+                    style={{ padding: "0.69rem" }}
+                  >
+                    {index + 1}
+                  </button>
+                  <button
+                    className="button is-rounded is-small mx-1"
+                    onClick={() => skipLocation(index + 1)}
+                  >
+                    Skip
+                  </button>
+                </td>
+                <td>{location.address}</td>
+                <td>{`${location.customer_first_name} ${location.customer_last_name[0]}.`}</td>
+                <td>N/A</td>
+                <td>N/A</td>
+                <td>
+                  {/* <button className="tooltip button is-rounded is-small mx-1"> */}
+                  <button
+                    className="button is-rounded is-small mx-1"
+                    onClick={() => sendConfirmationText(index + 1)}
+                  >
+                    <FontAwesomeIcon icon={Icons.faComment} />
+                    {/* <span className="tooltiptext">Message Customer</span> */}
+                  </button>
+                  {/* <button className="tooltip button is-rounded is-small mx-1"> */}
+                  <button
+                    className="button is-rounded is-small mx-1"
+                    onClick={() => sendConfirmationEmail(index + 1)}
+                  >
+                    <FontAwesomeIcon icon={Icons.faEnvelope} />
+                    {/* <span className="tooltiptext">Email Customer</span> */}
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </React.Fragment>
   );
 }
 

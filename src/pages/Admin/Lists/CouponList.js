@@ -84,7 +84,7 @@ function CouponList({ coupons, refunds, ...props }) {
           </tr>
         </thead>
         <tbody>
-          {refundList.map((refund, index) => ( // NOTE: create refindList array
+          {refundList.map((refund, index) => (
             <RefundItem
               key={index}
               index={index}
