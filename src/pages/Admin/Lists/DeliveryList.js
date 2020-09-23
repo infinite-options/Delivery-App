@@ -1,70 +1,130 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useReducer, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Icons from "utils/Icons/Icons";
 import axios from "axios";
 import { BASE_URL } from "utils/Functions/DataFunctions";
 
-// TODO: Add a Sort By [Businesses, Date]
+function init(data) {
+  const route_data = Object.entries(data.routes);
+  // List of available drivers
+  const drivers_list = (drivers => { // Entry: [driver_id, driver_name]
+    let list = [];
+    Object.entries(drivers).forEach(entry => {
+      if (!Object.values(data.routes).find(route => entry[0] === route.driver_id)) {
+        console.log(entry[0], entry[1].first_name)
+        list.push([
+          entry[0], 
+          entry[1].first_name + " " + entry[1].last_name, 
+        ]);
+      }
+    });
+    console.log(list);
+    return list;
+  })(data.drivers);
+
+  // Object of all route drivers that have been edited
+  const route_drivers = {}; // Entry: {driver_id, driver_name}
+  const selected_options = (drivers => { // Entry: {business_id, route_option, date}
+    let options = [];
+    route_data.forEach(routeEntry => {
+      const condition = drivers[routeEntry[1].driver_id] && 
+                        !(options.find(option => (
+                          option.business_id === routeEntry[1].business_id && option.date === routeEntry[1].date
+                        )));
+      if (condition) options.push({
+        business_id: routeEntry[1].business_id, 
+        route_option: routeEntry[1].route_option,
+        date: routeEntry[1].date,
+      });
+    });
+    return options;
+  })(data.drivers);
+
+  return {
+    route_data,
+    drivers_list,
+    route_drivers,
+    selected_options,
+  };
+};
+
+function reducer(state, action) {
+  switch(action.type) {
+    case 'route-update':
+      if (!action.payload.filter) return { ...state, route_data: action.payload.routes };
+      let filteredRouteData = action.payload.routes.filter(route => {
+        // console.log(route[1][props.filter.option], props.filter.value);
+        // eslint-disable-next-line
+        return route[1][action.payload.filter.option] == action.payload.filter.value
+      });
+      return {
+        ...state,
+        route_data: filteredRouteData,
+      };
+    case 'selected-options-update':
+      let selected_options;
+      if (!action.payload.selected) {
+        selected_options = [...state.selected_options];
+        // console.log(selected_options);
+        selected_options.push({ 
+          business_id: action.payload.route.business_id, 
+          route_option: action.payload.route.route_option, 
+          date: action.payload.route.date, 
+        });
+        return {
+          ...state,
+          selected_options,
+        };
+      }
+      selected_options = [...state.selected_options].filter(option => (
+        option.business_id !== action.payload.route.business_id || 
+        option.route_option !== action.payload.route.route_option || 
+        option.date !== action.payload.route.date
+      ));
+      return {
+        ...state,
+        selected_options,
+      };
+    case 'driver-select':
+      let newList = [...state.drivers_list].filter(entry => entry[0] !== action.payload.driver_id);
+      if (action.payload.driver) newList.push(action.payload.driver)
+
+      let newRouteDrivers = { ...state.route_drivers };
+      newRouteDrivers[action.payload.route_id] = { id: action.payload.driver_id, name: action.payload.driver_name };
+      return {
+        ...state,
+        drivers_list: newList,
+        route_drivers: newRouteDrivers,
+      };
+    default: return state;
+  }
+};
+
 function DeliveryList({ routes, drivers, ...props }) {
   console.log("rendering deliveries..");
-  const [routeData, setRouteData] = useState(Object.entries(routes));
-  const [driversList, setDriversList] = useState(Array.from(
-    Object.entries(drivers), 
-    entry => ([
-      entry[0], 
-      `${entry[1].first_name} ${entry[1].last_name}`
-    ])
-  ));
-  const [driversToRoutes, setDriversToRoutes] = useState({}); // { route_id: [driver_id, driver_name], ... }
-  const [selectedOptions, setSelectedOptions] = useState([]); // [{ business_id, route_option, date }, ... ]
 
-  useEffect(() => {
-    setSelectedOptions(() => {
-      let options = [];
-      for (let route_id of Object.keys(driversToRoutes)) {
-        const route = routes[route_id];
-        const option = {
-          business_id: route.business_id,
-          route_option: route.route_option,
-          date: route.date,
-        };
-        if (!options.length || options[options.length - 1].business_id !== option.business_id) { 
-          options.push(option);
-        }
-      }
-      return options;
-    });
-  }, [driversToRoutes]);
-
-  console.log(driversToRoutes);
-  // console.log(Object.values(driversToRoutes).length, Object.values(routes).length);
+  const [state, deliveryDispatch] = useReducer(reducer, { routes, drivers }, init);
+  console.log(state);
 
   useEffect(() => {
     const routeData = Object.entries(routes);
-    if (props.filter.option) {
-      setRouteData(() => {
-        let filteredRouteData = routeData.filter(route => {
-          // console.log(route[1][props.filter.option], props.filter.value);
-          // eslint-disable-next-line
-          return route[1][props.filter.option] == props.filter.value
-        });
-        return filteredRouteData;
-      });
-    }
-    else setRouteData(routeData);
+    deliveryDispatch({ type: "route-update", payload: { 
+      filter: props.filter.option ? props.filter : undefined, 
+      routes: routeData,
+    } });
   }, [routes, props.filter]);
   
   const saveRoutesDrivers = async () => {
     console.log("SAVING DRIVERS TO THEIR ROUTES");
     await (() => {
-      const routeDriverEntries = Object.entries(driversToRoutes);
+      const routeDriverEntries = Object.entries(state.route_drivers);
       return new Promise((resolve, reject) => {
         for (let routeDriver of routeDriverEntries) {
           if(routes[routeDriver[0]].driver_id !== routeDriver[1].id) {
             axios.get(BASE_URL + `updateDriverID/${routeDriver[1].id}/${routeDriver[0]}`)
             .then(response => {
               console.log(response);
-              if (routeDriver[1] === driversToRoutes[routeDriverEntries.length - 1]) resolve('success');
+              if (routeDriver[1] === state.route_drivers[routeDriverEntries.length - 1]) resolve('success');
             })
             .catch(err => {
               console.log(err);
@@ -74,7 +134,6 @@ function DeliveryList({ routes, drivers, ...props }) {
         }
       });
     })();
-    // props.dispatch({ type: 'update-route-drivers', payload: { route_drivers: driversToRoutes } })
   };
 
   // const [sort, setSort] = useState("businesses");
@@ -91,24 +150,25 @@ function DeliveryList({ routes, drivers, ...props }) {
         Save Changes
       </button>
       {/* <RouteSort sort={sort} setSort={setSort} /> */}
-      {routeData.map((route, index) => (route[1].date === props.date && 
+      {state.route_data.map((route, index) => (route[1].date === props.date && 
         <RouteItem
           key={index}
           index={index}
           route={route[1]}
           id={route[0]}
+
+          driver_id={route[1].driver_id}
+          driver_name={
+            drivers[route[1].driver_id] ? 
+              drivers[route[1].driver_id].first_name + " " + drivers[route[1].driver_id].last_name :
+              undefined
+          }
           
           selectedLocation={props.selectedLocation}
           setSelectedLocation={props.setSelectedLocation}
-
-          selectedOptions={selectedOptions}
-          setSelectedOptions={setSelectedOptions}
-          // drivers={drivers}
-          driversList={driversList}
-          setDriversList={setDriversList}
-          driversToRoutes={driversToRoutes}
-          setDriversToRoutes={setDriversToRoutes}
           
+          deliveryState={state}
+          deliveryDispatch={deliveryDispatch}
           dispatch={props.dispatch}
         />
       ))}
@@ -162,21 +222,14 @@ function DeliveryList({ routes, drivers, ...props }) {
 function RouteItem({ route, id, ...props }) {
   const [hidden, setHidden] = useState(true);
   const [driver, setDriver] = useState(() => {
-    let driver = props.driversList.find(entry => entry[0] === route.driver_id);
-    if (driver) return driver;
-    const driver_route_id = Object.keys(props.driversToRoutes).find(route_id => route_id === id);
-    // console.log("ID", driver_route_id);
-    return (driver_route_id ? 
-      [props.driversToRoutes[driver_route_id].id, props.driversToRoutes[driver_route_id].name] : 
-      undefined
-    );
+    if (props.driver_name) return [props.driver_id, props.driver_name];
   });
 
   const route_id = Number(id.substring(id.indexOf("-") + 1, id.length));
   
   const selected = (() => {
     // console.log(props.selectedOptions);
-    return Boolean(props.selectedOptions.find(option => (
+    return Boolean(props.deliveryState.selected_options.find(option => (
       option.business_id === route.business_id && 
       option.route_option === route.route_option && 
       option.date === route.date
@@ -185,7 +238,7 @@ function RouteItem({ route, id, ...props }) {
 
   const disabled = (() => {
     const option = 
-      props.selectedOptions.find(option => option.business_id === route.business_id) || 
+      props.deliveryState.selected_options.find(option => option.business_id === route.business_id) || 
       { route_option: route.route_option };
 
     return (
@@ -232,16 +285,10 @@ function RouteItem({ route, id, ...props }) {
   }
 
   const handleOption = () => {
-    if (!selected) props.setSelectedOptions(prevSelectedOptions => (
-      [ ...prevSelectedOptions, { business_id: route.business_id, route_option: route.route_option, date: route.date } ]
-    ));
-    else props.setSelectedOptions(prevSelectedOptions => (
-      [ ...prevSelectedOptions ].filter(option => (
-        option.business_id !== route.business_id || 
-        option.route_option !== route.route_option || 
-        option.date !== route.date
-      ))
-    ));
+    props.deliveryDispatch({ 
+      type: "selected-options-update", 
+      payload: { route, selected } 
+    });
   };
 
   const sendDriverText = (driverNumber) => {
@@ -308,9 +355,11 @@ function RouteItem({ route, id, ...props }) {
                       driver_num={route.driver_num}
                       driver={driver} 
                       setDriver={setDriver}
-                      list={props.driversList} 
-                      setList={props.setDriversList} 
-                      setDriversToRoutes={props.setDriversToRoutes}
+                      list={props.deliveryState.drivers_list} 
+                      // setList={props.setDriversList} 
+                      // setDriversToRoutes={props.setDriversToRoutes}
+
+                      deliveryDispatch={props.deliveryDispatch}
                     />
                     <button
                       className="button is-rounded is-super-small is-pulled-right ml-1"
@@ -413,41 +462,17 @@ function RouteItem({ route, id, ...props }) {
   );
 }
 
-function DriversDropdown({ driver, setDriver, list, setList, ...props }) {
+function DriversDropdown({ driver, setDriver, list/*, setList*/, ...props }) {
   const [open, setOpen] = useState(false);
   // console.log(driver);
   const route_driver_id = driver ? 
     Number(driver[0].substring(driver[0].indexOf("-") + 1, driver[0].length)) : 
     undefined;
 
-  useEffect(() => {
-    // if route already has a driver selected, remove the driver as an option from the dropdown
-    if (driver) {
-      setList(prevList => {
-        return [...prevList].filter(entry => entry[0] !== driver[0]);
-      });
-      props.setDriversToRoutes(prevDriversToRoutes => {
-        return ({
-          ...prevDriversToRoutes,
-          [props.route_id]: { id: driver[0], name: driver[1] },
-        });
-      });
-    }
-  }, []);
-
   const handleDriverSelect = (driver_id, driver_name) => {
-    setList(prevList => {
-      let newList = [...prevList].filter(entry => entry[0] !== driver_id);
-      if (driver) newList.push(driver);
-      return newList;
-    });
-    props.setDriversToRoutes(prevDriversToRoutes => {
-      let newDriversToRoutes = { ...prevDriversToRoutes };
-      // checking if user selected or deselected a driver
-      newDriversToRoutes[props.route_id] = { id: driver_id, name: driver_name };
-      // if (driver_id) newDriversToRoutes[props.route_id] = { id: driver_id, name: driver_name };
-      // else delete newDriversToRoutes[props.route_id];
-      return newDriversToRoutes;
+    props.deliveryDispatch({ 
+      type: "driver-select", 
+      payload: { route_id: props.route_id, driver, driver_id, driver_name }, 
     });
     setDriver(driver_id ? list.find(entry => entry[0] === driver_id) : undefined);
     setOpen(false);
