@@ -5,47 +5,57 @@ import axios from "axios";
 import { BASE_URL } from "utils/Functions/DataFunctions";
 
 function init(data) {
-  const route_data = Object.entries(data.routes);
-  // List of available drivers
-  const drivers_list = (drivers => { // Entry: [driver_id, driver_name]
-    let list = [];
+  const initState = (drivers => {
+    let route_data = Object.entries(data.routes);
+    let drivers_list = [];
+    let route_drivers = {};
+    let selected_options = [];
+
+    // drivers_list - Entry: [driver_id, driver_name]
     Object.entries(drivers).forEach(entry => {
       if (!Object.values(data.routes).find(route => entry[0] === route.driver_id)) {
         console.log(entry[0], entry[1].first_name)
-        list.push([
+        drivers_list.push([
           entry[0], 
           entry[1].first_name + " " + entry[1].last_name, 
         ]);
       }
     });
-    console.log(list);
-    return list;
-  })(data.drivers);
 
-  // Object of all route drivers that have been edited
-  const route_drivers = {}; // Entry: {driver_id, driver_name}
-  const selected_options = (drivers => { // Entry: {business_id, route_option, date}
-    let options = [];
     route_data.forEach(routeEntry => {
+      // route_drivers - Entry: route_id: { id: driver_id, name: driver_name }
+      const driver_id = routeEntry[1].driver_id;
+      const driver_name = drivers[driver_id] ? 
+        drivers[driver_id].first_name + " " + drivers[driver_id].last_name : 
+        undefined;
+      if (driver_name) route_drivers[routeEntry[0]] = { 
+        id: driver_id, 
+        name: driver_name, 
+        business_id: routeEntry[1].business_id,
+      };
+      
+      // selected_options - Entry: {business_id, route_option, date}
       const condition = drivers[routeEntry[1].driver_id] && 
-                        !(options.find(option => (
+                        !(selected_options.find(option => (
                           option.business_id === routeEntry[1].business_id && option.date === routeEntry[1].date
                         )));
-      if (condition) options.push({
+      if (condition) selected_options.push({
         business_id: routeEntry[1].business_id, 
         route_option: routeEntry[1].route_option,
         date: routeEntry[1].date,
       });
     });
-    return options;
+
+    return {
+      route_data,
+      drivers_list,
+      route_drivers,
+      selected_options,
+    };
   })(data.drivers);
 
-  return {
-    route_data,
-    drivers_list,
-    route_drivers,
-    selected_options,
-  };
+  // console.log(initState);
+  return initState;
 };
 
 function reducer(state, action) {
@@ -90,7 +100,11 @@ function reducer(state, action) {
       if (action.payload.driver) newList.push(action.payload.driver)
 
       let newRouteDrivers = { ...state.route_drivers };
-      newRouteDrivers[action.payload.route_id] = { id: action.payload.driver_id, name: action.payload.driver_name };
+      newRouteDrivers[action.payload.route_id] = { 
+        id: action.payload.driver_id, 
+        name: action.payload.driver_name, 
+        business_id: action.payload.business_id,
+      };
       return {
         ...state,
         drivers_list: newList,
@@ -136,33 +150,26 @@ function DeliveryList({ routes, drivers, ...props }) {
     })();
   };
 
-  // const [sort, setSort] = useState("businesses");
-
   return (
     <React.Fragment>
       <button
         className="button is-small mx-1 is-success is-outlined is-rounded" 
         style={{ marginBottom: "1rem" }}
-        // disabled={Object.values(driversToRoutes).length !== Object.values(routes).length}
+        // disabled={!Object.values(state.route_drivers).length}
         onClick={saveRoutesDrivers}
       >
         <FontAwesomeIcon icon={Icons.faCheck} className="mr-2" />
         Save Changes
       </button>
-      {/* <RouteSort sort={sort} setSort={setSort} /> */}
-      {state.route_data.map((route, index) => (route[1].date === props.date && 
+      {state.route_data.map((route, index) => (route[1].date === props.date &&
         <RouteItem
           key={index}
           index={index}
           route={route[1]}
           id={route[0]}
 
-          driver_id={route[1].driver_id}
-          driver_name={
-            drivers[route[1].driver_id] ? 
-              drivers[route[1].driver_id].first_name + " " + drivers[route[1].driver_id].last_name :
-              undefined
-          }
+          driver_id={state.route_drivers[route[0]] && state.route_drivers[route[0]].id}
+          driver_name={state.route_drivers[route[0]] && state.route_drivers[route[0]].name}
           
           selectedLocation={props.selectedLocation}
           setSelectedLocation={props.setSelectedLocation}
@@ -176,53 +183,10 @@ function DeliveryList({ routes, drivers, ...props }) {
   );
 }
 
-// function RouteSort({ sort, setSort, ...props }) {
-//   const [open, setOpen] = useState(false);
-
-//   const handleSelect = (type) => {
-//     setSort(type);
-//     setOpen(false);
-//   }
-
-//   return (
-//     <div className={"dropdown" + (open ? " is-active" : "")}>
-//       <div className="dropdown-trigger">
-//         <button 
-//           className="button is-small"
-//           onClick={() => setOpen(prevOpen => !prevOpen)} 
-//           aria-haspopup="true" 
-//           aria-controls="dropdown-menu"
-//         >
-//           Sort By: {sort.charAt(0).toUpperCase() + sort.slice(1)}
-//           <FontAwesomeIcon icon={Icons.faCaretDown} className= "ml-2" />
-//         </button>
-//       </div>
-//       <div className="dropdown-menu" style={{ paddingTop: 0 }} id="dropdown-menu" role="menu">
-//         <div className="dropdown-content">
-//           <button 
-//             className="button is-small is-white dropdown-item" 
-//             onClick={() => handleSelect("businesses")}
-//             disabled={sort === "businesses"}
-//           >
-//             Businesses
-//           </button>
-//           {/* <button 
-//             className="button is-small is-white dropdown-item"
-//             onClick={() => handleSelect("date")}
-//             disabled={sort === "date"}
-//           >
-//             Date
-//           </button> */}
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
 function RouteItem({ route, id, ...props }) {
   const [hidden, setHidden] = useState(true);
   const [driver, setDriver] = useState(() => {
-    if (props.driver_name) return [props.driver_id, props.driver_name];
+    if (props.driver_id) return [props.driver_id, props.driver_name];
   });
 
   const route_id = Number(id.substring(id.indexOf("-") + 1, id.length));
@@ -237,14 +201,12 @@ function RouteItem({ route, id, ...props }) {
   })();
 
   const disabled = (() => {
-    const option = 
-      props.deliveryState.selected_options.find(option => option.business_id === route.business_id) || 
-      { route_option: route.route_option };
+    const option = props.deliveryState.selected_options.find(option => option.business_id === route.business_id) || {};
+    const driverSelected = Object.values(props.deliveryState.route_drivers).find(driver => driver.business_id === route.business_id);
+    const sameRouteOption = option.route_option === route.route_option;
+    const sameRouteDate = option.date === route.date;
 
-    return (
-      option.route_option !== route.route_option && 
-      option.date === route.date
-    );
+    return (driverSelected || !sameRouteOption) && sameRouteDate;
   })();
   // console.log(selected);
 
@@ -352,13 +314,11 @@ function RouteItem({ route, id, ...props }) {
                   <div style={{ width: "325%", maxWidth: "250px" }}>
                     <DriversDropdown 
                       route_id={id}
+                      business_id={route.business_id}
                       driver_num={route.driver_num}
                       driver={driver} 
                       setDriver={setDriver}
                       list={props.deliveryState.drivers_list} 
-                      // setList={props.setDriversList} 
-                      // setDriversToRoutes={props.setDriversToRoutes}
-
                       deliveryDispatch={props.deliveryDispatch}
                     />
                     <button
@@ -469,10 +429,10 @@ function DriversDropdown({ driver, setDriver, list/*, setList*/, ...props }) {
     Number(driver[0].substring(driver[0].indexOf("-") + 1, driver[0].length)) : 
     undefined;
 
-  const handleDriverSelect = (driver_id, driver_name) => {
+  const handleDriverSelect = (route_id, driver_id, driver_name, business_id) => {
     props.deliveryDispatch({ 
       type: "driver-select", 
-      payload: { route_id: props.route_id, driver, driver_id, driver_name }, 
+      payload: { route_id, driver, driver_id, driver_name, business_id }, 
     });
     setDriver(driver_id ? list.find(entry => entry[0] === driver_id) : undefined);
     setOpen(false);
@@ -500,7 +460,7 @@ function DriversDropdown({ driver, setDriver, list/*, setList*/, ...props }) {
             <button 
               className="button is-small is-white dropdown-item" 
               disabled={!driver} 
-              onClick={() => handleDriverSelect()}
+              onClick={() => handleDriverSelect(props.route_id)}
             >
               Deselect
             </button>
@@ -509,7 +469,7 @@ function DriversDropdown({ driver, setDriver, list/*, setList*/, ...props }) {
               <button 
                 key={index} 
                 className="button is-small is-white dropdown-item" 
-                onClick={() => handleDriverSelect(item[0], item[1])}
+                onClick={() => handleDriverSelect(props.route_id, item[0], item[1], props.business_id)}
                 title={`Driver ID: ${Number(item[0].substring(item[0].indexOf("-") + 1, item[0].length))}`}
               >
                 {item[1]}
