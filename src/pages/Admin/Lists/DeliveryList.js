@@ -14,7 +14,7 @@ function init(data) {
     // drivers_list - Entry: [driver_id, driver_name]
     Object.entries(drivers).forEach(entry => {
       if (!Object.values(data.routes).find(route => entry[0] === route.driver_id)) {
-        console.log(entry[0], entry[1].first_name)
+        // console.log(entry[0], entry[1].first_name)
         drivers_list.push([
           entry[0], 
           entry[1].first_name + " " + entry[1].last_name, 
@@ -134,7 +134,7 @@ function DeliveryList({ routes, drivers, ...props }) {
       const routeDriverEntries = Object.entries(state.route_drivers);
       return new Promise((resolve, reject) => {
         for (let routeDriver of routeDriverEntries) {
-          if(routes[routeDriver[0]].driver_id !== routeDriver[1].id) {
+          if (routes[routeDriver[0]].driver_id !== routeDriver[1].id) {
             axios.get(BASE_URL + `updateDriverID/${routeDriver[1].id}/${routeDriver[0]}`)
             .then(response => {
               console.log(response);
@@ -310,8 +310,7 @@ function RouteItem({ route, id, ...props }) {
               </th>
               <th style={{ width: "29%" }} />
               <th style={{ width: "11%" }}>
-                {selected && (
-                  <div style={{ width: "325%", maxWidth: "250px" }}>
+                  <div hidden={!selected} style={{ width: "325%", maxWidth: "250px" }}>
                     <DriversDropdown 
                       route_id={id}
                       business_id={route.business_id}
@@ -334,7 +333,6 @@ function RouteItem({ route, id, ...props }) {
                       <FontAwesomeIcon icon={Icons.faComment} />
                     </button>
                   </div>
-                )}
               </th>
               <th style={{ width: "12.5%" }} />
               <th style={{ width: "12.5%" }} />

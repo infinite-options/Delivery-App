@@ -518,7 +518,7 @@ function FilterDropdown({ data, header, ...props }) {
   const [open, setOpen] = useState(false);
   const [dataType, setDataType] = useState();
   const [filterItems, setFilterItems] = useState([]);
-  console.log(filterItems, dataType);
+  // console.log(filterItems, dataType);
 
   useEffect(() => {
     let type;

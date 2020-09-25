@@ -59,7 +59,7 @@ const rainbow = (numOfSteps, step) => {
 const createRoutes = () => {
   return axios.get(NEW_NEW_BASE_URL + "getRoutes")
   .then((response) => {
-    // console.log("temprouteS:", response);
+    // console.log("route resp:", response);
     const result = response.data.result.result;
     let totalOptions = 0;
     let tempRoutes = {};
@@ -67,32 +67,12 @@ const createRoutes = () => {
       // console.log(location, result.length);
       const deliveryInfo = JSON.parse(location.route_delivery_info);
       const route_id = location.route_id;
-      // const latlngs = JSON.parse(location.customer_coords);
       const latlngs = [deliveryInfo[0].coordinates.latitude, deliveryInfo[0].coordinates.longitude];
       // console.log(latlngs);
       const location_data = {
-        // to: [latlngs.latitude, latlngs.longitude],
         to: latlngs,
         customer_id: deliveryInfo[0].customer_id,
-        // customer_first_name: "Bill",
-        // customer_last_name: "Gates",
         address: deliveryInfo[0].delivery_street,
-
-        // customer_id: location.customer_id,
-        // customer_first_name: location.delivery_first_name,
-        // customer_last_name: location.delivery_last_name,
-        // customer_email: location.delivery_email,
-        // customer_phone: location.delivery_phone_num,
-        // address: `${location.delivery_address} ${location.delivery_city} ${location.delivery_state} ${location.delivery_zip}`,
-        // NOTE: This regex stuff is temporary, the endpoint gives messy coordinate values so I gotta clean it
-        // to: [location.delivery_latitude.replace( /^,/g, ''), location.delivery_longitude.replace( /^,/g, '')],
-        //* customer_id: location.customer_id,
-        //* customer_first_name: location.customer_first_name,
-        //* customer_last_name: location.customer_last_name,
-        //* customer_email: location.customer_email,
-        //* customer_phone: location.customer_phone_num,
-        //* address: `${location.customer_street} ${location.customer_city} ${location.customer_state} ${location.customer_zip}`,
-        //* to: [location.customer_latitude, location.customer_longitude],
       };
       // console.log(route_id);
       if (route_id in tempRoutes) {
@@ -109,14 +89,11 @@ const createRoutes = () => {
         // location_data.from = [0, 0];
         if (totalOptions < location.route_option) totalOptions = location.route_option;
         location_data.from = [latlngs.latitude, latlngs.longitude];
-        //* location_data.from = [+location.customer_latitude + (Math.random() * 0.22 - 0.1), +location.customer_longitude + (Math.random() * 0.22 - 0.1)];
         tempRoutes[route_id] = {
           route_option: location.route_option,
           business_id: location.route_business_id,
           driver_id: location.route_driver_id, //* location.driver_id,
-          driver_num: location.route_driver_num,
-          // driver_first_name: "Bob", //* location.driver_first_name,
-          // driver_last_name: "Jones", //* location.driver_last_name, 
+          driver_num: location.route_driver_num, 
           distance: location.route_distance,
           date: location.shipment_date,
           visible: true,
@@ -141,56 +118,12 @@ const createRoutes = () => {
       // console.log(tempRoutes);
     return tempRoutes;
   });
-
-
-  // return axios.get(BASE_URL + "getCustomerRoutes")
-  // .then((response) => {
-  //   // console.log("temprouteS:", response);
-  //   const result = response.data.result.result;
-  //   let tempRoutes = {};
-  //   for (let location of result) {
-  //     const route_id = location.route_id;
-  //     const location_data = {
-  //       customer_id: location.customer_id,
-  //       address: `${location.customer_street} ${location.customer_city} ${location.customer_state} ${location.customer_zip}`,
-  //       // from: tempRoutes[route_id].route_data[route_data.length - 1].to,
-  //       to: [location.customer_latitude, location.customer_longitude],
-  //     };
-  //     if (route_id in tempRoutes) {
-  //       location_data.from =
-  //         tempRoutes[route_id].route_data[
-  //           tempRoutes[route_id].route_data.length - 1
-  //         ].to;
-  //       console.log(location_data);
-  //       // console.log("route data:", tempRoutes[route_id].route_data);
-  //       tempRoutes[route_id].route_data.push(location_data);
-  //     } else {
-  //       // console.log("route's business", businesses[location.business_id]);
-  //       location_data.from = [
-  //         businesses[location.business_id].latitude,
-  //         businesses[location.business_id].longitude,
-  //       ];
-  //       tempRoutes[route_id] = {
-  //         business_id: location.business_id,
-  //         driver_id: location.driver_id,
-  //         visible: true,
-  //         route_data: [location_data],
-  //       };
-  //     }
-  //   }
-  //   // let colors = [];
-  //   let i = 0;
-  //   const routes_length = Object.keys(tempRoutes).length;
-  //   for (let route_id in tempRoutes)
-  //     tempRoutes[route_id].route_color = rainbow(routes_length, i++);
-  //   return tempRoutes;
-  // });
 };
 
 const createDrivers = () => {
   return axios.get(NEW_NEW_BASE_URL + "Drivers")
   .then((response) => {
-    // console.log("response_drivers:", response);
+    // console.log("drivers resp:", response);
     const result = response.data.result.result;
     let tempDrivers = {};
     for (let driver of result) {
@@ -242,15 +175,6 @@ const createDrivers = () => {
         business_id: driver.business_id,
         hourly_rate: driver.driver_hourly_rate,
         delivery_fee: driver.driver_delivery_fee,
-        // time_availability: {
-        //   Sunday: undefined,
-        //   Monday: 1,
-        //   Tuesday: undefined,
-        //   Wednesday: 1,
-        //   Thursday: 1,
-        //   Friday: undefined,
-        //   Saturday: undefined,
-        // },
       };
       tempDrivers[driver_id] = driver_data;
     }
@@ -262,7 +186,7 @@ const createDrivers = () => {
 const createBusinesses = () => {
   return axios.get(NEW_NEW_BASE_URL + "Businesses")
   .then((response) => {
-    // console.log("tempbusines", response);
+    // console.log("business resp", response);
     const result = response.data.result.result;
     let tempBusinesses = {};
     for (let business of result) {
@@ -314,42 +238,12 @@ const createBusinesses = () => {
     // setBusinesses(tempBusinesses);
     return tempBusinesses;
   });
-
-
-  // return axios.get(BASE_URL + "getBusinesses")
-  // .then((response) => {
-  //   // console.log("tempbusines", response);
-  //   const result = response.data.result.result;
-  //   let tempBusinesses = {};
-  //   for (let business of result) {
-  //     const business_id = business.business_id;
-  //     const business_data = {
-  //       name: business.business_name,
-  //       description: business.business_desc,
-  //       type: business.business_type,
-  //       hours: business.business_hours,
-  //       street: business.business_street,
-  //       unit: business.business_unit,
-  //       city: business.business_city,
-  //       state: business.business_state,
-  //       zip: business.business_zip,
-  //       phone: business.business_phone_num,
-  //       email: business.business_email,
-  //       phone2: business.business_phone_num2,
-  //       latitude: business.business_latitude,
-  //       longitude: business.business_longitude,
-  //     };
-  //     tempBusinesses[business_id] = business_data;
-  //   }
-  //   // setBusinesses(tempBusinesses);
-  //   return tempBusinesses;
-  // });
 };
 
 const createCustomers = () => {
   return axios.get(NEW_NEW_BASE_URL + "Customers")
   .then((response) => {
-    // console.log("tempcust", response);
+    // console.log("customer resp", response);
     const result = response.data.result.result;
     let tempCustomers = {};
     for (let customer of result) {
@@ -406,7 +300,7 @@ const createCustomers = () => {
 const createVehicles = () => {
   return axios.get(NEW_NEW_BASE_URL + "getVehicles")
   .then(response => {
-    console.log("vehicles resp:", response);
+    // console.log("vehicles resp:", response);
     const result = response.data.result.result;
     let tempVehicles = {}
     for (let vehicle of result) {
@@ -434,7 +328,7 @@ const createVehicles = () => {
 const createPurchases = () => {
   return axios.get(NEW_NEW_BASE_URL + "Purchases")
   .then((response) => {
-    // console.log("temppurchases", response);
+    // console.log("purchase resp", response);
     const result = response.data.result.result;
     let tempPurchases = {};
     for (let purchase of result) {
@@ -474,7 +368,7 @@ const createPurchases = () => {
 const createPayments = () => {
   return axios.get(NEW_NEW_BASE_URL + "Payments")
   .then(response => {
-    console.log("payment resp:", response);
+    // console.log("payment resp:", response);
     const result = response.data.result.result;
     let tempPayments = {};
     for (let payment of result) {
@@ -508,7 +402,7 @@ const createPayments = () => {
 const createCoupons = () => {
   return axios.get(NEW_NEW_BASE_URL + "getCoupons")
   .then(response => {
-    // console.log("coupons:", response);
+    // console.log("coupon resp:", response);
     const result = response.data.result.result;
     let tempCoupons = {};
     for (let coupon of result) {

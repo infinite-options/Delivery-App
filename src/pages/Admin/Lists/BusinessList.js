@@ -247,7 +247,7 @@ function BusinessItem({ business, id, ...props }) {
                   onClick={() => props.handleEdit('edit', id)}
                 >
                   <FontAwesomeIcon
-                    icon={Icons.faPlus}
+                    icon={Icons.faEdit}
                   />
                   {/* <span className="tooltiptext">{hidden ? "Expand" : "Collapse"}</span> */}
                 </button>

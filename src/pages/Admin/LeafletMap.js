@@ -87,7 +87,7 @@ function LeafletMap({ header, routes, drivers, businesses, customers, ...props }
         });
         const dataToHide = Array.from(filtered, entry => entry[0]);
         for (let key of dataKeys) {
-          if(dataToHide.includes(key)) newData[key].visible = false;
+          if (dataToHide.includes(key)) newData[key].visible = false;
           else newData[key].visible = true;
         }
       }
@@ -103,11 +103,11 @@ function LeafletMap({ header, routes, drivers, businesses, customers, ...props }
                    header === 2 ? 'businesses' :
                  /*header === 3 ?*/ 'customers';
       }
-      console.log(newData);
-      console.log("YO", {
-        ...prevMapData,
-        [dataType]: newData,
-      });
+      // console.log(newData);
+      // console.log("YO", {
+      //   ...prevMapData,
+      //   [dataType]: newData,
+      // });
       return {
         ...prevMapData,
         [dataType]: newData,
